@@ -50,6 +50,7 @@
 		var submit_new_user = function() {
 			var loginForm = $("#loginForm");
 			var data = JSON.stringify(loginForm.serializeArray());
+			console.log(data);
 
 			$.ajax({
 				url: "/api/create-login",
@@ -84,11 +85,10 @@
 					  Username: <input type="text" name="username" class="column-centered"><br>
 					  Password: <input type="text" name="password" class="column-centered"><br>
 					  Email: <input type="text" name="email" class="column-centered"><br>
-					  <input type="submit" value="Submit" class="column-centered" onclick="submit_new_user()">
+					  <input type="button" value="Submit" class="column-centered" onclick="submit_new_user();">
 				</form>
 			</div>
 		</div>
-
 	</div>
 	<!-- /#wrapper -->
 
