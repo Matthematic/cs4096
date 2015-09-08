@@ -49,13 +49,21 @@
 	<script type="text/javascript">
 		var submit_new_user = function() {
 			var loginForm = $("#loginForm");
-			var data = JSON.stringify(loginForm.serializeArray());
+			var data = loginForm.serializeArray();
 			console.log(data);
+			var new_data = {};
+
+			var i;
+			for (i = 0; i < data.length; i++) {
+				new_data[data[i]["name"]] = data[i]["value"];
+			}
+			console.log(new_data);
+
 
 			$.ajax({
 				url: "/api/create-login",
 				datatype: "json",
-				data: data,
+				data: new_data,
 				method: "post",
 				success: function(){
 					alert("account created");
