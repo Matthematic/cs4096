@@ -23,7 +23,6 @@ process.on('SIGINT', function() {
 connection.connect(function(err) {
     if(err) {
         console.error('error connecting to database: ' + err.stack);
-        return
     }
 
     console.log('connected to database: ' + connection.threadId);
@@ -41,6 +40,8 @@ connection.connect(function(err) {
     });
 
     app.post('/api/create-login', jsonParser, function(req, res) {
+
+        api/create-login
 
     });
 
