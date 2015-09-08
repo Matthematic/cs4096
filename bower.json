@@ -1,15 +1,13 @@
 {
-  "name": "startbootstrap-sb-admin-2",
-  "version": "1.0.7",
-  "homepage": "http://startbootstrap.com/template-overviews/sb-admin-2/",
+  "name": "Tetris-CS4096",
+  "version": "0.0.1",
   "authors": [
-    "David Miller"
+    "Wyatt Kennedy",
+    "Josh Tuggle",
+    "Matt Carr",
+    "Zac Blohm"
   ],
-  "description": "A free, open source, Bootstrap admin theme created by Start Bootstrap",
-  "keywords": [
-    "bootstrap",
-    "theme"
-  ],
+  "description": "An Epic Tetris Webpage",
   "license": "Apache",
   "ignore": [
     "**/.*",
@@ -20,10 +18,6 @@
     "pages",
     "index.html",
     "/js"
-  ],
-  "main": [
-    "dist/css/sb-admin-2.css",
-    "dist/js/sb-admin-2.js"
   ],
   "dependencies": {
     "bootstrap": "~3.3.1",
