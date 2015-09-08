@@ -33,13 +33,16 @@ connection.connect(function(err) {
     app.use(express.static('frontend/pages'));
     app.use('/bower_components', express.static('bower_components'));
 
-    var jsonParser = bodyParser.json();
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    app.use(bodyParser.json());
 
     app.get('/', function(req, res) {
         return res.sendFile('index.html');
     });
 
-    app.post('/api/create-login', jsonParser, function(req, res) {
+    app.post('/api/create-login', function(req, res) {
         console.log("usersname: " + req.body.username);
         console.log("password: " + req.body.password);
         console.log("email: " + req.body.email);
