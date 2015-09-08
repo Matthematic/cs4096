@@ -40,9 +40,10 @@ connection.connect(function(err) {
     });
 
     app.post('/api/create-login', jsonParser, function(req, res) {
-
-        api/create-login
-
+        console.log("usersname: " + req.body.username);
+        console.log("password: " + req.body.password);
+        console.log("email: " + req.body.email);
+        console.log(req.body);
     });
 
     var server = app.listen(3000, function() {
