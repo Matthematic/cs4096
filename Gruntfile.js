@@ -7,15 +7,32 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
-        clean: ["./dist/css"],
+        clean: ["./.tmp"],
+
+        copy: {
+            serve: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: 'frontend/css',
+                    dest: '.tmp/css',
+                    src: ['*.css']
+                }, {
+                    expand: true,
+                    cwd:'frontend/js',
+                    dest: '.tmp/js',
+                    src: ['*.js']
+                }]
+            }
+        },
 
         less: {
             serve: {
                 expand: true,
-                cwd: './less',
+                cwd: './frontend/less',
                 src: '*.less',
                 ext: '.css',
-                dest: './dist/css'
+                dest: '.tmp/css'
             }
         },
 
@@ -37,6 +54,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         'clean',
         'concurrent:serve',
+        'copy:serve',
         'express:serve',
         'keepalive'
     ]);
