@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>SB Admin 2 - Bootstrap Admin Theme</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- MetisMenu CSS -->
+	<link href="../bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link href="../css/sb-admin-2.css" rel="stylesheet">
+
+	<!-- Custom Fonts -->
+	<link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<!-- jQuery -->
+	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+
+	<!-- JQuery Validation -->
+	<script src="../bower_components/jquery-validation/dist/jquery.validate.js"></script>
+	<script src="../bower_components/jquery-validation/dist/additional-methods.js"></script>
+
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<!-- load navbar template -->
+	<script>
+		$(function(){
+		  $("#navbars").load("navbars.html");
+		});
+	</script>
+
+	<style>
+		.column-centered {
+			margin: 0 auto;
+		}
+	</style>
+
+	<script type="text/javascript">
+		var submit_new_user = function() {
+			var loginForm = $("#loginForm");
+			var data = loginForm.serializeArray();
+			console.log(data);
+			var new_data = {};
+
+			var i;
+			for (i = 0; i < data.length; i++) {
+				new_data[data[i]["name"]] = data[i]["value"];
+			}
+			console.log(new_data);
+
+			$.ajax({
+				url: "/api/create-login",
+				datatype: "json",
+				data: new_data,
+				method: "post",
+				success: function(){
+					alert("account created");
+					console.log("account created");
+				},
+				callback: function(){
+					alert("account created");
+					console.log("account created");
+				},
+				failure: function(){
+					alert("error in creation");
+					console.log("account not created");
+				},
+			});
+
+			// for some reason putting these inside the ajax's success function wouldn't work
+			$('#username').val('');
+			$('#password').val('');
+			$('#email').val('');
+
+		}
+	</script>
+
+	<script>
+		$(document).ready(function () {
+
+			$('#loginForm').validate({
+				rules: {
+					username: {
+						required: true,
+						minlength: 2,
+						maxlength: 15,
+						alphanumeric: true
+					},
+					email: {
+						required: true,
+						email: true
+					},
+					password: {
+						required: true,
+						minlength: 6,
+						maxlength: 15,
+					}
+				},
+				highlight: function (element) {
+					$(element).closest('.control-group').removeClass('success').addClass('error');
+				},
+				unhighlight: function(element) {
+					$(element).closest('.control-group').removeClass('error').addClass('success');
+				},
+				success: function (element) {
+					$(element).text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+				}
+			});
+		});
+	</script>
+
+</head>
+
+<body>
+
+	<div id="wrapper">
+		<div id="navbars"></div>
+		<div id="page-wrapper">
+			<div class="container-fluid">
+				<h1>Registration Form</h1>
+				</br>
+				<form method="POST" class="form-horizontal" id="loginForm">
+					<div class="control-group">
+						<label class="control-label" for="username">Username</label>
+						<div class="controls">
+							<input type="text" name="username" id="username" placeholder="Desired username">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="password">Password</label>
+						<div class="controls">
+							<input type="text" name="password" id="password" placeholder="Desired password">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="email">Email Address</label>
+						<div class="controls">
+							<input type="text" name="email" id="email" placeholder="Your email address">
+						</div>
+					</div>
+					</br>
+					<input type="button" value="Submit" class="btn btn-success column-centered" onclick="submit_new_user();">
+				</form>
+			</div>
+		</div>
+
+	<!-- /#wrapper -->
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<!-- Metis Menu Plugin JavaScript -->
+	<script src="../bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+	<!-- Custom Theme JavaScript -->
+	<script src="../js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "Tetris-CS4096",
+  "version": "0.0.1",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "^4.13.3",
+    "mysql": "git://github.com/felixge/node-mysql"
+  },
+  "description": "An Epic Tetris Webpage",
+  "author": "Kilobytes of Speed",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-concurrent": "^2.0.3",
+    "grunt-keepalive": "^0.0.1",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-less": "~0.11.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.1",
+    "grunt-newer": "^0.7.0",
+    "grunt-wiredep": "^1.7.0",
+    "time-grunt": "^0.3.1",
+    "load-grunt-tasks": "*"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/Matthew-Carr/cs4096"
+  }
+}
