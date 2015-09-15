@@ -9,7 +9,7 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<title>SB Admin 2 - Bootstrap Admin Theme</title>
+	<title>Kilobytes Of Tetris</title>
 
 	<!-- Bootstrap Core CSS -->
 	<link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,10 +40,59 @@
 		});
 	</script>
 
+	<script>
+		$(document).ready(function() {
+			$('#ranked tr').click(function() {
+				alert("You clicked an open game. This means you have accepted that game and the game should automatically start");
+			});
+		});
+
+		var send_play_request = function() {
+			var inviteForm = $("#inviteForm");
+			var data = inviteForm.serializeArray();
+			console.log(data);
+			var new_data = {};
+
+			var i;
+			for (i = 0; i < data.length; i++) {
+				new_data[data[i]["name"]] = data[i]["value"];
+			}
+			console.log(new_data);
+
+			$.ajax({
+				url: "/api/invite-user",
+				datatype: "json",
+				data: new_data,
+				method: "post",
+				success: function(){
+					alert("invite sent");
+					console.log("invite sent");
+				},
+				callback: function(){
+					alert("invite sent");
+					console.log("invite sent");
+				},
+				failure: function(){
+					alert("invite not sent");
+					console.log("invite not sent");
+				},
+			});
+
+			// for some reason putting these inside the ajax's success function wouldn't work
+			$('#username').val('');
+			$('#email').val('');
+
+		}
+	</script>
+
+	<style>
+		#ranked {
+			cursor: pointer;
+		}
+	</style>
 </head>
 
 <body>
-
 	<div id="wrapper">
 		<div id="navbars"></div>
 		<!-- Page Content -->
@@ -51,7 +100,109 @@
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-lg-12">
-						<h1 class="page-header">Matchmaking Page</h1>
+						<h1 class="page-header">Matchmaking</h1>
+						<div id="Tabs" role="tabpanel">
+							<!-- Nav tabs -->
+							<ul class="nav nav-tabs nav-justified" role="tablist">
+								<li class="active">
+									<a href="#ranked" role="tab" data-toggle="tab"><h4>Ranked</h4></a>
+								</li>
+								<li>
+									<a href="#social" role="tab" data-toggle="tab"><h4>Social</h4></a>
+								</li>
+								<li>
+									<a href="#invite" role="tab" data-toggle="tab"><h4>Invite</h4></a>
+								</li>
+								<li>
+									<a href="#watch" role="tab" data-toggle="tab"><h4>Watch</h4></a>
+								</li>
+							</ul>
+							<!-- Tab panes -->
+							<div class="tab-content" style="padding-top: 20px">
+								<div role="tabpanel" class="tab-pane fade in active" id="ranked">
+									<h3>Open Games - these games affect your rating</h3>
+									<table class="table table-hover" id="ranked">
+										<thead>
+										<tr>
+											<th>Username</th>
+											<th>Elo Rating</th>
+											<th>Gametype</th>
+										</tr>
+										</thead>
+										<tbody id="ranked_tbody">
+										<tr>
+											<td>RonTheMoron</td>
+											<td>1847</td>
+											<td>Classic</td>
+										</tr>
+										<tr>
+											<td>FatalCatharsis</td>
+											<td>1900</td>
+											<td>Classic</td>
+										</tr>
+										<tr>
+											<td>Tuglight</td>
+											<td>1200</td>
+											<td>Classic</td>
+										</tr>
+										</tbody>
+									</table>
+								</div>
+								<div role="tabpanel" class="tab-pane fade" id="social">
+									<h3>Open Games - these games do NOT affect your rating</h3>
+									<table class="table table-hover" id="social">
+										<thead>
+										<tr>
+											<th>Username</th>
+											<th>Elo Rating</th>
+											<th>Gametype</th>
+										</tr>
+										</thead>
+										<tbody id="ranked_tbody">
+										<tr>
+											<td>RonTheMoron</td>
+											<td>1847</td>
+											<td>Classic</td>
+										</tr>
+										<tr>
+											<td>Tuglight</td>
+											<td>1200</td>
+											<td>Classic</td>
+										</tr>
+										<tr>
+											<td>FatalCatharsis</td>
+											<td>1900</td>
+											<td>Classic</td>
+										</tr>
+										</tbody>
+									</table>
+								</div>
+								<div role="tabpanel" class="tab-pane fade" id="invite">
+									<h3>Enter either a username or an email address.</h3>
+									<h4>We will send a private game request to that user.</h4>
+									<form method="POST" class="form-horizontal" id="inviteForm">
+										<div class="control-group">
+											<label class="control-label" for="username">Username</label>
+											<div class="controls">
+												<input type="text" name="username" id="username" placeholder="Friend's username">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label" for="email">Email Address</label>
+											<div class="controls">
+												<input type="text" name="email" id="email" placeholder="Friend's email address">
+											</div>
+										</div>
+										</br>
+										<input type="button" value="Submit" class="btn btn-success column-centered" onclick="send_play_request();">
+									</form>
+								</div>
+								<div role="tabpanel" class="tab-pane fade" id="watch">
+									<h3>This is the Watch a Game page.</h3>
+									<h4>There will be a list of current games being played, and you will be able to spectate.</h4>
+								</div>
+							</div>
+						</div>
 					</div>
 					<!-- /.col-lg-12 -->
 				</div>
