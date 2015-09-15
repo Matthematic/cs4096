@@ -43,12 +43,6 @@ connection.connect(function(err) {
     });
 
     app.post('/api/create-login', function(req, res) {
-<<<<<<< HEAD
-        console.log("usersname: " + req.body.username);
-        console.log("password: " + req.body.password);
-        console.log("email: " + req.body.email);
-        console.log(req.body);
-=======
 
         connection.query('INSERT INTO Users(UserID, UserName, Email, Password) VALUES (NULL, \"' + req.body.username + '\", \"' + req.body.password + '\", \"' + req.body.email + '\")', function(err){
             if(err) {
@@ -58,7 +52,6 @@ connection.connect(function(err) {
             }
         });
 
->>>>>>> f4213fc5184d3a5bc7591b5622c3ef74e31089ee
     });
 
     var server = app.listen(3000, function() {
