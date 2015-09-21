@@ -133,9 +133,20 @@
 		<div id="navbars"></div>
 		<div id="page-wrapper">
 			<div class="container-fluid">
+				<div class="col-md-12">
+					<div id="alert-field">
+					</div>
+
+					<script>
+					if(message.length > 0) {
+						var m = $(document.createElement('div')).addClass('alert alert-danger').text(message);
+						$('#alert-field').append(m);
+					}
+					</script>
+				</div>
 				<h1>Registration Form</h1>
 				</br>
-				<form method="POST" class="form-horizontal" id="loginForm">
+				<form action="/api/create-login" method="post" class="form-horizontal" id="loginForm">
 					<div class="control-group">
 						<label class="control-label" for="username">Username</label>
 						<div class="controls">
@@ -155,7 +166,7 @@
 						</div>
 					</div>
 					</br>
-					<input type="button" value="Submit" class="btn btn-success column-centered" onclick="submit_new_user();">
+					<button type="submit" value="Submit" class="btn btn-success column-centered">Submit</button>
 				</form>
 			</div>
 		</div>

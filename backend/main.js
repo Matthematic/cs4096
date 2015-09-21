@@ -1,13 +1,15 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var mysql = require('mysql');
+var passport = require('passport');
+var flash = require('connect-flash');
 
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'apples',
-    database: 'test'
-});
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+
+var database = require('./database');
+var connection = database.connection;
+
+require('./signup.js')(passport);
 
 process.on('SIGINT', function() {
     console.log('Closing database connection...');
@@ -20,13 +22,12 @@ process.on('SIGINT', function() {
     });
 });
 
-connection.connect(function(err) {
+connection.query('SELECT 1', function(err, rows) {
     if(err) {
-        console.error('error connecting to database: ' + err.stack);
+        console.error("Could not connect to the database.");
+    } else {
+        console.log('connected to database: ' + connection.threadId);
     }
-
-    console.log('connected to database: ' + connection.threadId);
-
     var app = express();
 
     app.use(express.static('.tmp/'));
@@ -37,22 +38,36 @@ connection.connect(function(err) {
         extended: true
     }));
     app.use(bodyParser.json());
+    app.use(cookieParser());
+
+    app.use(session({secret: 'supersecretsession'}));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(flash());
 
     app.get('/', function(req, res) {
+        console.log("going to root");
         return res.sendFile('index.html');
     });
 
-    app.post('/api/create-login', function(req, res) {
-
-        connection.query('INSERT INTO Users(UserID, UserName, Email, Password) VALUES (NULL, \"' + req.body.username + '\", \"' + req.body.password + '\", \"' + req.body.email + '\")', function(err){
-            if(err) {
-                console.log('Could not create login. Error ' + err.stack);
-            } else {
-                console.log('Account Created.');
-            }
-        });
-
+    app.get('/sign-in' , function(req,res) {
+        console.info("blah");
+        return res.sendFile('account_registration.html', { root: "./frontend/pages" });
     });
+
+    app.get('/api/sign-in-redirect', function(req, res) {
+        if(req.isAuthenticated()) {
+            res.redirect('/');
+        } else {
+            res.redirect('/sign-in?error=1');
+        }
+    });
+
+    app.post('/api/create-login', passport.authenticate('local-signup', {
+        successRedirect: '/',
+        failureRedirect: '/api/sign-in-redirect',
+        failureFlash: true
+    }));
 
     var server = app.listen(3000, function() {
         var host = server.address().address;
@@ -60,6 +75,7 @@ connection.connect(function(err) {
 
         console.log('listening for stuff\n');
     });
-});
+})
+
 
 
