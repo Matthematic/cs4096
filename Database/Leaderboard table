@@ -1,0 +1,8 @@
+CREATE TABLE Leaderboard
+(
+
+LeadID int UNSIGNED NOT NULL AUTO_INCREMENT,
+UserName varchar (16) NOT NULL,
+Score int UNSIGNED NOT NULL,
+PRIMARY KEY (LeadID)
+);
