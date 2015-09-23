@@ -86,11 +86,6 @@ MessageDTO.getBySender = function(sender, callback) {
     });
 }
 
-MessageDTO.getByReceiver = function(receiver, callback) {
-    connection.query('SELECT * FROM )
-}
-
-
 module.exports = {
     "connection": connection,
     "UserDTO" : UserDTO

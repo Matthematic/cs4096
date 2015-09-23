@@ -1,4 +1,4 @@
-USE test
+USE test;
 
 CREATE TABLE Messages
 (

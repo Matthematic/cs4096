@@ -36,17 +36,29 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(cookieParser());
 
   	app.get('/', function(req, res) {
-    		return res.sendFile('login.html');  // i tried changing this so we could load the login
+    		return res.sendFile('login.html', {root: "./frontend/pages"});  // i tried changing this so we could load the login
     											//   page on default, but it kept loading index.html and ignoring this,
     											//   so I just renamed the files as a temp fix
   	});
 
-    app.get('/profile', authenticate.auth, function(req, res) {
-        return res.sendFile('profile.html', {root: "./frontend/pages"});
+    app.get('/profile', function(req, res) {
+        return res.sendFile('dashboard.html', {root: "./frontend/pages"});
     });
 
     app.get('/register' , function(req,res) {
         return res.sendFile('account_registration.html', { root: "./frontend/pages" });
+    });
+
+    app.get('/matchmaking', function(req, res) {
+        return res.sendFile('matchmaking.html', {root: "./frontend/pages"});
+    });
+
+    app.get('/stats/ranked', function(req, res) {
+        return res.sendFile('ranked.html', {root: "./frontend/pages"});
+    });
+
+    app.get('/stats/social', function(req, res) {
+        return res.sendFile('social.html', {root: "./frontend/pages"});
     });
 
     var apiRouter = express.Router();
