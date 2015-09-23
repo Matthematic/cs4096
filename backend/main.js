@@ -63,8 +63,37 @@ connection.connect(function(err) {
 
 	// need to send a "message" to a user, maybe an email
 	app.post('/api/invite-user', function(req, res) {
-		console.log("username: " + req.body.username);
-		console.log("email: " + req.body.email);
+		var subject = '"You have been invited!"';
+		var content = '"FatalCatharsis has invited you to a game!"';
+		var sql = 'INSERT INTO Messages(sender, receiver, `subject`, content)' +
+				'SELECT "FatalCatharsis", "' + req.body.username + '", ' + subject + ', ' + content;
+		console.log("query: " + sql);
+		connection.query( sql, function(err, rows, fields) {
+			if(err) {
+				console.log('Invite could not be sent' + err.stack);
+			} else {
+				console.log('Invite sent');
+			}
+
+			console.log(rows);
+			res.send(rows);
+		});
+	});
+
+	// need to send a "message" to a user, maybe an email
+	app.post('/api/load_messages', function(req, res) {
+		var sql = 'SELECT * FROM Messages';
+		console.log("query: " + sql);
+		connection.query( sql, function(err, rows, fields) {
+			if(err) {
+				console.log('Could not retrieve all messages' + err.stack);
+			} else {
+				console.log('retrieved all messages');
+			}
+
+			console.log(rows);
+			res.send(rows);
+		});
 	});
 
 	// need to push these through the validation system
@@ -100,6 +129,21 @@ connection.connect(function(err) {
 
 			console.log(rows);
 			res.send(rows);
+		});
+	});
+
+	app.post('/api/create_game', function(req, res) {
+		console.log(req);
+		var sql = 'INSERT INTO OpenGames(username, elo, gametype, queuetype) ' +
+					'SELECT "Dyrus", 4000, "Classic", "' + req.body.queuetype + '"';
+		console.log("query: " + sql);
+		connection.query( sql, function(err, rows, fields) {
+			if(err) {
+				console.log('Could not create a game' + err.stack);
+			} else {
+				console.log('Game created successfully');
+				res.send(true);
+			}
 		});
 	});
 
