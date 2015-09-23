@@ -59,4 +59,3 @@ module.exports = {
     "connection": connection,
     "UserDTO" : UserDTO
 };
-

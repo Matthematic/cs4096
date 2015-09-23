@@ -1,55 +1,81 @@
-var LocalStrategy = require('passport-local').Strategy;
 var database = require('./database.js');
+var jwt = require('jsonwebtoken');
 
-var secret = 'notevencloselistenbaby';
+var secret = 'notevencloselistenbaby'
 
 module.exports = {
-    "register": function(username, email, password) {
-        database.UserDTO.getByName(username, function(err, dto) {
+    "register": function(req, callback) {
+        database.UserDTO.getByName(req.body.username, function(err, dto) {
             if(err != null) {
-                return {success: false, message: "The server had an unexpected error. Please try again later."};
+                callback({success: false, message: "The server had an unexpected error. Please try again later."});
+                return;
             }
 
             if(dto != null) {
-                return {success: false, message: "That username already exists."};
+                callback({success: false, message: "That username already exists."});
+                return;
             } else {
                 var newUser = new database.UserDTO();
 
-                newUser.UserName = username;
-                newUser.Password = password;
-                newUser.Email = email;
+                newUser.UserName = req.body.username;
+                newUser.Password = req.body.password;
+                newUser.Email = req.body.email;
 
                 database.UserDTO.push(newUser, function(err) {
-                    if(err) throw err;
-                    return {success: true, message: null};
+                    if(err) {
+                        callback({success: false, message: "The server had an unexpected error"});
+                        return;
+                    }
+
+                    database.UserDTO.getByName(newUser.UserName, function(err, dto) {
+                        if(err || dto == null) {
+                            callback({success: false, message: "The server had an unexpected error"});
+                            return;
+                        }
+
+                        var token = jwt.sign(dto, secret, {
+                              expiresInMinutes: 1440
+                        });
+
+                        callback({
+                            success: true,
+                            message: null,
+                            token: token
+                        });
+                        return;
+                    });
                 });
             }
 
         });
     },
 
-    "signin": function(username, password) {
+    "signin": function(req, callback) {
         database.UserDTO.getByName(username, function(err, dto) {
             if(err) {
-                return {success: false, message: "The server had an unexpected error. Please try again later."};
+                callback({success: false, message: "The server had an unexpected error. Please try again later."});
+                return;
             }
 
             if(dto == null) {
-                return {success: false, message: "Authentication failed. User not found."};
+                callback({success: false, message: "Authentication failed. User not found."});
+                return;
             } else {
                 if(dto.password != password) {
-                    return {success: false, message: "Authentication failed. Password is incorrect."};
+                    callback({success: false, message: "Authentication failed. Password is incorrect."});
+                    return;
                 } else {
 
-                    var token = jwt.sign(dto, app.get(secret), {
+                    var token = jwt.sign(dto, secret, {
                           expiresInMinutes: 1440
                     });
 
-                    return {
+                    callback({
                         success: true,
                         message: null,
                         token: token
-                    };
+                    });
+                    return;
                 }
             }
 
@@ -58,10 +84,10 @@ module.exports = {
     },
 
     "auth": function(req, res, next) {
-        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        var token = req.cookies.token;
 
         if(token) {
-            jwt.verify(token, app.get(secret), function(err, decoded) {
+            jwt.verify(token, secret, function(err, decoded) {
                 if(err) {
                     return {success: false, message: 'Failed to authenticate token.'};
                 } else {
@@ -76,6 +102,5 @@ module.exports = {
                 message: 'No token provided.'
             })
         }
-
     }
 };

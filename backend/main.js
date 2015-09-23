@@ -1,9 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var cookieParser = require('cookie-parser');
 
 var database = require('./database');
-var authenticate = require('./signup');
+var authenticate = require('./authenticate');
 var connection = database.connection;
 
 process.on('SIGINT', function() {
@@ -33,39 +33,42 @@ connection.query('SELECT 1', function(err, rows) {
         extended: true
     }));
     app.use(bodyParser.json());
+    app.use(cookieParser());
 
     app.get('/', function(req, res) {
         return res.sendFile('index.html');
+    });
+
+    app.get('/profile', authenticate.auth, function(req, res) {
+        return res.sendFile('index.html', {root: "./frontend/pages"});
     });
 
     app.get('/register' , function(req,res) {
         return res.sendFile('account_registration.html', { root: "./frontend/pages" });
     });
 
-    app.use(authenticate.auth);
-
-    app.get('/profile', function(req, res) {
-        return res.sendFile('index.html', './frontend/pages');
-    });
-
     var apiRouter = express.Router();
 
-    apiRouter.post('/api/create-login', function(req, res) {
-        return res.json(authenticate.register(req.body.username, req.body.email, req.body.password));
+    apiRouter.post('/create-login', function(req, res, next) {
+        authenticate.register(req, function(data){
+            res.json(data);
+            next();
+        });
     });
 
-    apiRouter.post('/api/sign-in', function(req, res) {
-        return res.json(authenticate.signin(req.body.username, req.body.password));
+    apiRouter.post('/sign-in', function(req, res, next) {
+        authenticate.signin(req, function(data) {
+            res.json(data);
+            next();
+        });
     });
 
-    authRouter.get('/api/profile', function(req, res) {
-        return res.sendFile('index.html', './frontend/pages');
-    });
+    app.use('/api', apiRouter);
 
     var server = app.listen(3000, function() {
         var host = server.address().address;
         var port = server.address().port;
 
-        console.log('listening for stuff\n');
+        console.log('The thunderdome awaits...\n');
     });
 })
