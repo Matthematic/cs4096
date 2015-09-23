@@ -7,14 +7,14 @@ var authenticate = require('./authenticate');
 var connection = database.connection;
 
 process.on('SIGINT', function() {
-    console.log('Closing database connection...');
-    connection.end(function(err) {
-        if(typeof err == "undefined") {
-            console.log ('Could not close connection: ' + err.stack);
-        } else {
-            console.log ('Connection closed successfully.');
-        }
-    });
+  	console.log('Closing database connection...');
+  	connection.end(function(err) {
+    		if(typeof err == "undefined") {
+    			console.log ('Could not close connection: ' + err.stack);
+    		} else {
+    			console.log ('Connection closed successfully.');
+    		}
+  	});
 });
 
 connection.query('SELECT 1', function(err, rows) {
@@ -25,9 +25,9 @@ connection.query('SELECT 1', function(err, rows) {
     }
     var app = express();
 
-    app.use(express.static('.tmp/'));
-    app.use(express.static('frontend/pages'));
-    app.use('/bower_components', express.static('bower_components'));
+  	app.use(express.static('.tmp/'));
+  	app.use(express.static('frontend/pages'));
+  	app.use('/bower_components', express.static('bower_components'));
 
     app.use(bodyParser.urlencoded({
         extended: true
@@ -35,12 +35,14 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(bodyParser.json());
     app.use(cookieParser());
 
-    app.get('/', function(req, res) {
-        return res.sendFile('index.html');
-    });
+  	app.get('/', function(req, res) {
+    		return res.sendFile('login.html');  // i tried changing this so we could load the login
+    											//   page on default, but it kept loading index.html and ignoring this,
+    											//   so I just renamed the files as a temp fix
+  	});
 
     app.get('/profile', authenticate.auth, function(req, res) {
-        return res.sendFile('index.html', {root: "./frontend/pages"});
+        return res.sendFile('profile.html', {root: "./frontend/pages"});
     });
 
     app.get('/register' , function(req,res) {
@@ -63,6 +65,86 @@ connection.query('SELECT 1', function(err, rows) {
         });
     });
 
+    // need to send a "message" to a user, maybe an email
+  	apiRouter.post('/invite-user', function(req, res) {
+    		var subject = '"You have been invited!"';
+    		var content = '"FatalCatharsis has invited you to a game!"';
+    		var sql = 'INSERT INTO Messages(sender, receiver, `subject`, content)' +
+    				'SELECT "FatalCatharsis", "' + req.body.username + '", ' + subject + ', ' + content;
+    		console.log("query: " + sql);
+    		connection.query( sql, function(err, rows, fields) {
+      			if(err) {
+			          console.log('Invite could not be sent' + err.stack);
+      			} else {
+			          console.log('Invite sent');
+      			}
+
+      			console.log(rows);
+      			res.send(rows);
+    		});
+  	});
+
+    // need to send a "message" to a user, maybe an email
+  	apiRouter.post('/load_messages', function(req, res) {
+    		var sql = 'SELECT * FROM Messages';
+    		console.log("query: " + sql);
+    		connection.query( sql, function(err, rows, fields) {
+      			if(err) {
+      				  console.log('Could not retrieve all messages' + err.stack);
+      			} else {
+      				  console.log('retrieved all messages');
+      			}
+
+      			console.log(rows);
+      			res.send(rows);
+    		});
+  	});
+
+    apiRouter.post('/load_open_games__ranked', function(req, res) {
+    		var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Ranked"';
+    		console.log("query: " + sql);
+    		connection.query( sql, function(err, rows, fields) {
+      			if(err) {
+      			  	console.log('Could not load open_games_ranked data' + err.stack);
+      			} else {
+      				  console.log('loaded open_games_ranked data');
+      			}
+
+      			console.log(rows);
+      			res.send(rows);
+    		});
+  	});
+
+    apiRouter.post('/load_open_games__social', function(req, res) {
+    		var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Social"';
+    		console.log("query: " + sql);
+    		connection.query( sql, function(err, rows, fields) {
+      			if(err) {
+      				  console.log('Could not load open_games_social data' + err.stack);
+      			} else {
+      				  console.log('loaded open_games_social data');
+      			}
+
+      			console.log(rows);
+      			res.send(rows);
+    		});
+  	});
+
+    apiRouter.post('/create_game', function(req, res) {
+    		console.log(req);
+    		var sql = 'INSERT INTO OpenGames(username, elo, gametype, queuetype) ' +
+    					'SELECT "Dyrus", 4000, "Classic", "' + req.body.queuetype + '"';
+    		console.log("query: " + sql);
+    		connection.query( sql, function(err, rows, fields) {
+      			if(err) {
+      			  	console.log('Could not create a game' + err.stack);
+      			} else {
+      			  	console.log('Game created successfully');
+      				  res.send(true);
+      			}
+    		});
+  	});
+
     app.use('/api', apiRouter);
 
     var server = app.listen(3000, function() {
@@ -71,4 +153,5 @@ connection.query('SELECT 1', function(err, rows) {
 
         console.log('The thunderdome awaits...\n');
     });
-})
+
+});

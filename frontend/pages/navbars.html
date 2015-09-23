@@ -1,6 +1,54 @@
+<head>
+	<script>
+		/*$('#message_list').prepend(
+			'<li>' +
+				'<a href="#">' +
+					'<div>' +
+						'<strong>Matt Carr2</strong>' +
+						'<span class="pull-right text-muted">' +
+							'<em>Yesterday2</em>' +
+						'</span>' +
+					'</div>' +
+				'<div>test</div>' +
+				'</a>' +
+			'</li>'
+		);
+		*/
+		//$("#" + queuetype + "_tbody tr").remove();
+		$.ajax({
+			url: "/api/load_messages",
+			method: "post",
+			success: function(data){
+				console.log("data received");
+				console.log(data);
+
+				for( var i=0; i < data.length; i++ )
+				{
+					$('#message_list').prepend('<li>' +
+						'<a href="#">' +
+						'<div>' +
+						'<strong>From:' + data[i].sender + '</strong>' +
+						'<span class="pull-right text-muted">' +
+						'<em>To:' + data[i].receiver +'</em>' +
+						'</span></div>' +
+						'<div>' + data[i].content + '</div></a></li>'
+					);
+				}
+
+			},
+			callback: function(){
+				console.log("message data received");
+			},
+			failure: function(){
+				console.log("error getting message data");
+			},
+		});
+	</script>
+</head>
+<body>
 <div id="top-navbar">
 			<!-- Begin Top Dropdown Navbar -->
-			<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+			<nav class="navbar navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 						<span class="sr-only">Toggle navigation</span>
@@ -18,49 +66,7 @@
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 							<i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
 						</a>
-						<ul class="dropdown-menu dropdown-messages">
-							<li>
-								<a href="#">
-									<div>
-										<strong>Matt Carr</strong>
-										<span class="pull-right text-muted">
-											<em>Yesterday</em>
-										</span>
-									</div>
-									<div>Kilobytes</div>
-								</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="#">
-									<div>
-										<strong>Josh Tuggle</strong>
-										<span class="pull-right text-muted">
-											<em>Yesterday</em>
-										</span>
-									</div>
-									<div>Of</div>
-								</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="#">
-									<div>
-										<strong>Wyatt Kennedy</strong>
-										<span class="pull-right text-muted">
-											<em>Yesterday</em>
-										</span>
-									</div>
-									<div>Speed</div>
-								</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a class="text-center" href="#">
-									<strong>Read All Messages</strong>
-									<i class="fa fa-angle-right"></i>
-								</a>
-							</li>
+						<ul class="dropdown-menu dropdown-messages" id="message_list">
 						</ul>
 					</li>
 					<!-- End Dropdown Messages-->
@@ -217,7 +223,7 @@
 							<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
 							</li>
 							<li class="divider"></li>
-							<li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+							<li><a href="index.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 							</li>
 						</ul>
 					</li>
@@ -245,16 +251,32 @@
 							<a href="matchmaking.html"><i class="fa fa-group fa-fw"></i> Matchmaking</a>
 						</li>
 						<li>
-							<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+							<a href="dashboard.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
 						</li>
 						<li>
-							<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Leaderboards<span class="fa arrow"></span></a>
+							<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Stats<span class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">
 								<li>
-									<a href="flot.html">Ranked</a>
+									<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Personal<span class="fa arrow"></span></a>
+									<ul class="nav nav-third-level">
+										<li>
+											<a href="ranked.html">Ranked</a>
+										</li>
+										<li>
+											<a href="social.html">Social</a>
+										</li>
+									</ul>
 								</li>
 								<li>
-									<a href="morris.html">Social</a>
+									<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Leaderboards<span class="fa arrow"></span></a>
+									<ul class="nav nav-third-level">
+										<li>
+											<a href="ranked_leaderboards.html">Ranked</a>
+										</li>
+										<li>
+											<a href="social_leaderboards.html">Social</a>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<!-- /.nav-second-level -->
@@ -347,4 +369,4 @@
 
 	<!-- Custom Theme JavaScript -->
 	<script src="../js/sb-admin-2.js"></script>
-
+</body>

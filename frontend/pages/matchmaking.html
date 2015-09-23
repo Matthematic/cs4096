@@ -33,19 +33,50 @@
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
-	<!-- load navbar template -->
 	<script>
 		$(function(){
-		  $("#navbars").load("navbars.html");
+			$("#navbars").load("navbars.html");
 		});
 	</script>
 
 	<script>
 		$(document).ready(function() {
-			$('#ranked tr').click(function() {
+			load_table_data('ranked');
+			load_table_data('social');
+
+			$('#ranked_tbody').click(function() {
+				alert("You clicked an open game. This means you have accepted that game and the game should automatically start");
+			});
+
+			$('#social_tbody').click(function() {
 				alert("You clicked an open game. This means you have accepted that game and the game should automatically start");
 			});
 		});
+
+		function create_game(queuetype) {
+			console.log("creating game");
+
+			var game_data = {"queuetype": queuetype};
+			console.log(game_data);
+			$.ajax({
+				url: "/api/create_game",
+				data: game_data,
+				datatype: 'json',
+				method: "post",
+				success: function(){
+					console.log("Game created successfully");
+				},
+				callback: function(){
+					console.log("Game created successfully");
+				},
+				failure: function(){
+					console.log("Could not create a game");
+				},
+			});
+
+			load_table_data(queuetype);
+
+		}
 
 		var send_play_request = function() {
 			var inviteForm = $("#inviteForm");
@@ -83,13 +114,53 @@
 			$('#email').val('');
 
 		}
+
+
+		var load_table_data = function(queuetype) {
+			$("#" + queuetype + "_tbody tr").remove();
+			$.ajax({
+				url: "/api/load_open_games__" + queuetype,
+				method: "post",
+				success: function(data){
+					console.log("data received");
+					console.log(data);
+
+					for( var i=0; i < data.length; i++ )
+					{
+						$('#' + queuetype + '_tbody').append('<tr>' +
+											'<td>' + data[i].username + '</td>' +
+											'<td>' + data[i].elo + '</td>' +
+											'<td>' + data[i].gametype + '</td>' +
+											'</tr>'
+						);
+					}
+
+				},
+				callback: function(){
+					console.log("data received");
+				},
+				failure: function(){
+					console.log("error getting open game data");
+				},
+			});
+		}
 	</script>
 
 	<style>
 		#ranked {
 			cursor: pointer;
 		}
+		#social {
+			cursor: pointer;
+		}
+		.nav-tabs > li > a:hover{
+			background-color: #303136 !important;
+			border: medium none;
+			border-radius: 0;
+			color:#fff;
+		}
 	</style>
+
 </head>
 
 <body>
@@ -101,6 +172,12 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<h1 class="page-header">Matchmaking</h1>
+						<!--
+						<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#create_game_label">Create a game</button onclick="console.log('clicked');">
+						<div id="create_game_label" class="collapse">
+							Game Created Successfully
+						</div>
+						-->
 						<div id="Tabs" role="tabpanel">
 							<!-- Nav tabs -->
 							<ul class="nav nav-tabs nav-justified" role="tablist">
@@ -130,23 +207,13 @@
 										</tr>
 										</thead>
 										<tbody id="ranked_tbody">
-										<tr>
-											<td>RonTheMoron</td>
-											<td>1847</td>
-											<td>Classic</td>
-										</tr>
-										<tr>
-											<td>FatalCatharsis</td>
-											<td>1900</td>
-											<td>Classic</td>
-										</tr>
-										<tr>
-											<td>Tuglight</td>
-											<td>1200</td>
-											<td>Classic</td>
-										</tr>
 										</tbody>
 									</table>
+
+									<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#create_ranked_game_label" onClick="create_game('ranked')">Create Game</button>
+									<div id="create_ranked_game_label" class="collapse">
+										Ranked game created successfully. We don't have an authentication system yet, so we just assumed you were the user 'Dyrus'.
+									</div>
 								</div>
 								<div role="tabpanel" class="tab-pane fade" id="social">
 									<h3>Open Games - these games do NOT affect your rating</h3>
@@ -158,24 +225,14 @@
 											<th>Gametype</th>
 										</tr>
 										</thead>
-										<tbody id="ranked_tbody">
-										<tr>
-											<td>RonTheMoron</td>
-											<td>1847</td>
-											<td>Classic</td>
-										</tr>
-										<tr>
-											<td>Tuglight</td>
-											<td>1200</td>
-											<td>Classic</td>
-										</tr>
-										<tr>
-											<td>FatalCatharsis</td>
-											<td>1900</td>
-											<td>Classic</td>
-										</tr>
+										<tbody id="social_tbody">
 										</tbody>
 									</table>
+
+									<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#create_social_game_label" onClick="create_game('social')">Create Game</button>
+									<div id="create_social_game_label" class="collapse">
+										Social game created successfully. We don't have an authentication system yet, so we just assumed you were the user 'Dyrus'.
+									</div>
 								</div>
 								<div role="tabpanel" class="tab-pane fade" id="invite">
 									<h3>Enter either a username or an email address.</h3>
