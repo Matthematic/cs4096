@@ -119,7 +119,7 @@
 		var load_table_data = function(queuetype) {
 			$("#" + queuetype + "_tbody tr").remove();
 			$.ajax({
-				url: "/api/load_open_games__" + queuetype,
+				url: "/api/load-open-games-" + queuetype,
 				method: "post",
 				success: function(data){
 					console.log("data received");

@@ -90,22 +90,18 @@ MessageDTO.getByReceiver = function(receiver, callback) {
     connection.query('SELECT * FROM Messages WHERE receiver=\"' + receiver + '\"', function(err, rows) {
         if(err) callback(err, null);
 
-        if(rows.length != 0) {
-            var i;
-            var ret = [];
-            for(i = 0; i < rows.length; i++) {
-                var u = new MessageDTO();
-                u.id = rows[i].id;
-                u.sender = rows[i].sender;
-                u.receiver = rows[i].receiver;
-                u.subject = rows[i].subject;
-                u.content = rows[i].content;
-                ret.push(u);
-            }
-            callback(null, ret);
-        } else {
-            callback(null, null);
+        var i;
+        var ret = [];
+        for(i = 0; i < rows.length; i++) {
+            var u = new MessageDTO();
+            u.id = rows[i].id;
+            u.sender = rows[i].sender;
+            u.receiver = rows[i].receiver;
+            u.subject = rows[i].subject;
+            u.content = rows[i].content;
+            ret.push(u);
         }
+        callback(null, ret);
     });
 };
 

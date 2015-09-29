@@ -89,9 +89,9 @@ connection.query('SELECT 1', function(err, rows) {
 
     		database.MessageDTO.push(m, function(err) {
             var ret = {};
-            if(err) {
+            if(err != null) {
                 ret.success = false;
-                ret.message = "An unkown error has occurred.";
+                ret.message = "An unknown error has occurred.";
                 console.log(err.stack);
             } else {
                 ret.success = true;
@@ -102,14 +102,26 @@ connection.query('SELECT 1', function(err, rows) {
   	});
 
     // need to send a "message" to a user, maybe an email
-  	apiRouter.post('/load_messages', authenticate.auth, function(req, res) {
+  	apiRouter.post('/load-messages', authenticate.auth, function(req, res) {
     		user = jwt.decode(req.cookies.token);
-        database.MessageDTO.getByReceiver(user.UserName, function() {
+        database.MessageDTO.getByReceiver(user.UserName, function(err, rows) {
+            var ret = {};
+            if(err != null) {
+                ret.success = false;
+                ret.message = "An unknown error has occurred.";
+                res.json(ret);
+                return;
+            }
 
+            if(rows != null) {
+                ret.success = true;
+                ret.messages = rows;
+            }
+            res.json(ret);
         });
   	});
 
-    apiRouter.post('/load_open_games__ranked', function(req, res) {
+    apiRouter.post('/load-open-games-ranked', function(req, res) {
     		var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Ranked"';
     		console.log("query: " + sql);
     		connection.query( sql, function(err, rows, fields) {
@@ -124,7 +136,7 @@ connection.query('SELECT 1', function(err, rows) {
     		});
   	});
 
-    apiRouter.post('/load_open_games__social', function(req, res) {
+    apiRouter.post('/load-open-games-social', function(req, res) {
     		var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Social"';
     		console.log("query: " + sql);
     		connection.query( sql, function(err, rows, fields) {
@@ -139,7 +151,7 @@ connection.query('SELECT 1', function(err, rows) {
     		});
   	});
 
-    apiRouter.post('/create_game', function(req, res) {
+    apiRouter.post('/create_game', authenticate.auth, function(req, res) {
     		console.log(req);
     		var sql = 'INSERT INTO OpenGames(username, elo, gametype, queuetype) ' +
     					'SELECT "Dyrus", 4000, "Classic", "' + req.body.queuetype + '"';
