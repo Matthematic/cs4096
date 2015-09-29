@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var jwt = require('jsonwebtoken');
 
 var database = require('./database');
 var authenticate = require('./authenticate');
@@ -79,40 +80,33 @@ connection.query('SELECT 1', function(err, rows) {
 
     // need to send a "message" to a user, maybe an email
   	apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
-            user = jwt.decode(req.cookies.token);
-            var m = new database.MessageDTO();
-            m.sender = user.username;
-            m.receiver = req.body.username;
+        user = jwt.decode(req.cookies.token);
+        var m = new database.MessageDTO();
+        m.sender = user.UserName;
+        m.receiver = req.body.username;
     		m.subject = 'You have been invited!';
     		m.content = req.body.username + ' has invited you to a game!';
 
     		database.MessageDTO.push(m, function(err) {
-                var ret = {};
-                if(err) {
-                    ret.success = false;
-                    ret.message = "An unkown error has occurred.";
-                } else {
-                    ret.success = true;
-                    ret.message = null;
-                }
-                res.json(ret);
-            });
+            var ret = {};
+            if(err) {
+                ret.success = false;
+                ret.message = "An unkown error has occurred.";
+                console.log(err.stack);
+            } else {
+                ret.success = true;
+                ret.message = null;
+            }
+            res.json(ret);
+        });
   	});
 
     // need to send a "message" to a user, maybe an email
   	apiRouter.post('/load_messages', authenticate.auth, function(req, res) {
-    		var sql = 'SELECT * FROM Messages';
-    		console.log("query: " + sql);
-    		connection.query( sql, function(err, rows, fields) {
-      			if(err) {
-      				  console.log('Could not retrieve all messages' + err.stack);
-      			} else {
-      				  console.log('retrieved all messages');
-      			}
+    		user = jwt.decode(req.cookies.token);
+        database.MessageDTO.getByReceiver(user.UserName, function() {
 
-      			console.log(rows);
-      			res.send(rows);
-    		});
+        });
   	});
 
     apiRouter.post('/load_open_games__ranked', function(req, res) {

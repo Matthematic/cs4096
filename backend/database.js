@@ -110,12 +110,13 @@ MessageDTO.getByReceiver = function(receiver, callback) {
 };
 
 MessageDTO.push = function(dto, callback) {
-    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content) VALUES (' + dto.id + ', ' + dto.sender + ', ' + dto.receiver + ', ' + dto.subject + ', ' + dto.content + ')', function(err) {
+    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\")', function(err) {
         callback(err);
     });
 };
 
 module.exports = {
     "connection": connection,
-    "UserDTO" : UserDTO
+    "UserDTO" : UserDTO,
+    "MessageDTO" : MessageDTO
 };
