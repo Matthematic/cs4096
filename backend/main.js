@@ -78,26 +78,29 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     // need to send a "message" to a user, maybe an email
-  	apiRouter.post('/invite-user', function(req, res) {
-    		var subject = '"You have been invited!"';
-    		var content = '"FatalCatharsis has invited you to a game!"';
-    		var sql = 'INSERT INTO Messages(sender, receiver, `subject`, content)' +
-    				'SELECT "FatalCatharsis", "' + req.body.username + '", ' + subject + ', ' + content;
-    		console.log("query: " + sql);
-    		connection.query( sql, function(err, rows, fields) {
-      			if(err) {
-			          console.log('Invite could not be sent' + err.stack);
-      			} else {
-			          console.log('Invite sent');
-      			}
+  	apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
+            user = jwt.decode(req.cookies.token);
+            var m = new database.MessageDTO();
+            m.sender = user.username;
+            m.receiver = req.body.username;
+    		m.subject = 'You have been invited!';
+    		m.content = req.body.username + ' has invited you to a game!';
 
-      			console.log(rows);
-      			res.send(rows);
-    		});
+    		database.MessageDTO.push(m, function(err) {
+                var ret = {};
+                if(err) {
+                    ret.success = false;
+                    ret.message = "An unkown error has occurred.";
+                } else {
+                    ret.success = true;
+                    ret.message = null;
+                }
+                res.json(ret);
+            });
   	});
 
     // need to send a "message" to a user, maybe an email
-  	apiRouter.post('/load_messages', function(req, res) {
+  	apiRouter.post('/load_messages', authenticate.auth, function(req, res) {
     		var sql = 'SELECT * FROM Messages';
     		console.log("query: " + sql);
     		connection.query( sql, function(err, rows, fields) {

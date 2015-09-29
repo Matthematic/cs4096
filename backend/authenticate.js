@@ -51,7 +51,7 @@ module.exports = {
     },
 
     "signin": function(req, callback) {
-        database.UserDTO.getByName(username, function(err, dto) {
+        database.UserDTO.getByName(req.body.username, function(err, dto) {
             if(err) {
                 callback({success: false, message: "The server had an unexpected error. Please try again later."});
                 return;
@@ -61,7 +61,7 @@ module.exports = {
                 callback({success: false, message: "Authentication failed. User not found."});
                 return;
             } else {
-                if(dto.password != password) {
+                if(dto.Password != req.body.password) {
                     callback({success: false, message: "Authentication failed. Password is incorrect."});
                     return;
                 } else {
