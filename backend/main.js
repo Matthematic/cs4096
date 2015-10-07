@@ -2,9 +2,11 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
+var io = require('socket.io')();
 
 var database = require('./database');
 var authenticate = require('./authenticate');
+var tetris = require('./tetris');
 var connection = database.connection;
 
 process.on('SIGINT', function() {
@@ -167,6 +169,20 @@ connection.query('SELECT 1', function(err, rows) {
   	});
 
     app.use('/api', apiRouter);
+
+
+    io.on('connection', function(socket) {
+        var username;
+
+        socket.on('join-game', function(data){
+
+            // TODO parse data as json object
+
+            user = jwt.decode(data.token
+
+            console.log("test: join-game recieved from .");
+        });
+    });
 
     var server = app.listen(3000, function() {
         var host = server.address().address;

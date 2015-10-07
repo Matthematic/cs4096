@@ -12,7 +12,7 @@ var Block = function() {
 
 var testBlock = new Block;
 var currentTet = new Array(4);
-    
+
 console.log('test, test');
 
 var theGrid = new Block;
@@ -37,7 +37,7 @@ function InitializeGrid() {
             grid[j][k] = null;
         }
     }
-    return grid;       
+    return grid;
 }
 
 function DisplayGrid(myArray) {
@@ -56,14 +56,14 @@ function DisplayGrid(myArray) {
     s = '^^^^^^^^^^^^^^';
     console.log(s);
 }
-        
-    
+
+
 function CreateLPiece(theTet, myArray) {
     theTet[0] = new Block;
     theTet[1] = new Block;
     theTet[2] = new Block;
     theTet[3] = new Block;
-    
+
     theTet[0].up = null;
     theTet[0].right = theTet[1];
     theTet[0].down = null;
@@ -88,13 +88,13 @@ function CreateLPiece(theTet, myArray) {
     theTet[2].posY = 1;
     theTet[3].posX = 5;
     theTet[3].posY = 0;
-    
+
     myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
     myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
     myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
     myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
-}    
-    
+}
+
 function MoveLPieceDown(theTet, myArray) {
     myArray[theTet[0].posY][theTet[0].posX] = null;
     myArray[theTet[1].posY][theTet[1].posX] = null;
@@ -108,7 +108,43 @@ function MoveLPieceDown(theTet, myArray) {
     myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
     myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
     myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
-}    
-    
+}
 
+function left(gameid, player) {
+
+}
+
+function up(gameid, player) {
+
+}
+
+function down(gameid, player) {
+
+}
+
+function right(gameid, player) {
+
+}
+
+function space(gameid, player) {
+
+}
+
+function pause(gameid, player) {
+
+}
+
+// please return the new game id as an index into the game array
+function newGame(player) {
+    
+}
+
+module.exports = {
+    "left": left,
+    "up": up,
+    "down": down,
+    "right": right,
+    "space": space,
+    "pause": pause
+}
 
