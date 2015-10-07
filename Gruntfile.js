@@ -36,6 +36,21 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            scripts: {
+                files: ['./frontend/js/*.js'],
+                tasks: ['copy:serve']
+            },
+            css: {
+                files: ['./frontend/css/*.css'],
+                tasks: ['copy:serve']
+            },
+            less: {
+                files: ['./frontend/less/*.less'],
+                tasks: ['less:serve']
+            }
+        },
+
         express: {
             serve: {
                 options: {
@@ -56,6 +71,6 @@ module.exports = function(grunt) {
         'concurrent:serve',
         'copy:serve',
         'express:serve',
-        'keepalive'
+        'watch'
     ]);
 };
