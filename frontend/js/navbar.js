@@ -18,20 +18,24 @@
         url: "/api/load-messages",
         method: "post",
         success: function(data){
-            console.log("data received");
-            console.log(data);
+            if(data.success == true) {
+                console.log("data received");
+                console.log(data);
 
-            for( var i=0; i < data.length; i++ )
-            {
-                $('#message_list').prepend('<li>' +
-                    '<a href="#">' +
-                    '<div>' +
-                    '<strong>From:' + data[i].sender + '</strong>' +
-                    '<span class="pull-right text-muted">' +
-                    '<em>To:' + data[i].receiver +'</em>' +
-                    '</span></div>' +
-                    '<div>' + data[i].content + '</div></a></li>'
-                );
+                for( var i=0; i < data.length; i++ )
+                {
+                    $('#message_list').prepend('<li>' +
+                        '<a href="#">' +
+                        '<div>' +
+                        '<strong>From:' + data[i].sender + '</strong>' +
+                        '<span class="pull-right text-muted">' +
+                        '<em>To:' + data[i].receiver +'</em>' +
+                        '</span></div>' +
+                        '<div>' + data[i].content + '</div></a></li>'
+                    );
+                }
+            } else {
+                console.log("error getting message data");
             }
 
         },

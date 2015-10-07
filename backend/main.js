@@ -106,14 +106,17 @@ connection.query('SELECT 1', function(err, rows) {
   	});
 
     // need to send a "message" to a user, maybe an email
-  	apiRouter.post('/load-messages', authenticate.auth, function(req, res) {
-    		user = jwt.decode(req.cookies.token);
+  	apiRouter.post('/load-messages', authenticate.auth, function(req, res, next) {
+    	user = jwt.decode(req.cookies.token);
+
         database.MessageDTO.getByReceiver(user.UserName, function(err, rows) {
             var ret = {};
+
             if(err != null) {
                 ret.success = false;
                 ret.message = "An unknown error has occurred.";
                 res.json(ret);
+                next();
                 return;
             }
 
@@ -121,7 +124,10 @@ connection.query('SELECT 1', function(err, rows) {
                 ret.success = true;
                 ret.messages = rows;
             }
+
             res.json(ret);
+            next();
+            return;
         });
   	});
 

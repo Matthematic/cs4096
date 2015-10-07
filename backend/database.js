@@ -88,7 +88,15 @@ MessageDTO.getBySender = function(sender, callback) {
 
 MessageDTO.getByReceiver = function(receiver, callback) {
     connection.query('SELECT * FROM Messages WHERE receiver=\"' + receiver + '\"', function(err, rows) {
-        if(err) callback(err, null);
+        if(err) {
+            callback(err, null);
+            return;
+        }
+
+        if(typeof rows === 'undefined') {
+            callback(null, null);
+            return;
+        }
 
         var i;
         var ret = [];
@@ -102,6 +110,7 @@ MessageDTO.getByReceiver = function(receiver, callback) {
             ret.push(u);
         }
         callback(null, ret);
+        return;
     });
 };
 
