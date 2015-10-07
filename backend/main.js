@@ -39,9 +39,7 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(cookieParser());
 
   	app.get('/', function(req, res) {
-    		return res.sendFile('login.html', {root: "./frontend/pages"});  // i tried changing this so we could load the login
-    											//   page on default, but it kept loading index.html and ignoring this,
-    											//   so I just renamed the files as a temp fix
+    		return res.sendFile('frontpage.html', {root: "./frontend/pages"});
   	});
 
     app.get('/profile', function(req, res) {
@@ -50,6 +48,10 @@ connection.query('SELECT 1', function(err, rows) {
 
     app.get('/register' , function(req,res) {
         return res.sendFile('account_registration.html', { root: "./frontend/pages" });
+    });
+
+    app.get('/login', function(req, res) {
+        return res.sendFile('login.html', {root: "./frontend/pages"});
     });
 
     app.get('/matchmaking', function(req, res) {
