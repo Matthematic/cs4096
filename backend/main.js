@@ -177,9 +177,6 @@ connection.query('SELECT 1', function(err, rows) {
         socket.on('join-game', function(data){
 
             // TODO parse data as json object
-
-            user = jwt.decode(data.token
-
             console.log("test: join-game recieved from .");
         });
     });
