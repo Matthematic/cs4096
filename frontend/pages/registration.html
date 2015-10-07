@@ -46,48 +46,108 @@
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
-
-	<script>
+	<script type="text/javascript">
 		var setCookie = function(cname, cvalue, exdays) {
 			var expires = "expires="+exdays.toUTCString();
 			document.cookie = cname + "=" + cvalue + "; " + expires;
-		};
+			};
 
-		var login = function() {
-			var loginForm = $("#loginForm");
-			var data = loginForm.serializeArray();
-			var new_data = {};
+			var addAlert = function(obj, type, text) {
+					var classes = 'alert ';
 
-			var i;
-			for (i = 0; i < data.length; i++) {
-				new_data[data[i]["name"]] = data[i]["value"];
-			}
-			console.log(new_data);
+					console.log(type);
 
-			$.ajax({
-				url: "/api/sign-in",
-				datatype: "json",
-				data: new_data,
-				method: "post",
-				success: function(res){
-					if (res.success) {
-						console.log("logged in");
-						var expiryDate = new Date();
-						expiryDate.setMinutes(expiryDate.getMinutes() + 30);
-						setCookie('token', res.token, expiryDate);
-						document.location.href = '/profile';
+					if(type === 'success') {
+							console.log("up here");
+							classes = classes + 'alert-success ';
+					} else if(type === 'info') {
+							console.log("and here");
+							classes = classes + 'alert-info ';
+					} else if(type === 'warning') {
+							console.log('here?');
+							classes = classes + 'alert-warning ';
+					} else if(type === 'danger') {
+							console.log("prolly not here");
+							classes = classes + 'alert-danger ';
+					} else {
+							console.log("here")
+							classes = classes + 'alert-info ';
 					}
-					else {
-						alert("login unsuccessful - try again");
-						console.log(res.message);
+
+					console.log(classes);
+
+					newobj = $(document.createElement('div'))
+							.addClass(classes)
+							.attr('data-dismiss', 'alert')
+							.text(text);
+
+					obj.append(newobj);
+			};
+
+			var submit_new_user = function() {
+				var loginForm = $("#loginForm");
+				var data = loginForm.serializeArray();
+				console.log(data);
+				var new_data = {};
+
+				var i;
+				for (i = 0; i < data.length; i++) {
+					new_data[data[i]["name"]] = data[i]["value"];
+				}
+				console.log(new_data);
+
+				$.ajax({
+					url: "/api/create-login",
+					datatype: "json",
+					data: new_data,
+					method: "post",
+					success: function(res){
+						if(res.success) {
+								console.log("account created");
+								addAlert($('#alert-field'), 'success', "Success! Redirecting to profile page...");
+								var expiryDate = new Date();
+								expiryDate.setMinutes(expiryDate.getMinutes() + 30);
+								setCookie('token', res.token, expiryDate);
+								setTimeout(function() {window.location.href = '/profile';}, 3000);
+						} else {
+								console.log(res.message);
+								addAlert($('#alert-field'), 'danger', res.message);
+								$('#username').val('');
+								$('#password').val('');
+								$('#email').val('');
+						}
 					}
-				},
-				failure: function(){
-					console.log("an error has occurred");
-				},
+				});
+
+			};
+
+			$(document).ready(function () {
+
+				$('#registerForm').validate({
+					rules: {
+						username: {
+							required: true,
+							minlength: 2,
+							maxlength: 15,
+							alphanumeric: true
+						},
+						password: {
+							required: true,
+							minlength: 6,
+							maxlength: 15,
+						}
+					},
+					highlight: function (element) {
+						$(element).closest('.control-group').removeClass('success').addClass('error');
+					},
+					unhighlight: function(element) {
+						$(element).closest('.control-group').removeClass('error').addClass('success');
+					},
+					success: function (element) {
+						$(element).text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+					}
+				});
 			});
-		}
-	</script>
 	</script>
 
 
@@ -99,10 +159,10 @@
 			<div class="col-md-4 col-md-offset-4">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Please Sign In</h3>
+						<h3 class="panel-title">Please Register</h3>
 					</div>
 					<div class="panel-body">
-						<form role="form" method="POST" id="loginForm">
+						<form role="form" method="POST" id="registerForm">
 							<fieldset>
 								<div class="form-group">
 									<input class="form-control" placeholder="E-mail or Username" name="username" autofocus>
@@ -115,10 +175,7 @@
 										<input name="remember" type="checkbox" value="Remember Me">Remember Me
 									</label>
 								</div>
-								<!--
-								<a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>
-								-->
-								<input type="button" value="Login" class="btn btn-lg btn-success btn-block" onclick="login();">
+								<input type="button" value="Register" class="btn btn-lg btn-success btn-block" onclick="submit_new_user();">
 							</fieldset>
 						</form>
 					</div>

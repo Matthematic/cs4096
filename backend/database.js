@@ -2,9 +2,8 @@ var mysql = require('mysql');
 
 var connection = mysql.createConnection({
 	host: 'localhost',
-	port: '3307',
-	//user: 'root',
-	//password: 'apples',
+	user: 'root',
+	password: 'apples',
 	database: 'test'
 });
 
@@ -66,52 +65,52 @@ var MessageDTO = function() {
 MessageDTO.getBySender = function(sender, callback) {
 	connection.query('SELECT * FROM Messages WHERE sender=\"' + sender + '\"', function(err, rows) {
 		if(err) callback(err, null);
-        if(rows.length != 0) {
-            var i;
-            var ret = [];
-            for(i = 0; i < rows.length; i++) {
-                var u = new MessageDTO();
-                u.id = rows[i].id;
-                u.sender = rows[i].sender;
-                u.receiver = rows[i].receiver;
-                u.subject = rows[i].subject;
-                u.content = rows[i].content;
-                ret.push(u);
-            }
-            callback(null, ret);
-        } else {
-            callback(null, null);
-        }
-    });
+		if(rows.length != 0) {
+			var i;
+			var ret = [];
+			for(i = 0; i < rows.length; i++) {
+				var u = new MessageDTO();
+				u.id = rows[i].id;
+				u.sender = rows[i].sender;
+				u.receiver = rows[i].receiver;
+				u.subject = rows[i].subject;
+				u.content = rows[i].content;
+				ret.push(u);
+			}
+			callback(null, ret);
+		} else {
+			callback(null, null);
+		}
+	});
 };
 
 MessageDTO.getByReceiver = function(receiver, callback) {
-    connection.query('SELECT * FROM Messages WHERE receiver=\"' + receiver + '\"', function(err, rows) {
-        if(err) callback(err, null);
+	connection.query('SELECT * FROM Messages WHERE receiver=\"' + receiver + '\"', function(err, rows) {
+		if(err) callback(err, null);
 
-        var i;
-        var ret = [];
-        for(i = 0; i < rows.length; i++) {
-            var u = new MessageDTO();
-            u.id = rows[i].id;
-            u.sender = rows[i].sender;
-            u.receiver = rows[i].receiver;
-            u.subject = rows[i].subject;
-            u.content = rows[i].content;
-            ret.push(u);
-        }
-        callback(null, ret);
-    });
+		var i;
+		var ret = [];
+		for(i = 0; i < rows.length; i++) {
+			var u = new MessageDTO();
+			u.id = rows[i].id;
+			u.sender = rows[i].sender;
+			u.receiver = rows[i].receiver;
+			u.subject = rows[i].subject;
+			u.content = rows[i].content;
+			ret.push(u);
+		}
+		callback(null, ret);
+	});
 };
 
 MessageDTO.push = function(dto, callback) {
-    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\")', function(err) {
-        callback(err);
-    });
+	connection.query('INSERT INTO Messages(id, sender, receiver, subject, content) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\")', function(err) {
+		callback(err);
+	});
 };
 
 module.exports = {
-    "connection": connection,
-    "UserDTO" : UserDTO,
-    "MessageDTO" : MessageDTO
+	"connection": connection,
+	"UserDTO" : UserDTO,
+	"MessageDTO" : MessageDTO
 };

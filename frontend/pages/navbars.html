@@ -1,5 +1,17 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="../css/navbar.css" media="screen" />
+	<script>
+		$('#logout').click(function() {
+			var cookies = document.cookie.split(";");
+
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = cookies[i];
+				var eqPos = cookie.indexOf("=");
+				var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+				document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+			}
+		 });
+	</script>
 </head>
 <body>
 	<div id="top-navbar">
@@ -170,7 +182,7 @@
 
 			<!-- Begin Dropdown User Settings -->
 			<li id="profile" class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameDisplay">
 					<i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
 				</a>
 				<ul id="profile-logged-in" class="dropdown-menu dropdown-user">
@@ -179,12 +191,13 @@
 					<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
 					</li>
 					<li class="divider"></li>
-					<li><a href="/profile"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+					<li id="logout"><a href="/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 					</li>
 				</ul>
 				<ul id="profile-logged-out" class="dropdown-menu dropdown-user">
 					<li class="divider"></li>
-					<li><a href="#"><i class="fa fa-user fa-fw"></i> Sign In</a>
+					<li>
+						<a href="login.html"><i class="fa fa-user fa-fw"></i> Sign In</a>
 					</li>
 				</ul>
 			</li>
@@ -330,6 +343,6 @@
 
 	<!-- Custom Theme JavaScript -->
 	<script src="../js/sb-admin-2.js"></script>
-
 	<script src="../js/navbar.js"></script>
+
 </body>

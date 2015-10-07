@@ -89,7 +89,7 @@ connection.query('SELECT 1', function(err, rows) {
 				m.sender = user.UserName;
 				m.receiver = req.body.username;
 				m.subject = 'You have been invited!';
-				m.content = req.body.username + ' has invited you to a game!';
+				m.content = user.UserName + ' has invited you to a game!';
 
 				database.MessageDTO.push(m, function(err) {
 						var ret = {};
@@ -103,6 +103,11 @@ connection.query('SELECT 1', function(err, rows) {
 						}
 						res.json(ret);
 				});
+		});
+
+		apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
+				user = jwt.decode(req.cookies.token);
+				res.send(user.UserName);
 		});
 
 		// need to send a "message" to a user, maybe an email
@@ -157,8 +162,9 @@ connection.query('SELECT 1', function(err, rows) {
 
 		apiRouter.post('/create_game', authenticate.auth, function(req, res) {
 				console.log(req);
+				user = jwt.decode(req.cookies.token);
 				var sql = 'INSERT INTO OpenGames(username, elo, gametype, queuetype) ' +
-							'SELECT "Dyrus", 4000, "Classic", "' + req.body.queuetype + '"';
+							'SELECT "' + user.UserName + '", 4000, "Classic", "' + req.body.queuetype + '"';
 				console.log("query: " + sql);
 				connection.query( sql, function(err, rows, fields) {
 						if(err) {
@@ -182,6 +188,7 @@ connection.query('SELECT 1', function(err, rows) {
 						console.log("test: join-game recieved from .");
 				});
 		});
+
 
 		var server = app.listen(3000, function() {
 				var host = server.address().address;
