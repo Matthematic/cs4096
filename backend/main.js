@@ -2,12 +2,15 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
-var io = require('socket.io')();
+//var io = require('socket.io')();
 
 var database = require('./database');
 var authenticate = require('./authenticate');
 var tetris = require('./tetris');
 var connection = database.connection;
+
+var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classic'}];
+var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
 
 process.on('SIGINT', function() {
 		console.log('Closing database connection...');
@@ -131,55 +134,26 @@ connection.query('SELECT 1', function(err, rows) {
 		});
 
 		apiRouter.post('/load-open-games-ranked', function(req, res) {
-				var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Ranked"';
-				console.log("query: " + sql);
-				connection.query( sql, function(err, rows, fields) {
-						if(err) {
-								console.log('Could not load open_games_ranked data' + err.stack);
-						} else {
-								console.log('loaded open_games_ranked data');
-						}
-
-						console.log(rows);
-						res.send(rows);
-				});
+			res.send(open_games_ranked);
 		});
 
 		apiRouter.post('/load-open-games-social', function(req, res) {
-				var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Social"';
-				console.log("query: " + sql);
-				connection.query( sql, function(err, rows, fields) {
-						if(err) {
-								console.log('Could not load open_games_social data' + err.stack);
-						} else {
-								console.log('loaded open_games_social data');
-						}
-
-						console.log(rows);
-						res.send(rows);
-				});
+				res.send(open_games_social);
 		});
 
 		apiRouter.post('/create_game', authenticate.auth, function(req, res) {
-				console.log(req);
-				user = jwt.decode(req.cookies.token);
-				var sql = 'INSERT INTO OpenGames(username, elo, gametype, queuetype) ' +
-							'SELECT "' + user.UserName + '", 4000, "Classic", "' + req.body.queuetype + '"';
-				console.log("query: " + sql);
-				connection.query( sql, function(err, rows, fields) {
-						if(err) {
-								console.log('Could not create a game' + err.stack);
-						} else {
-								console.log('Game created successfully');
-								res.send(true);
-						}
-				});
+			if (req.body.queuetype == 'ranked') {
+				open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+			}
+			else if (req.body.queuetype == 'social') {
+				open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
+			}
 		});
 
 		app.use('/api', apiRouter);
 
 
-		io.on('connection', function(socket) {
+		/*io.on('connection', function(socket) {
 				var username;
 
 				socket.on('join-game', function(data){
@@ -188,7 +162,7 @@ connection.query('SELECT 1', function(err, rows) {
 						console.log("test: join-game recieved from .");
 				});
 		});
-
+*/
 
 		var server = app.listen(3000, function() {
 				var host = server.address().address;
