@@ -69,6 +69,10 @@ connection.query('SELECT 1', function(err, rows) {
 				return res.sendFile('social.html', {root: "./frontend/pages"});
 		});
 
+		app.get('/messages', function(req, res) {
+				return res.sendFile('messages.html', {root: "./frontend/pages"});
+		});
+
 		var apiRouter = express.Router();
 
 		apiRouter.post('/create-login', function(req, res, next) {
@@ -93,6 +97,8 @@ connection.query('SELECT 1', function(err, rows) {
 				m.receiver = req.body.username;
 				m.subject = 'You have been invited!';
 				m.content = user.UserName + ' has invited you to a game!';
+				m.type = 'invite';  // 'invite' - anything that requires an accept/decline
+									// 'message' - just a message
 
 				database.MessageDTO.push(m, function(err) {
 						var ret = {};

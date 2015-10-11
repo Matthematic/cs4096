@@ -61,6 +61,7 @@ var MessageDTO = function() {
 	this.receiver = null;
 	this.subject = null;
 	this.content = null;
+	this.type = null;
 }
 
 MessageDTO.getBySender = function(sender, callback) {
@@ -76,6 +77,7 @@ MessageDTO.getBySender = function(sender, callback) {
                 u.receiver = rows[i].receiver;
                 u.subject = rows[i].subject;
                 u.content = rows[i].content;
+                u.type = rows[i].type;
                 ret.push(u);
             }
             callback(null, ret);
@@ -98,6 +100,7 @@ MessageDTO.getByReceiver = function(receiver, callback) {
             u.receiver = rows[i].receiver;
             u.subject = rows[i].subject;
             u.content = rows[i].content;
+            u.type = rows[i].type;
             ret.push(u);
         }
         callback(null, ret);
@@ -105,7 +108,7 @@ MessageDTO.getByReceiver = function(receiver, callback) {
 };
 
 MessageDTO.push = function(dto, callback) {
-    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\")', function(err) {
+    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content, type) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\", \"' + dto.type + '")', function(err) {
         callback(err);
     });
 };
