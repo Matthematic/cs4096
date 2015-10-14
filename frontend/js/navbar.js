@@ -77,6 +77,11 @@
 		$('#messages').hide();
 		$('#friends').hide();
 		$('#profile-logged-in').hide();
+		var path = window.location.pathname;
+		var page = path.split("/").pop();
+		if (page != "") {
+			window.location.href = "/";
+		}
 	}
 
 

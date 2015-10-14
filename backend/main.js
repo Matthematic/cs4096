@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
-//var io = require('socket.io')();
+var io = require('socket.io')();
 
 var database = require('./database');
 var authenticate = require('./authenticate');
@@ -159,7 +159,7 @@ connection.query('SELECT 1', function(err, rows) {
 		app.use('/api', apiRouter);
 
 
-		/*io.on('connection', function(socket) {
+		io.on('connection', function(socket) {
 				var username;
 
 				socket.on('join-game', function(data){
@@ -168,7 +168,7 @@ connection.query('SELECT 1', function(err, rows) {
 						console.log("test: join-game recieved from .");
 				});
 		});
-*/
+
 
 		var server = app.listen(3000, function() {
 				var host = server.address().address;
