@@ -356,7 +356,11 @@ function pause(gameid, player) {
 
 // please return the new game id as an index into the game array
 function newGame(player) {
-    return 1;
+    var elGame = {};
+    elGame.width = 10;
+    elGame.height = 20;
+    elGame.gameid = 1;
+    return elGame;
 };
 
 module.exports = {
