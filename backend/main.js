@@ -2,7 +2,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
-var io = require('socket.io')();
 
 var database = require('./database');
 var authenticate = require('./authenticate');
@@ -24,157 +23,163 @@ process.on('SIGINT', function() {
 });
 
 connection.query('SELECT 1', function(err, rows) {
-		if(err) {
-				console.error("Could not connect to the database.");
-		} else {
-				console.log('connected to database: ' + connection.threadId);
-		}
-		var app = express();
+    if(err) {
+        console.error("Could not connect to the database.");
+    } else {
+        console.log('connected to database: ' + connection.threadId);
+    }
+    var app = express();
 
-		app.use(express.static('.tmp/'));
-		app.use(express.static('frontend/pages'));
-		app.use('/bower_components', express.static('bower_components'));
+  	app.use(express.static('.tmp/'));
+  	app.use(express.static('frontend/pages'));
+  	app.use('/bower_components', express.static('bower_components'));
 
-		app.use(bodyParser.urlencoded({
-				extended: true
-		}));
-		app.use(bodyParser.json());
-		app.use(cookieParser());
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    app.use(bodyParser.json());
+    app.use(cookieParser());
 
-		app.get('/', function(req, res) {
-				return res.sendFile('frontpage.html', {root: "./frontend/pages"});
-		});
+  	app.get('/', function(req, res) {
+    		return res.sendFile('frontpage.html', {root: "./frontend/pages"});
+  	});
 
-		app.get('/profile', function(req, res) {
-				return res.sendFile('dashboard.html', {root: "./frontend/pages"});
-		});
+    app.get('/profile', function(req, res) {
+        return res.sendFile('dashboard.html', {root: "./frontend/pages"});
+    });
 
-		app.get('/register' , function(req,res) {
-				return res.sendFile('account_registration.html', { root: "./frontend/pages" });
-		});
+    app.get('/register' , function(req,res) {
+        return res.sendFile('account_registration.html', { root: "./frontend/pages" });
+    });
 
-		app.get('/login', function(req, res) {
-				return res.sendFile('login.html', {root: "./frontend/pages"});
-		});
+    app.get('/login', function(req, res) {
+        return res.sendFile('login.html', {root: "./frontend/pages"});
+    });
 
-		app.get('/matchmaking', function(req, res) {
-				return res.sendFile('matchmaking.html', {root: "./frontend/pages"});
-		});
+    app.get('/matchmaking', function(req, res) {
+        return res.sendFile('matchmaking.html', {root: "./frontend/pages"});
+    });
 
-		app.get('/stats/ranked', function(req, res) {
-				return res.sendFile('ranked.html', {root: "./frontend/pages"});
-		});
+    app.get('/stats/ranked', function(req, res) {
+        return res.sendFile('ranked.html', {root: "./frontend/pages"});
+    });
 
-		app.get('/stats/social', function(req, res) {
-				return res.sendFile('social.html', {root: "./frontend/pages"});
-		});
+    app.get('/stats/social', function(req, res) {
+        return res.sendFile('social.html', {root: "./frontend/pages"});
+    });
 
-		app.get('/messages', function(req, res) {
-				return res.sendFile('messages.html', {root: "./frontend/pages"});
-		});
+    var apiRouter = express.Router();
 
-		var apiRouter = express.Router();
+    apiRouter.post('/create-login', function(req, res, next) {
+        authenticate.register(req, function(data){
+            res.json(data);
+            next();
+        });
+    });
 
-		apiRouter.post('/create-login', function(req, res, next) {
-				authenticate.register(req, function(data){
-						res.json(data);
-						next();
-				});
-		});
+    apiRouter.post('/sign-in', function(req, res, next) {
+        authenticate.signin(req, function(data) {
+            res.json(data);
+            next();
+        });
+    });
 
-		apiRouter.post('/sign-in', function(req, res, next) {
-				authenticate.signin(req, function(data) {
-						res.json(data);
-						next();
-				});
-		});
+    // need to send a "message" to a user, maybe an email
+  	apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
+        user = jwt.decode(req.cookies.token);
+        var m = new database.MessageDTO();
+        m.sender = user.UserName;
+        m.receiver = req.body.username;
+    		m.subject = 'You have been invited!';
+    		m.content = req.body.username + ' has invited you to a game!';
 
-		// need to send a "message" to a user, maybe an email
-		apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
-				user = jwt.decode(req.cookies.token);
-				var m = new database.MessageDTO();
-				m.sender = user.UserName;
-				m.receiver = req.body.username;
-				m.subject = 'You have been invited!';
-				m.content = user.UserName + ' has invited you to a game!';
-				m.type = 'invite';  // 'invite' - anything that requires an accept/decline
-									// 'message' - just a message
+    		database.MessageDTO.push(m, function(err) {
+            var ret = {};
+            if(err != null) {
+                ret.success = false;
+                ret.message = "An unknown error has occurred.";
+                console.log(err.stack);
+            } else {
+                ret.success = true;
+                ret.message = null;
+            }
+            res.json(ret);
+        });
+  	});
 
-				database.MessageDTO.push(m, function(err) {
-						var ret = {};
-						if(err != null) {
-								ret.success = false;
-								ret.message = "An unknown error has occurred.";
-								console.log(err.stack);
-						} else {
-								ret.success = true;
-								ret.message = null;
-						}
-						res.json(ret);
-				});
-		});
+    apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
+            user = jwt.decode(req.cookies.token);
+            res.send(user.UserName);
+    });
 
-		apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
-				user = jwt.decode(req.cookies.token);
-				res.send(user.UserName);
-		});
+    // need to send a "message" to a user, maybe an email
+  	apiRouter.post('/load-messages', authenticate.auth, function(req, res, next) {
+    	user = jwt.decode(req.cookies.token);
 
-		// need to send a "message" to a user, maybe an email
-		apiRouter.post('/load-messages', authenticate.auth, function(req, res) {
-				user = jwt.decode(req.cookies.token);
-				database.MessageDTO.getByReceiver(user.UserName, function(err, rows) {
-						var ret = {};
-						if(err != null) {
-								ret.success = false;
-								ret.message = "An unknown error has occurred.";
-								res.json(ret);
-								return;
-						}
+        database.MessageDTO.getByReceiver(user.UserName, function(err, rows) {
+            var ret = {};
 
-						if(rows != null) {
-								ret.success = true;
-								ret.messages = rows;
-						}
-						res.json(ret);
-				});
-		});
+            if(err != null) {
+                ret.success = false;
+                ret.message = "An unknown error has occurred.";
+                res.json(ret);
+                next();
+                return;
+            }
 
-		apiRouter.post('/load-open-games-ranked', function(req, res) {
-			res.send(open_games_ranked);
-		});
+            if(rows != null) {
+                ret.success = true;
+                ret.messages = rows;
+            }
 
-		apiRouter.post('/load-open-games-social', function(req, res) {
-				res.send(open_games_social);
-		});
+            res.json(ret);
+            next();
+            return;
+        });
+  	});
 
-		apiRouter.post('/create_game', authenticate.auth, function(req, res) {
-			if (req.body.queuetype == 'ranked') {
-				open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
-			}
-			else if (req.body.queuetype == 'social') {
-				open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
-			}
-		});
+    apiRouter.post('/load-open-games-ranked', function(req, res) {
+        res.send(open_games_ranked);
+    });
 
-		app.use('/api', apiRouter);
+    apiRouter.post('/load-open-games-social', function(req, res) {
+            res.send(open_games_social);
+    });
 
+    apiRouter.post('/create_game', authenticate.auth, function(req, res) {
+        if (req.body.queuetype == 'ranked') {
+            open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+        }
+        else if (req.body.queuetype == 'social') {
+            open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
+        }
+    });
 
-		io.on('connection', function(socket) {
-				var username;
+    app.use('/api', apiRouter);
 
-				socket.on('join-game', function(data){
+    var server = app.listen(3000, function() {
+        var host = server.address().address;
+        var port = server.address().port;
 
-						// TODO parse data as json object
-						console.log("test: join-game recieved from .");
-				});
-		});
+        console.log('The thunderdome awaits...\n');
+    });
 
+    var io = require('socket.io')(server);
 
-		var server = app.listen(3000, function() {
-				var host = server.address().address;
-				var port = server.address().port;
+    io.on('connection', function(socket) {
+        var username;
+        console.log("a user connected.");
 
-				console.log('The thunderdome awaits...\n');
-		});
+        socket.on('join-game', function(){
+            var gameid = tetris.newGame("anonymousPengin");
+            socket.emit('join-response', gameid);
+            // TODO parse data as json object
+        });
+
+        socket.on('left', tetris.left);
+        socket.on('right', tetris.right);
+        socket.on('up', tetris.up);
+        socket.on('down', tetris.down);
+    });
 
 });

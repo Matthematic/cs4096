@@ -90,7 +90,7 @@ module.exports = {
         if(token) {
             jwt.verify(token, secret, function(err, decoded) {
                 if(err) {
-                    return {success: false, message: 'Failed to authenticate token.'};
+                    res.json({success: false, message: 'Failed to authenticate token.'});
                 } else {
                     req.decoded = decoded;
                     next();
@@ -98,6 +98,7 @@ module.exports = {
             });
 
         } else {
+            console.log("error token auth");
             return res.status(403).send({
                 success: false,
                 message: 'No token provided.'

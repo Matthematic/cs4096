@@ -1,31 +1,29 @@
 (function() {
-	$.ajax({
-		url: "/api/load-messages",
-		method: "post",
-		success: function(data){
-			console.log("data received");
-			console.log(data);
+    $.ajax({
+        url: "/api/load-messages",
+        method: "post",
+        success: function(data){
+            if(data.success == true) {
+                console.log("data received");
+                console.log(data);
 
-			// data is an arbitrary object, not an array, thus data.length returns undefined. Must use this instead
-			for( var i=0; i < Object.keys(data.messages).length; i++ )
-			{
-				$('#message_list').prepend('<li>' +
-					'<a href="#">' +
-					'<div>' +
-					'<em>From: <strong>' + data.messages[i].sender + '</strong></em>' +
-					'<span class="pull-right text-muted">' +
-					'</span></div>' +
-					'<div>' + data.messages[i].content + '</div></a></li>'
-				);
-			}
-		},
-		callback: function(){
-			console.log("message data received");
-		},
-		failure: function(){
-			console.log("error getting message data");
-		},
-	});
+                for( var i=0; i < data.length; i++ )
+                {
+                    $('#message_list').prepend('<li>' +
+                        '<a href="#">' +
+                        '<div>' +
+                        '<strong>From:' + data[i].sender + '</strong>' +
+                        '<span class="pull-right text-muted">' +
+                        '<em>To:' + data[i].receiver +'</em>' +
+                        '</span></div>' +
+                        '<div>' + data[i].content + '</div></a></li>'
+                    );
+                }
+            } else {
+                console.log("error getting message data");
+            }
+        }
+    });
 
 	$.ajax({
 		url: "/api/load-username-display",
