@@ -7,7 +7,7 @@
 			console.log(data);
 
 			// data is an arbitrary object, not an array, thus data.length returns undefined. Must use this instead
-			for( var i=0; i < Object.keys(data).length; i++ )
+			for( var i=0; i < Object.keys(data.messages).length; i++ )
 			{
 				$('#message_list').prepend('<li>' +
 					'<a href="#">' +
@@ -75,7 +75,13 @@
 		$('#alerts').hide();
 		$('#tasks').hide();
 		$('#messages').hide();
+		$('#friends').hide();
 		$('#profile-logged-in').hide();
+		var path = window.location.pathname;
+		var page = path.split("/").pop();
+		if (page != "") {
+			window.location.href = "/";
+		}
 	}
 
 

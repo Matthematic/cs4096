@@ -9,6 +9,9 @@ var authenticate = require('./authenticate');
 var tetris = require('./tetris');
 var connection = database.connection;
 
+var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classic'}];
+var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
+
 process.on('SIGINT', function() {
 		console.log('Closing database connection...');
 		connection.end(function(err) {
@@ -66,6 +69,10 @@ connection.query('SELECT 1', function(err, rows) {
 				return res.sendFile('social.html', {root: "./frontend/pages"});
 		});
 
+		app.get('/messages', function(req, res) {
+				return res.sendFile('messages.html', {root: "./frontend/pages"});
+		});
+
 		var apiRouter = express.Router();
 
 		apiRouter.post('/create-login', function(req, res, next) {
@@ -90,6 +97,8 @@ connection.query('SELECT 1', function(err, rows) {
 				m.receiver = req.body.username;
 				m.subject = 'You have been invited!';
 				m.content = user.UserName + ' has invited you to a game!';
+				m.type = 'invite';  // 'invite' - anything that requires an accept/decline
+									// 'message' - just a message
 
 				database.MessageDTO.push(m, function(err) {
 						var ret = {};
@@ -131,49 +140,20 @@ connection.query('SELECT 1', function(err, rows) {
 		});
 
 		apiRouter.post('/load-open-games-ranked', function(req, res) {
-				var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Ranked"';
-				console.log("query: " + sql);
-				connection.query( sql, function(err, rows, fields) {
-						if(err) {
-								console.log('Could not load open_games_ranked data' + err.stack);
-						} else {
-								console.log('loaded open_games_ranked data');
-						}
-
-						console.log(rows);
-						res.send(rows);
-				});
+			res.send(open_games_ranked);
 		});
 
 		apiRouter.post('/load-open-games-social', function(req, res) {
-				var sql = 'SELECT * FROM OpenGames WHERE queuetype = "Social"';
-				console.log("query: " + sql);
-				connection.query( sql, function(err, rows, fields) {
-						if(err) {
-								console.log('Could not load open_games_social data' + err.stack);
-						} else {
-								console.log('loaded open_games_social data');
-						}
-
-						console.log(rows);
-						res.send(rows);
-				});
+				res.send(open_games_social);
 		});
 
 		apiRouter.post('/create_game', authenticate.auth, function(req, res) {
-				console.log(req);
-				user = jwt.decode(req.cookies.token);
-				var sql = 'INSERT INTO OpenGames(username, elo, gametype, queuetype) ' +
-							'SELECT "' + user.UserName + '", 4000, "Classic", "' + req.body.queuetype + '"';
-				console.log("query: " + sql);
-				connection.query( sql, function(err, rows, fields) {
-						if(err) {
-								console.log('Could not create a game' + err.stack);
-						} else {
-								console.log('Game created successfully');
-								res.send(true);
-						}
-				});
+			if (req.body.queuetype == 'ranked') {
+				open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+			}
+			else if (req.body.queuetype == 'social') {
+				open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
+			}
 		});
 
 		app.use('/api', apiRouter);
