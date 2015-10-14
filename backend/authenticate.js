@@ -1,7 +1,7 @@
 var database = require('./database.js');
 var jwt = require('jsonwebtoken');
 
-var secret = 'notevencloselistenbaby'
+var secret = 'notevencloselistenbaby';
 
 module.exports = {
     "register": function(req, callback) {

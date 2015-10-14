@@ -10,22 +10,75 @@ var Block = function() {
     this.left = null;
 }
 
+var myReadLine = require('readline');
+var y = myReadLine.createInterface(process.stdin, process.stdout);
+
 var testBlock = new Block;
 var currentTet = new Array(4);
+var userInput = 0;
 
 console.log('test, test');
 
+
 var theGrid = new Block;
+var stillBlocks = new Array(10);
+stillBlocks[0] = new Block;
+stillBlocks[1] = new Block;
+stillBlocks[2] = new Block;
+stillBlocks[3] = new Block;
+stillBlocks[4] = new Block;
+stillBlocks[5] = new Block;
+stillBlocks[6] = new Block;
+stillBlocks[7] = new Block;
+stillBlocks[8] = new Block;
+stillBlocks[9] = new Block;
+stillBlocks[10] = new Block;
+
 
 theGrid = InitializeGrid();
 
+theGrid[5][0] = stillBlocks[0];
+theGrid[5][1] = stillBlocks[1];
+theGrid[5][2] = stillBlocks[2];
+theGrid[5][3] = stillBlocks[3];
+theGrid[5][4] = stillBlocks[4];
+theGrid[5][5] = stillBlocks[5];
+theGrid[5][6] = stillBlocks[6];
+theGrid[5][7] = stillBlocks[7];
+theGrid[5][8] = stillBlocks[8];
+theGrid[5][9] = stillBlocks[9];
+theGrid[4][3] = stillBlocks[10];
+
+
 theGrid[0][0] = testBlock;
 
-CreateLPiece(currentTet, theGrid);
-DisplayGrid(theGrid);
-MovePieceLeft(currentTet, theGrid);
-DisplayGrid(theGrid);
 
+CreateLPiece(currentTet, theGrid);
+
+
+DisplayGrid(theGrid);
+var userInput = 0;
+//while (userInput != 'q') {
+    
+    y.question('Your move? :', function(userInput) {
+        if (userInput == 'a') {
+            MovePieceLeft(currentTet, theGrid);
+        }
+        else if (userInput == 'd') {
+            MovePieceRight(currentTet, theGrid);
+        }
+        else if (userInput == 's') {
+            MovePieceDown(currentTet, theGrid);
+        }
+        DisplayGrid(theGrid);
+        y.close();
+        //y.stdin.destroy();
+    });
+    
+    
+    //CheckForRows(theGrid, stillBlocks);
+    //DisplayGrid(theGrid);
+//}
 
 function InitializeGrid() {
     grid = new Array(20);
@@ -214,6 +267,30 @@ function MovePieceLeft(theTet, myArray) {
         myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
     }
     return moveLeft;
+}
+
+function CheckForRows(myArray, theBlocks) {
+    var j = 0;
+    var foundHole = false;
+    for (var i = 19; i >= 0; i--) {
+        j = 0;
+        foundHole = false;
+        while (j < 10 && foundHole == false) {
+            if (myArray[i][j] == null) {
+                foundHole = true;
+            }
+            j++;
+        }
+        if (foundHole == false) {
+            for (k = 0; k < 10; k++) {
+                var removalIndex = theBlocks.indexOf(myArray[i][k]);
+                theBlocks.splice(removalIndex, 1);
+                myArray[i][k] = null;
+            }
+        }
+    }
+
+
 }
 
 function left(gameid, player) {

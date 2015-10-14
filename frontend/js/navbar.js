@@ -1,18 +1,3 @@
-/*$('#message_list').prepend(
-    '<li>' +
-        '<a href="#">' +
-            '<div>' +
-                '<strong>Matt Carr2</strong>' +
-                '<span class="pull-right text-muted">' +
-                    '<em>Yesterday2</em>' +
-                '</span>' +
-            '</div>' +
-        '<div>test</div>' +
-        '</a>' +
-    '</li>'
-);
-*/
-//$("#" + queuetype + "_tbody tr").remove();
 (function() {
     $.ajax({
         url: "/api/load-messages",
@@ -37,37 +22,65 @@
             } else {
                 console.log("error getting message data");
             }
-
-        },
-        callback: function(){
-            console.log("message data received");
-        },
-        failure: function(){
-            console.log("error getting message data");
-        },
+        }
     });
 
-    function getCookie(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0; i<ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-        }
-        return "";
-    }
+	$.ajax({
+		url: "/api/load-username-display",
+		method: "post",
+		success: function(data){
+			console.log("data received");
+			console.log(data);
+			$("#userNameDisplay").html(function(index, oldhtml) {
+				return data + oldhtml;
+			});
+		},
+		callback: function(){
+			console.log("data received");
+		},
+		failure: function(){
+			console.log("error getting data");
+		},
+	});
 
-    // check for cookie token
-    var token = getCookie('token');
-    if(token != "") {
-        $('#profile-logged-out').hide();
-    } else {
-        $('#alerts').hide();
-        $('#tasks').hide();
-        $('#messages').hide();
-        $('#profile-logged-in').hide();
-    }
+	function getCookie(cname) {
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1);
+			if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+		}
+		return "";
+	}
+
+	function deleteAllCookies() {
+		var cookies = document.cookie.split(";");
+
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = cookies[i];
+			var eqPos = cookie.indexOf("=");
+			var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+			document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+		}
+	}
+
+	// check for cookie token
+	var token = getCookie('token');
+	if(token != "") {
+		$('#profile-logged-out').hide();
+	} else {
+		$('#alerts').hide();
+		$('#tasks').hide();
+		$('#messages').hide();
+		$('#friends').hide();
+		$('#profile-logged-in').hide();
+		var path = window.location.pathname;
+		var page = path.split("/").pop();
+		if (page != "") {
+			window.location.href = "/";
+		}
+	}
 
 
 

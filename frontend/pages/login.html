@@ -3,6 +3,15 @@
 
 <head>
 
+	<style>
+		body {
+			background-image: url("http://images3.alphacoders.com/239/239007.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			height: 100%;
+		}
+	</style>
+
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,6 +34,13 @@
 
 	<link href="../css/login.css" rel="stylesheet">
 
+	<!-- jQuery -->
+	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+
+	<!-- JQuery Validation -->
+	<script src="../bower_components/jquery-validation/dist/jquery.validate.js"></script>
+	<script src="../bower_components/jquery-validation/dist/additional-methods.js"></script>
+
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -32,6 +48,47 @@
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
+	<script>
+		var setCookie = function(cname, cvalue, exdays) {
+			var expires = "expires="+exdays.toUTCString();
+			document.cookie = cname + "=" + cvalue + "; " + expires;
+		};
+
+		var login = function() {
+			var loginForm = $("#loginForm");
+			var data = loginForm.serializeArray();
+			var new_data = {};
+
+			var i;
+			for (i = 0; i < data.length; i++) {
+				new_data[data[i]["name"]] = data[i]["value"];
+			}
+			console.log(new_data);
+
+			$.ajax({
+				url: "/api/sign-in",
+				datatype: "json",
+				data: new_data,
+				method: "post",
+				success: function(res){
+					if (res.success) {
+						console.log("logged in");
+						var expiryDate = new Date();
+						expiryDate.setMinutes(expiryDate.getMinutes() + 30);
+						setCookie('token', res.token, expiryDate);
+						document.location.href = '/profile';
+					}
+					else {
+						alert("login unsuccessful - try again");
+						console.log(res.message);
+					}
+				},
+				failure: function(){
+					console.log("an error has occurred");
+				},
+			});
+		}
+	</script>
 </head>
 
 <body>
@@ -49,7 +106,8 @@
 						<form id="loginForm" role="form" method="POST">
 							<fieldset>
 								<div class="form-group">
-									<input class="form-control" placeholder="Username" name="username" type="username" autofocus>
+									<input class="form-control" placeholder="E-mail or Username" name="username" autofocus>
+
 								</div>
 								<div class="form-group">
 									<input class="form-control" placeholder="Password" name="password" type="password" value="">
@@ -100,9 +158,6 @@
 			<div class="col-md-2"></div>
 		</div>
 	</div>
-
-	<!-- jQuery -->
-	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
 
 	<!-- Bootstrap Core JavaScript -->
 	<script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
