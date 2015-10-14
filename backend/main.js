@@ -168,18 +168,29 @@ connection.query('SELECT 1', function(err, rows) {
 
     io.on('connection', function(socket) {
         var username;
+        var gameid;
         console.log("a user connected.");
 
-        socket.on('join-game', function(){
-            var gameid = tetris.newGame("anonymousPengin");
-            socket.emit('join-response', gameid);
-            // TODO parse data as json object
+        socket.on('join-game', function(name){
+            username = name;
+            var gameData = tetris.newGame("anonymousPengin");
+            gameid = gameData.gameid;
+            socket.emit('join-response', gameData);
+
         });
 
-        socket.on('left', tetris.left);
-        socket.on('right', tetris.right);
-        socket.on('up', tetris.up);
-        socket.on('down', tetris.down);
+        socket.on('left', function() {
+            tetris.left(gameid, username);
+        });
+        socket.on('right', function() {
+            tetris.right(gameid, username);
+        });
+        socket.on('up', function() {
+            tetris.up(gameid, username);
+        });
+        socket.on('down', function() {
+            tetris.down(gameid, username);
+        });
     });
 
 });

@@ -283,15 +283,17 @@
     };
 
     var socket = io();
-    var gameid = -1;
+    var gamedata;
 
     socket.on('connect', function() {
         console.log("Connected!");
     });
 
-    socket.on('join-response', function(id) {
-        gameid = id;
-        console.log(gameid);
+    socket.on('join-response', function(data) {
+        gamedata = data;
+        console.log(gamedata.gameid);
+        console.log(gamedata.width);
+        console.log(gamedata.height);
 
         $(document).keydown(function(e) {
             switch(e.keyCode) {
