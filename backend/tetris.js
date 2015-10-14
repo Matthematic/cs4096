@@ -217,33 +217,33 @@ function MovePieceLeft(theTet, myArray) {
 }
 
 function left(gameid, player) {
-
-}
+    console.log("left");
+};
 
 function up(gameid, player) {
-
-}
+    console.log("up");
+};
 
 function down(gameid, player) {
-
-}
+    console.log("down");
+};
 
 function right(gameid, player) {
-
-}
+    console.log("right");
+};
 
 function space(gameid, player) {
 
-}
+};
 
 function pause(gameid, player) {
 
-}
+};
 
 // please return the new game id as an index into the game array
 function newGame(player) {
-
-}  
+    return 1;
+};
 
 module.exports = {
     "left": left,
@@ -251,6 +251,7 @@ module.exports = {
     "down": down,
     "right": right,
     "space": space,
-    "pause": pause
-}
+    "pause": pause,
+    "newGame": newGame
+};
 

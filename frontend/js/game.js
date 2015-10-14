@@ -34,13 +34,11 @@
         constructor.prototype.mul = function(point, param2) {
             var x, y;
             if(typeof param2 != 'undefined') {
-                # called as mul : (Point point) ->
                 x = ((this.elements[0] * point.x) + (this.elements[3] * point.y) +
                 this.elements[6]);
                 y = ((this.elements[1] * point.x) + (this.elements[4] * point.y) +
                 this.elements[7]);
             } else {
-                # called as mul : (x, y) ->
                 var xt = point;
                 var yt = param2;
                 x = (this.elements[0] * xt) + (this.elements[3] * yt) + this.elements[6];
@@ -105,10 +103,10 @@
 
         constructor.prototype.rotate = function(radians) {
             var temp = [];
-            temp[0] = Math::cos(radians);
-            temp[1] = -Math::sin(radians);
-            temp[2] = Math::sin(radians);
-            temp[3] = Math::cos(radians);
+            temp[0] = Math.cos(radians);
+            temp[1] = -Math.sin(radians);
+            temp[2] = Math.sin(radians);
+            temp[3] = Math.cos(radians);
 
             this.elements[0] = (temp[0] * this.elements[0]) + (temp[1] * this.elements[3]);
             this.elements[1] = (temp[0] * this.elements[1]) + (temp[1] * this.elements[4]);
@@ -140,19 +138,17 @@
             this.a = a;
         };
 
-        # returns a string with the CSS color value.
-        # Ex. Color(1.0, 1.0, 0.0, 1.0) will return "#FFFF00"
         constructor.prototype.toCSS = function () {
             var r = parseInt(this.r * 255);
             r = r.toString(16);
             if(r.length == 1) {r = "0"+r;}
-            var g = parseInt(@g * 255);
+            var g = parseInt(this.g * 255);
             g = g.toString(16);
             if(g.length == 1) {g = "0"+g;}
-            var b = parseInt(@b * 255);
+            var b = parseInt(this.b * 255);
             b = b.toString(16);
             if(b.length == 1) {b = "0"+b;}
-            var a = parseInt(@a * 255);
+            var a = parseInt(this.a * 255);
             a = a.toString(16);
             if(a.length == 1) {a = "0"+a;}
             return "#" + r + g + b;
@@ -176,10 +172,10 @@
         this.fillColor = new Color(0, 0, 0, 0)
     };
 
-    var canvas = $('#stage');
+    var canvas = $('#stage').get(0);
     var gl = canvas.getContext("webgl", {antialias : false, depth: false});
     if(typeof gl == 'undefined') {
-        gl = canvas.getContext "experimental-webgl"
+        gl = canvas.getContext("experimental-webgl");
         if(typeof gl == 'undefined') {
             console.log("Your browser does not support the playing of this game");
         }
@@ -230,7 +226,7 @@
     var colorVShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(colorVShader, colorVShaderSource);
     gl.compileShader(colorVShader);
-    if(!gl.getShaderParameter(colorVShader, @gl.COMPILE_STATUS)) {
+    if(!gl.getShaderParameter(colorVShader, gl.COMPILE_STATUS)) {
         throw {msg: "vertex shader did not compile correctly"};
     }
 
@@ -256,33 +252,66 @@
     colorProg.mvMatrixUniform = gl.getUniformLocation(colorProg, "uMVMatrix");
     colorProg.color = gl.getUniformLocation(colorProg, "uColor");
 
-    var drawRect = function() {
+    var drawRect = function(rect) {
         gl.useProgram(colorProg);
         gl.disableVertexAttribArray(1);
 
         var mvmat = new Matrix3x3();
 
-        var color = new Float32Array(4)
+        var color = new Float32Array(4);
         color[0] = rect.fillColor.r;
         color[1] = rect.fillColor.g;
         color[2] = rect.fillColor.b;
         color[3] = rect.fillColor.a;
 
-        mvmat.translate(rect.position.x, rect.position.y)
-        mvmat.scale(rect.width, rect.height)
+        mvmat.translate(rect.position.x, rect.position.y);
+        mvmat.scale(rect.width, rect.height);
 
-        @gl.bindBuffer(@gl.ARRAY_BUFFER, @baseRect)
-        @gl.vertexAttribPointer(@colorProg.vertexPositionAttribute,
-            @baseRect.itemSize, @gl.FLOAT, false, 0, 0)
+        gl.bindBuffer(gl.ARRAY_BUFFER, baseRect);
+        gl.vertexAttribPointer(colorProg.vertexPositionAttribute,
+            baseRect.itemSize, gl.FLOAT, false, 0, 0);
 
-        if rect.transform != null
-            @gl.uniformMatrix3fv(@colorProg.pMatrixUniform, false, rect.transform.elements)
-        else
-            @gl.uniformMatrix3fv(@colorProg.pMatrixUniform, false, @Projection.elements)
+        if(rect.transform != null) {
+            gl.uniformMatrix3fv(colorProg.pMatrixUniform, false, rect.transform.elements);
+        } else {
+            gl.uniformMatrix3fv(colorProg.pMatrixUniform, false, Projection.elements);
+        }
 
-        @gl.uniformMatrix3fv(@colorProg.mvMatrixUniform, false, mvmat.elements)
-        @gl.uniform4fv(@colorProg.color, color)
-        @gl.drawArrays(@gl.TRIANGLE_STRIP, 0, @baseRect.numItems)
-    }
+        gl.uniformMatrix3fv(colorProg.mvMatrixUniform, false, mvmat.elements);
+        gl.uniform4fv(colorProg.color, color);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, baseRect.numItems);
+    };
+
+    var socket = io();
+    var gameid = -1;
+
+    socket.on('connect', function() {
+        console.log("Connected!");
+    });
+
+    socket.on('join-response', function(id) {
+        gameid = id;
+        console.log(gameid);
+
+        $(document).keydown(function(e) {
+            switch(e.keyCode) {
+                case 37:
+                    socket.emit("left");
+                    break;
+                case 38:
+                    socket.emit("up");
+                    break;
+                case 39:
+                    socket.emit("right");
+                    break;
+                case 40:
+                    socket.emit("down");
+                    break;
+            }
+        });
+    })
+
+    // for now lets just auto join an anonymous game
+    socket.emit('join-game');
 
 })();

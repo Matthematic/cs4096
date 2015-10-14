@@ -2,7 +2,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
-var io = require('socket.io')();
 
 var database = require('./database');
 var authenticate = require('./authenticate');
@@ -178,22 +177,29 @@ connection.query('SELECT 1', function(err, rows) {
 
     app.use('/api', apiRouter);
 
-
-    io.on('connection', function(socket) {
-        var username;
-
-        socket.on('join-game', function(data){
-
-            // TODO parse data as json object
-            console.log("test: join-game recieved from .");
-        });
-    });
-
     var server = app.listen(3000, function() {
         var host = server.address().address;
         var port = server.address().port;
 
         console.log('The thunderdome awaits...\n');
+    });
+
+    var io = require('socket.io')(server);
+
+    io.on('connection', function(socket) {
+        var username;
+        console.log("a user connected.");
+
+        socket.on('join-game', function(){
+            var gameid = tetris.newGame("anonymousPengin");
+            socket.emit('join-response', gameid);
+            // TODO parse data as json object
+        });
+
+        socket.on('left', tetris.left);
+        socket.on('right', tetris.right);
+        socket.on('up', tetris.up);
+        socket.on('down', tetris.down);
     });
 
 });
