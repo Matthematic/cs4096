@@ -111,102 +111,102 @@ function DisplayGrid(myArray) {
 }
 
 
-function CreateLPiece(theTet, myArray) {
-    theTet[0] = new Block;
-    theTet[1] = new Block;
-    theTet[2] = new Block;
-    theTet[3] = new Block;
+function CreateLPiece(currentTet, myArray) {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
 
-    theTet[0].up = null;
-    theTet[0].right = theTet[1];
-    theTet[0].down = null;
-    theTet[0].left = null;
-    theTet[1].up = null;
-    theTet[1].right = theTet[2];
-    theTet[1].down = null;
-    theTet[1].left = theTet[0];
-    theTet[2].up = theTet[3];
-    theTet[2].right = null;
-    theTet[2].down = null;
-    theTet[2].left = theTet[1];
-    theTet[3].up = null;
-    theTet[3].right = null;
-    theTet[3].down = theTet[2];
-    theTet[3].left = null;
-    theTet[0].posX = 3;
-    theTet[0].posY = 1;
-    theTet[1].posX = 4;
-    theTet[1].posY = 1;
-    theTet[2].posX = 5;
-    theTet[2].posY = 1;
-    theTet[3].posX = 5;
-    theTet[3].posY = 0;
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = null;
+    currentTet[0].left = null;
+    currentTet[1].up = null;
+    currentTet[1].right = currentTet[2];
+    currentTet[1].down = null;
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = currentTet[3];
+    currentTet[2].right = null;
+    currentTet[2].down = null;
+    currentTet[2].left = currentTet[1];
+    currentTet[3].up = null;
+    currentTet[3].right = null;
+    currentTet[3].down = currentTet[2];
+    currentTet[3].left = null;
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 1;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 1;
+    currentTet[2].posX = 5;
+    currentTet[2].posY = 1;
+    currentTet[3].posX = 5;
+    currentTet[3].posY = 0;
 
-    myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
-    myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
-    myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
-    myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
+    myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
 
-function CreateJPiece(theTet, myArray) {
-    theTet[0] = new Block;
-    theTet[1] = new Block;
-    theTet[2] = new Block;
-    theTet[3] = new Block;
+function CreateJPiece(currentTet, myArray) {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
 
-    theTet[0].up = null;
-    theTet[0].right = theTet[1];
-    theTet[0].down = null;
-    theTet[0].left = null;
-    theTet[1].up = null;
-    theTet[1].right = theTet[2];
-    theTet[1].down = null;
-    theTet[1].left = theTet[0];
-    theTet[2].up = theTet[3];
-    theTet[2].right = null;
-    theTet[2].down = null;
-    theTet[2].left = theTet[1];
-    theTet[3].up = null;
-    theTet[3].right = null;
-    theTet[3].down = theTet[2];
-    theTet[3].left = null;
-    theTet[0].posX = 3;
-    theTet[0].posY = 1;
-    theTet[1].posX = 4;
-    theTet[1].posY = 1;
-    theTet[2].posX = 5;
-    theTet[2].posY = 1;
-    theTet[3].posX = 5;
-    theTet[3].posY = 0;
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = null;
+    currentTet[0].left = null;
+    currentTet[1].up = null;
+    currentTet[1].right = currentTet[2];
+    currentTet[1].down = null;
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = currentTet[3];
+    currentTet[2].right = null;
+    currentTet[2].down = null;
+    currentTet[2].left = currentTet[1];
+    currentTet[3].up = null;
+    currentTet[3].right = null;
+    currentTet[3].down = currentTet[2];
+    currentTet[3].left = null;
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 1;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 1;
+    currentTet[2].posX = 5;
+    currentTet[2].posY = 1;
+    currentTet[3].posX = 5;
+    currentTet[3].posY = 0;
 
-    myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
-    myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
-    myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
-    myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
+    myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
 
-function MoveLPieceDown(theTet, myArray) {
-    myArray[theTet[0].posY][theTet[0].posX] = null;
-    myArray[theTet[1].posY][theTet[1].posX] = null;
-    myArray[theTet[2].posY][theTet[2].posX] = null;
-    myArray[theTet[3].posY][theTet[3].posX] = null;
-    theTet[0].posY += 1;
-    theTet[1].posY += 1;
-    theTet[2].posY += 1;
-    theTet[3].posY += 1;
-    myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
-    myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
-    myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
-    myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
+function MoveLPieceDown(currentTet, myArray) {
+    myArray[currentTet[0].posY][currentTet[0].posX] = null;
+    myArray[currentTet[1].posY][currentTet[1].posX] = null;
+    myArray[currentTet[2].posY][currentTet[2].posX] = null;
+    myArray[currentTet[3].posY][currentTet[3].posX] = null;
+    currentTet[0].posY += 1;
+    currentTet[1].posY += 1;
+    currentTet[2].posY += 1;
+    currentTet[3].posY += 1;
+    myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
 
-function CanMoveDown(theTet, myArray) {
+function CanMoveDown(currentTet, myArray) {
     var moveDown = true;
     var count = 0;
 
     while (count < 4) {
-        if (theTet[count].down == null) {
-            if (theTet[count].posY + 1 >= 20 || myArray[theTet[count].posY + 1][theTet[count].posX] != null) {
+        if (currentTet[count].down == null) {
+            if (currentTet[count].posY + 1 >= 20 || myArray[currentTet[count].posY + 1][currentTet[count].posX] != null) {
                 moveDown = false;
                 break;
             }
@@ -216,13 +216,13 @@ function CanMoveDown(theTet, myArray) {
     return moveDown;
 }
 
-function MovePieceDown(theTet, myArray) {
+function MovePieceDown(currentTet, myArray) {
     var moveDown = true;
     var count = 0;
 
     while (count < 4) {
-        if (theTet[count].down == null) {
-            if (theTet[count].posY + 1 >= 20 || myArray[theTet[count].posY + 1][theTet[count].posX] != null) {
+        if (currentTet[count].down == null) {
+            if (currentTet[count].posY + 1 >= 20 || myArray[currentTet[count].posY + 1][currentTet[count].posX] != null) {
                 moveDown = false;
                 break;
             }
@@ -230,29 +230,29 @@ function MovePieceDown(theTet, myArray) {
         count++;
     }
     if (moveDown == true) {
-        myArray[theTet[0].posY][theTet[0].posX] = null;
-        myArray[theTet[1].posY][theTet[1].posX] = null;
-        myArray[theTet[2].posY][theTet[2].posX] = null;
-        myArray[theTet[3].posY][theTet[3].posX] = null;
-        theTet[0].posY += 1;
-        theTet[1].posY += 1;
-        theTet[2].posY += 1;
-        theTet[3].posY += 1;
-        myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
-        myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
-        myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
-        myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
+        myArray[currentTet[0].posY][currentTet[0].posX] = null;
+        myArray[currentTet[1].posY][currentTet[1].posX] = null;
+        myArray[currentTet[2].posY][currentTet[2].posX] = null;
+        myArray[currentTet[3].posY][currentTet[3].posX] = null;
+        currentTet[0].posY += 1;
+        currentTet[1].posY += 1;
+        currentTet[2].posY += 1;
+        currentTet[3].posY += 1;
+        myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     return moveDown;
 }
 
-function MovePieceRight(theTet, myArray) {
+function MovePieceRight(currentTet, myArray) {
     var moveRight = true;
     var count = 0;
 
     while (count < 4) {
-        if (theTet[count].right == null) {
-            if (theTet[count].posX + 1 >= 10 || myArray[theTet[count].posY][theTet[count].posX + 1] != null) {
+        if (currentTet[count].right == null) {
+            if (currentTet[count].posX + 1 >= 10 || myArray[currentTet[count].posY][currentTet[count].posX + 1] != null) {
                 moveRight = false;
                 break;
             }
@@ -260,29 +260,29 @@ function MovePieceRight(theTet, myArray) {
         count++;
     }
     if (moveRight == true) {
-        myArray[theTet[0].posY][theTet[0].posX] = null;
-        myArray[theTet[1].posY][theTet[1].posX] = null;
-        myArray[theTet[2].posY][theTet[2].posX] = null;
-        myArray[theTet[3].posY][theTet[3].posX] = null;
-        theTet[0].posX += 1;
-        theTet[1].posX += 1;
-        theTet[2].posX += 1;
-        theTet[3].posX += 1;
-        myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
-        myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
-        myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
-        myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
+        myArray[currentTet[0].posY][currentTet[0].posX] = null;
+        myArray[currentTet[1].posY][currentTet[1].posX] = null;
+        myArray[currentTet[2].posY][currentTet[2].posX] = null;
+        myArray[currentTet[3].posY][currentTet[3].posX] = null;
+        currentTet[0].posX += 1;
+        currentTet[1].posX += 1;
+        currentTet[2].posX += 1;
+        currentTet[3].posX += 1;
+        myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     return moveRight;
 }
 
-function MovePieceLeft(theTet, myArray) {
+function MovePieceLeft(currentTet, myArray) {
     var moveLeft = true;
     var count = 0;
 
     while (count < 4) {
-        if (theTet[count].left == null) {
-            if (theTet[count].posX - 1 < 0 || myArray[theTet[count].posY][theTet[count].posX - 1] != null) {
+        if (currentTet[count].left == null) {
+            if (currentTet[count].posX - 1 < 0 || myArray[currentTet[count].posY][currentTet[count].posX - 1] != null) {
                 moveLeft = false;
                 break;
             }
@@ -290,18 +290,18 @@ function MovePieceLeft(theTet, myArray) {
         count++;
     }
     if (moveLeft == true) {
-        myArray[theTet[0].posY][theTet[0].posX] = null;
-        myArray[theTet[1].posY][theTet[1].posX] = null;
-        myArray[theTet[2].posY][theTet[2].posX] = null;
-        myArray[theTet[3].posY][theTet[3].posX] = null;
-        theTet[0].posX -= 1;
-        theTet[1].posX -= 1;
-        theTet[2].posX -= 1;
-        theTet[3].posX -= 1;
-        myArray[theTet[0].posY][theTet[0].posX] = theTet[0];
-        myArray[theTet[1].posY][theTet[1].posX] = theTet[1];
-        myArray[theTet[2].posY][theTet[2].posX] = theTet[2];
-        myArray[theTet[3].posY][theTet[3].posX] = theTet[3];
+        myArray[currentTet[0].posY][currentTet[0].posX] = null;
+        myArray[currentTet[1].posY][currentTet[1].posX] = null;
+        myArray[currentTet[2].posY][currentTet[2].posX] = null;
+        myArray[currentTet[3].posY][currentTet[3].posX] = null;
+        currentTet[0].posX -= 1;
+        currentTet[1].posX -= 1;
+        currentTet[2].posX -= 1;
+        currentTet[3].posX -= 1;
+        myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     return moveLeft;
 }
@@ -368,6 +368,33 @@ function up(gameid, player) {
 
 function down(gameid, player) {
     console.log("down");
+    var moveDown = true;
+    var count = 0;
+
+    while (count < 4) {
+        if (currentTet[count].down == null) {
+            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
+                moveDown = false;
+                break;
+            }
+        }
+        count++;
+    }
+    if (moveDown == true) {
+        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
+        currentTet[0].posY += 1;
+        currentTet[1].posY += 1;
+        currentTet[2].posY += 1;
+        currentTet[3].posY += 1;
+        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+    }
+    return moveDown;
 };
 
 function right(gameid, player) {
