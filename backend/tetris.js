@@ -372,6 +372,34 @@ function down(gameid, player) {
 
 function right(gameid, player) {
     console.log("right");
+    var moveRight = true;
+    var count = 0;
+
+    while (count < 4) {
+        if (currentTet[count].right == null) {
+            if (currentTet[count].posX + 1 >= 10 || theGrid[currentTet[count].posY][currentTet[count].posX + 1] != null) {
+                moveRight = false;
+                break;
+            }
+        }
+        count++;
+    }
+    if (moveRight == true) {
+        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
+        currentTet[0].posX += 1;
+        currentTet[1].posX += 1;
+        currentTet[2].posX += 1;
+        currentTet[3].posX += 1;
+        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+    }
+    DisplayGrid(theGrid);
+    //return moveRight;
 };
 
 function space(gameid, player) {
