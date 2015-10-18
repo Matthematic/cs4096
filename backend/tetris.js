@@ -394,7 +394,8 @@ function down(gameid, player) {
         theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
         theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
-    return moveDown;
+    DisplayGrid(theGrid);
+    //return moveDown;
 };
 
 function right(gameid, player) {
