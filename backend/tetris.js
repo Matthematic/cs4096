@@ -21,7 +21,9 @@ console.log('test, test');
 
 
 var theGrid = new Block;
-var stillBlocks = new Array(10);
+var stillBlocks = new Array(0);
+
+/*
 stillBlocks[0] = new Block;
 stillBlocks[1] = new Block;
 stillBlocks[2] = new Block;
@@ -33,10 +35,11 @@ stillBlocks[7] = new Block;
 stillBlocks[8] = new Block;
 stillBlocks[9] = new Block;
 stillBlocks[10] = new Block;
-
+*/
 
 theGrid = InitializeGrid();
 
+/*
 theGrid[5][0] = stillBlocks[0];
 theGrid[5][1] = stillBlocks[1];
 theGrid[5][2] = stillBlocks[2];
@@ -48,12 +51,14 @@ theGrid[5][7] = stillBlocks[7];
 theGrid[5][8] = stillBlocks[8];
 theGrid[5][9] = stillBlocks[9];
 theGrid[4][3] = stillBlocks[10];
-
+*/
 
 theGrid[0][0] = testBlock;
 
+var currentPieceType = 0;
+var nextPieceType = Math.floor((Math.random() * 7));
 
-CreateLPiece(currentTet, theGrid);
+GeneratePieces();
 
 
 DisplayGrid(theGrid);
@@ -111,7 +116,7 @@ function DisplayGrid(myArray) {
 }
 
 
-function CreateLPiece(currentTet, myArray) {
+function CreateLPiece() {
     currentTet[0] = new Block;
     currentTet[1] = new Block;
     currentTet[2] = new Block;
@@ -142,13 +147,13 @@ function CreateLPiece(currentTet, myArray) {
     currentTet[3].posX = 5;
     currentTet[3].posY = 0;
 
-    myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
 
-function CreateJPiece(currentTet, myArray) {
+function CreateJPiece() {
     currentTet[0] = new Block;
     currentTet[1] = new Block;
     currentTet[2] = new Block;
@@ -162,13 +167,198 @@ function CreateJPiece(currentTet, myArray) {
     currentTet[1].right = currentTet[2];
     currentTet[1].down = null;
     currentTet[1].left = currentTet[0];
-    currentTet[2].up = currentTet[3];
+    currentTet[2].up = null;
+    currentTet[2].right = null;
+    currentTet[2].down = currentTet[3];
+    currentTet[2].left = currentTet[1];
+    currentTet[3].up = currentTet[2];
+    currentTet[3].right = null;
+    currentTet[3].down = null;
+    currentTet[3].left = null;
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 0;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 0;
+    currentTet[2].posX = 5;
+    currentTet[2].posY = 0;
+    currentTet[3].posX = 5;
+    currentTet[3].posY = 1;
+
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+}
+
+function CreateIPiece() {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
+
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = null;
+    currentTet[0].left = null;
+    currentTet[1].up = null;
+    currentTet[1].right = currentTet[2];
+    currentTet[1].down = null;
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = null;
+    currentTet[2].right = currentTet[3];
+    currentTet[2].down = null;
+    currentTet[2].left = currentTet[1];
+    currentTet[3].up = null;
+    currentTet[3].right = null;
+    currentTet[3].down = null;
+    currentTet[3].left = currentTet[2];
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 0;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 0;
+    currentTet[2].posX = 5;
+    currentTet[2].posY = 0;
+    currentTet[3].posX = 6;
+    currentTet[3].posY = 0;
+
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+}
+
+function CreateOPiece() {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
+
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = currentTet[2];
+    currentTet[0].left = null;
+    currentTet[1].up = null;
+    currentTet[1].right = null;
+    currentTet[1].down = currentTet[3];
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = currentTet[0];
+    currentTet[2].right = currentTet[3];
+    currentTet[2].down = null;
+    currentTet[2].left = null;
+    currentTet[3].up = currentTet[1];
+    currentTet[3].right = null;
+    currentTet[3].down = null;
+    currentTet[3].left = currentTet[2];
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 0;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 0;
+    currentTet[2].posX = 3;
+    currentTet[2].posY = 1;
+    currentTet[3].posX = 4;
+    currentTet[3].posY = 1;
+
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+}
+
+function CreateZPiece() {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
+
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = null;
+    currentTet[0].left = null;
+    currentTet[1].up = null;
+    currentTet[1].right = null;
+    currentTet[1].down = currentTet[2];
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = currentTet[0];
+    currentTet[2].right = currentTet[3];
+    currentTet[2].down = null;
+    currentTet[2].left = null;
+    currentTet[3].up = null;
+    currentTet[3].right = null;
+    currentTet[3].down = null;
+    currentTet[3].left = currentTet[2];
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 0;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 0;
+    currentTet[2].posX = 4;
+    currentTet[2].posY = 1;
+    currentTet[3].posX = 5;
+    currentTet[3].posY = 1;
+
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+}
+
+function CreateSPiece() {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
+
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = null;
+    currentTet[0].left = null;
+    currentTet[1].up = currentTet[2];
+    currentTet[1].right = null;
+    currentTet[1].down = null;
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = null;
+    currentTet[2].right = currentTet[3];
+    currentTet[2].down = currentTet[1];
+    currentTet[2].left = null;
+    currentTet[3].up = null;
+    currentTet[3].right = null;
+    currentTet[3].down = null;
+    currentTet[3].left = currentTet[2];
+    currentTet[0].posX = 3;
+    currentTet[0].posY = 1;
+    currentTet[1].posX = 4;
+    currentTet[1].posY = 1;
+    currentTet[2].posX = 4;
+    currentTet[2].posY = 0;
+    currentTet[3].posX = 5;
+    currentTet[3].posY = 0;
+
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+}
+
+function CreateTPiece() {
+    currentTet[0] = new Block;
+    currentTet[1] = new Block;
+    currentTet[2] = new Block;
+    currentTet[3] = new Block;
+
+    currentTet[0].up = null;
+    currentTet[0].right = currentTet[1];
+    currentTet[0].down = null;
+    currentTet[0].left = null;
+    currentTet[1].up = currentTet[3];
+    currentTet[1].right = currentTet[2];
+    currentTet[1].down = null;
+    currentTet[1].left = currentTet[0];
+    currentTet[2].up = null;
     currentTet[2].right = null;
     currentTet[2].down = null;
     currentTet[2].left = currentTet[1];
     currentTet[3].up = null;
     currentTet[3].right = null;
-    currentTet[3].down = currentTet[2];
+    currentTet[3].down = currentTet[1];
     currentTet[3].left = null;
     currentTet[0].posX = 3;
     currentTet[0].posY = 1;
@@ -176,14 +366,16 @@ function CreateJPiece(currentTet, myArray) {
     currentTet[1].posY = 1;
     currentTet[2].posX = 5;
     currentTet[2].posY = 1;
-    currentTet[3].posX = 5;
+    currentTet[3].posX = 4;
     currentTet[3].posY = 0;
 
-    myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
+
+
 
 function MoveLPieceDown(currentTet, myArray) {
     myArray[currentTet[0].posY][currentTet[0].posX] = null;
@@ -200,13 +392,13 @@ function MoveLPieceDown(currentTet, myArray) {
     myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
 
-function CanMoveDown(currentTet, myArray) {
+function CanMoveDown() {
     var moveDown = true;
     var count = 0;
 
     while (count < 4) {
         if (currentTet[count].down == null) {
-            if (currentTet[count].posY + 1 >= 20 || myArray[currentTet[count].posY + 1][currentTet[count].posX] != null) {
+            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
                 moveDown = false;
                 break;
             }
@@ -326,8 +518,52 @@ function CheckForRows(myArray, theBlocks) {
             }
         }
     }
+}
 
+function TetToBlocks() {
+    for (var i = 0; i < 4; i++) {
+        
+        currentTet[i].left = null;
+        currentTet[i].right = null;
+        currentTet[i].up = null;
+        currentTet[i].down = null;
+        stillBlocks.push(currentTet[i]);
+        currentTet[i] = null;
+    }
+}
 
+function GeneratePieces() {
+    
+    currentPieceType = nextPieceType;
+    nextPieceType = Math.floor((Math.random() * 7));
+    
+    switch(currentPieceType) {
+        case 0:
+            CreateLPiece();
+            break;
+        case 1:
+            CreateJPiece();
+            break;
+        case 2:
+            CreateIPiece();
+            break;
+        case 3:
+            CreateOPiece();
+            break;
+        case 4:
+            CreateZPiece();
+            break;
+        case 5:
+            CreateSPiece();
+            break;
+        case 6:
+            CreateTPiece();
+            break;
+    }
+    
+    
+    
+    
 }
 
 function left(gameid, player) {
@@ -394,7 +630,14 @@ function down(gameid, player) {
         theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
         theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
+    
+    if (CanMoveDown() == false) {
+        TetToBlocks();
+        GeneratePieces();
+    }
     DisplayGrid(theGrid);
+    
+    
     //return moveDown;
 };
 
@@ -427,10 +670,46 @@ function right(gameid, player) {
         theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     DisplayGrid(theGrid);
+    //if (CanMoveDown() == false)
     //return moveRight;
 };
 
 function space(gameid, player) {
+    console.log("space");
+    var moveDown = true;
+    var count = 0;
+    while(CanMoveDown() == true) {
+        moveDown = true;
+        var count = 0;
+
+        while (count < 4) {
+            if (currentTet[count].down == null) {
+                if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
+                    moveDown = false;
+                    break;
+                }
+            }
+            count++;
+        }
+        if (moveDown == true) {
+            theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+            theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+            theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+            theGrid[currentTet[3].posY][currentTet[3].posX] = null;
+            currentTet[0].posY += 1;
+            currentTet[1].posY += 1;
+            currentTet[2].posY += 1;
+            currentTet[3].posY += 1;
+            theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+            theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+            theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+            theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+        }
+    }
+    TetToBlocks();
+    GeneratePieces();
+    
+    DisplayGrid(theGrid);
 
 };
 

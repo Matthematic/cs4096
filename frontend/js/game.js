@@ -297,6 +297,9 @@
 
         $(document).keydown(function(e) {
             switch(e.keyCode) {
+                case 32:
+                    socket.emit("space");
+                    break;
                 case 37:
                     socket.emit("left");
                     break;

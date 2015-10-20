@@ -178,7 +178,9 @@ connection.query('SELECT 1', function(err, rows) {
             socket.emit('join-response', gameData);
 
         });
-
+        socket.on('space', function() {
+            tetris.space(gameid, username);
+        });
         socket.on('left', function() {
             tetris.left(gameid, username);
         });
