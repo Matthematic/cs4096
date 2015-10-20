@@ -13,7 +13,6 @@ var Block = function() {
 var myReadLine = require('readline');
 var y = myReadLine.createInterface(process.stdin, process.stdout);
 
-var testBlock = new Block;
 var currentTet = new Array(4);
 var userInput = 0;
 
@@ -53,7 +52,6 @@ theGrid[5][9] = stillBlocks[9];
 theGrid[4][3] = stillBlocks[10];
 */
 
-theGrid[0][0] = testBlock;
 
 var currentPieceType = 0;
 var nextPieceType = Math.floor((Math.random() * 7));
@@ -98,12 +96,12 @@ function InitializeGrid() {
     return grid;
 }
 
-function DisplayGrid(myArray) {
+function DisplayGrid(theGrid) {
     var s = '';
     for (var i = 0; i < 20; i++) {
         s = '<|';
         for (var j = 0; j < 10; j++) {
-            if (myArray[i][j] == null)
+            if (theGrid[i][j] == null)
                 s += '.';
             else
                 s += 'B';
@@ -377,19 +375,19 @@ function CreateTPiece() {
 
 
 
-function MoveLPieceDown(currentTet, myArray) {
-    myArray[currentTet[0].posY][currentTet[0].posX] = null;
-    myArray[currentTet[1].posY][currentTet[1].posX] = null;
-    myArray[currentTet[2].posY][currentTet[2].posX] = null;
-    myArray[currentTet[3].posY][currentTet[3].posX] = null;
+function MoveLPieceDown(currentTet, theGrid) {
+    theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+    theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+    theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+    theGrid[currentTet[3].posY][currentTet[3].posX] = null;
     currentTet[0].posY += 1;
     currentTet[1].posY += 1;
     currentTet[2].posY += 1;
     currentTet[3].posY += 1;
-    myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
 }
 
 function CanMoveDown() {
@@ -408,13 +406,13 @@ function CanMoveDown() {
     return moveDown;
 }
 
-function MovePieceDown(currentTet, myArray) {
+function MovePieceDown(currentTet, theGrid) {
     var moveDown = true;
     var count = 0;
 
     while (count < 4) {
         if (currentTet[count].down == null) {
-            if (currentTet[count].posY + 1 >= 20 || myArray[currentTet[count].posY + 1][currentTet[count].posX] != null) {
+            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
                 moveDown = false;
                 break;
             }
@@ -422,29 +420,29 @@ function MovePieceDown(currentTet, myArray) {
         count++;
     }
     if (moveDown == true) {
-        myArray[currentTet[0].posY][currentTet[0].posX] = null;
-        myArray[currentTet[1].posY][currentTet[1].posX] = null;
-        myArray[currentTet[2].posY][currentTet[2].posX] = null;
-        myArray[currentTet[3].posY][currentTet[3].posX] = null;
+        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
         currentTet[0].posY += 1;
         currentTet[1].posY += 1;
         currentTet[2].posY += 1;
         currentTet[3].posY += 1;
-        myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     return moveDown;
 }
 
-function MovePieceRight(currentTet, myArray) {
+function MovePieceRight(currentTet, theGrid) {
     var moveRight = true;
     var count = 0;
 
     while (count < 4) {
         if (currentTet[count].right == null) {
-            if (currentTet[count].posX + 1 >= 10 || myArray[currentTet[count].posY][currentTet[count].posX + 1] != null) {
+            if (currentTet[count].posX + 1 >= 10 || theGrid[currentTet[count].posY][currentTet[count].posX + 1] != null) {
                 moveRight = false;
                 break;
             }
@@ -452,29 +450,29 @@ function MovePieceRight(currentTet, myArray) {
         count++;
     }
     if (moveRight == true) {
-        myArray[currentTet[0].posY][currentTet[0].posX] = null;
-        myArray[currentTet[1].posY][currentTet[1].posX] = null;
-        myArray[currentTet[2].posY][currentTet[2].posX] = null;
-        myArray[currentTet[3].posY][currentTet[3].posX] = null;
+        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
         currentTet[0].posX += 1;
         currentTet[1].posX += 1;
         currentTet[2].posX += 1;
         currentTet[3].posX += 1;
-        myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     return moveRight;
 }
 
-function MovePieceLeft(currentTet, myArray) {
+function MovePieceLeft(currentTet, theGrid) {
     var moveLeft = true;
     var count = 0;
 
     while (count < 4) {
         if (currentTet[count].left == null) {
-            if (currentTet[count].posX - 1 < 0 || myArray[currentTet[count].posY][currentTet[count].posX - 1] != null) {
+            if (currentTet[count].posX - 1 < 0 || theGrid[currentTet[count].posY][currentTet[count].posX - 1] != null) {
                 moveLeft = false;
                 break;
             }
@@ -482,40 +480,51 @@ function MovePieceLeft(currentTet, myArray) {
         count++;
     }
     if (moveLeft == true) {
-        myArray[currentTet[0].posY][currentTet[0].posX] = null;
-        myArray[currentTet[1].posY][currentTet[1].posX] = null;
-        myArray[currentTet[2].posY][currentTet[2].posX] = null;
-        myArray[currentTet[3].posY][currentTet[3].posX] = null;
+        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
         currentTet[0].posX -= 1;
         currentTet[1].posX -= 1;
         currentTet[2].posX -= 1;
         currentTet[3].posX -= 1;
-        myArray[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        myArray[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        myArray[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        myArray[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
     return moveLeft;
 }
 
-function CheckForRows(myArray, theBlocks) {
+function CheckForRows() {
     var j = 0;
     var foundHole = false;
     for (var i = 19; i >= 0; i--) {
         j = 0;
         foundHole = false;
         while (j < 10 && foundHole == false) {
-            if (myArray[i][j] == null) {
+            if (theGrid[i][j] == null) {
                 foundHole = true;
             }
             j++;
         }
         if (foundHole == false) {
             for (k = 0; k < 10; k++) {
-                var removalIndex = theBlocks.indexOf(myArray[i][k]);
-                theBlocks.splice(removalIndex, 1);
-                myArray[i][k] = null;
+                var removalIndex = stillBlocks.indexOf(theGrid[i][k]);
+                stillBlocks.splice(removalIndex, 1);
+                theGrid[i][k] = null;
             }
+        for (var x = i; x > 0; x--) {
+            for (var y = 0; y < 10; y++) {
+                if (theGrid[x-1][y] != null) {
+                    theGrid[x-1][y].posY += 1;
+                    theGrid[x][y] = theGrid[x-1][y];
+                    theGrid[x-1][y] = null;
+                }
+            }
+            
+        }
+        
         }
     }
 }
@@ -633,6 +642,7 @@ function down(gameid, player) {
     
     if (CanMoveDown() == false) {
         TetToBlocks();
+        CheckForRows();
         GeneratePieces();
     }
     DisplayGrid(theGrid);
@@ -707,6 +717,7 @@ function space(gameid, player) {
         }
     }
     TetToBlocks();
+    CheckForRows();
     GeneratePieces();
     
     DisplayGrid(theGrid);
