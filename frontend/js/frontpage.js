@@ -7,7 +7,7 @@ $(document).ready(function() {
     });
 
     $('#signup-button').click(function() {
-        window.location.href="registration.html";
+        window.location.href="login.html";
     });
 
 });

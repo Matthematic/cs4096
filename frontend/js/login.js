@@ -140,13 +140,22 @@
         console.log(new_data);
 
         $.ajax({
-            url: "/api/login",
+            url: "/api/sign-in",
             datatype: "json",
             data: new_data,
             method: "post",
-            success: function(){
-                alert("login successful");
-                console.log("login successful");
+            success: function(res){
+                if (res.success) {
+                    console.log("logged in");
+                    var expiryDate = new Date();
+                    expiryDate.setMinutes(expiryDate.getMinutes() + 30);
+                    setCookie('token', res.token, expiryDate);
+                    //document.location.href = '/profile';
+                }
+                else {
+                    alert("login unsuccessful - try again");
+                    console.log(res.message);
+                }
             },
             callback: function(){
                 alert("login successful");

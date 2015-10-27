@@ -68,6 +68,10 @@ connection.query('SELECT 1', function(err, rows) {
         return res.sendFile('social.html', {root: "./frontend/pages"});
     });
 
+    app.get('/messages', function(req, res) {
+        return res.sendFile('messages.html', {root: "./frontend/pages"});
+    });
+
     var apiRouter = express.Router();
 
     apiRouter.post('/create-login', function(req, res, next) {

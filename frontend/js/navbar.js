@@ -4,19 +4,20 @@
         method: "post",
         success: function(data){
             if(data.success == true) {
-                console.log("data received");
+                console.log("message data received");
+                console.log(data.messages.length);
                 console.log(data);
 
-                for( var i=0; i < data.length; i++ )
+                for( var i=0; i < data.messages.length; i++ )
                 {
                     $('#message_list').prepend('<li>' +
                         '<a href="#">' +
                         '<div>' +
-                        '<strong>From:' + data[i].sender + '</strong>' +
+                        '<strong>From:' + data.messages[i].sender + '</strong>' +
                         '<span class="pull-right text-muted">' +
-                        '<em>To:' + data[i].receiver +'</em>' +
+                        '<em>To:' + data.messages[i].receiver +'</em>' +
                         '</span></div>' +
-                        '<div>' + data[i].content + '</div></a></li>'
+                        '<div>' + data.messages[i].content + '</div></a></li>'
                     );
                 }
             } else {
@@ -67,19 +68,14 @@
 
 	// check for cookie token
 	var token = getCookie('token');
-	if(token != "") {
+	if(token != "") { // if logged in
 		$('#profile-logged-out').hide();
-	} else {
+	} else { // if logged out
 		$('#alerts').hide();
 		$('#tasks').hide();
 		$('#messages').hide();
 		$('#friends').hide();
 		$('#profile-logged-in').hide();
-		var path = window.location.pathname;
-		var page = path.split("/").pop();
-		if (page != "") {
-			window.location.href = "/";
-		}
 	}
 
 
