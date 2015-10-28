@@ -146,15 +146,16 @@
             method: "post",
             success: function(res){
                 if (res.success) {
-                    console.log("logged in");
+                    console.log("successful login");
+                    addAlert($('#alert-field'), 'success', "Success! Redirecting to profile page...");
                     var expiryDate = new Date();
                     expiryDate.setMinutes(expiryDate.getMinutes() + 30);
                     setCookie('token', res.token, expiryDate);
-                    //document.location.href = '/profile';
+                    setTimeout(function() {window.location.href = '/profile';}, 3000);
                 }
                 else {
-                    alert("login unsuccessful - try again");
                     console.log(res.message);
+                    addAlert($('#alert-field'), 'danger', res.message);
                 }
             },
             callback: function(){
@@ -167,7 +168,7 @@
             },
         });
 
-        document.location.href = '/profile';
+        //document.location.href = '/profile';
     });
 
     $('#register-button').click(function() {

@@ -13,8 +13,44 @@
 		 });
 
 		$('#add_friend').click(function() {
-			var new_friend_username = { "new_friend_username": $('#new_friend_username').val() };
-			console.log("adding " + new_friend_username);
+			var new_friend = { "username": $('#new_friend_username').val() };
+			console.log("adding " + new_friend.username);
+
+			var add = false;
+			$.ajax({
+				url: "/api/check_if_friends",
+				data: new_friend,
+				datatype: 'json',
+				method: "post",
+				success: function(res){
+					console.log(res);
+					console.log("Not Friends");
+					add = true;
+					$.ajax({
+						url: "/api/add_friend",
+						data: new_friend,
+						datatype: 'json',
+						method: "post",
+						success: function(res){
+							console.log(res);
+							console.log("Friend added successfully");
+						},
+						callback: function(){
+							console.log("Game created successfully");
+						},
+						failure: function(){
+							console.log("Could not add friend");
+						},
+					});
+				},
+				callback: function(){
+					console.log("Game created successfully");
+				},
+				failure: function(){
+					console.log("Already Friends");
+				},
+			});
+
 		});
 
 		$('#view_all_messages').click(function() {
@@ -60,15 +96,7 @@
 						<div>
 							<strong>Friends List</strong>
 						</div>
-						<div>
-						<em>TetrisMan</em>
-						</div>
-						<div>
-						<em>user1</em>
-						</div>
 					</li>
-					<input type="text" id="new_friend_username" placeholder="Enter A Username" style="float:left;" >
-					<input type="button" id="add_friend" value="Add Friend" class="btn btn-success"  >
 				</ul>
 			</li>
 			<!-- End Dropdown Friends list -->
