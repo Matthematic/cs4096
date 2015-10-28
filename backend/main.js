@@ -41,7 +41,7 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(cookieParser());
 
   	app.get('/', function(req, res) {
-    		return res.sendFile('frontpage.html', {root: "./frontend/pages"});
+        return res.sendFile('frontpage.html', {root: "./frontend/pages"});
   	});
 
     app.get('/profile', function(req, res) {
@@ -68,6 +68,14 @@ connection.query('SELECT 1', function(err, rows) {
         return res.sendFile('social.html', {root: "./frontend/pages"});
     });
 
+    app.get('/messages', function(req, res) {
+        return res.sendFile('messages.html', {root: "./frontend/pages"});
+    });
+
+    app.get('/game', function(req, res) {
+        return res.sendFile('game.html', {root: "./frontend/pages"});
+    });
+
     var apiRouter = express.Router();
 
     apiRouter.post('/create-login', function(req, res, next) {
@@ -90,10 +98,10 @@ connection.query('SELECT 1', function(err, rows) {
         var m = new database.MessageDTO();
         m.sender = user.UserName;
         m.receiver = req.body.username;
-    		m.subject = 'You have been invited!';
-    		m.content = req.body.username + ' has invited you to a game!';
-
-    		database.MessageDTO.push(m, function(err) {
+		m.subject = 'You have been invited!';
+		m.content = user.UserName + ' has invited you to a game!';
+        m.type = 'invite';
+		database.MessageDTO.push(m, function(err) {
             var ret = {};
             if(err != null) {
                 ret.success = false;
@@ -138,6 +146,25 @@ connection.query('SELECT 1', function(err, rows) {
         });
   	});
 
+    apiRouter.post('/load-friends', authenticate.auth, function(req, res, next) {
+        user = jwt.decode(req.cookies.token);
+
+        var query ="SELECT friend FROM Friends WHERE user='" + user.UserName + "'";
+        console.log(query);
+        connection.query(query, function(err, rows) {
+            var ret = {};
+            if(err) res.send(err);
+
+            if(rows) {
+                ret.success = true;
+                ret.friends = rows;
+            }
+            res.json(ret);
+            next();
+            return;
+        });
+    });
+
     apiRouter.post('/load-open-games-ranked', function(req, res) {
         res.send(open_games_ranked);
     });
@@ -153,6 +180,39 @@ connection.query('SELECT 1', function(err, rows) {
         else if (req.body.queuetype == 'social') {
             open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
         }
+    });
+
+    apiRouter.post('/check_if_friends', authenticate.auth, function(req, res) {
+        console.log(req);
+        user = jwt.decode(req.cookies.token);
+        var query ="SELECT 1 FROM Friends WHERE user_id='" + user.UserName + "' AND friend_id = '" + req.body.username + "'";
+        console.log(query);
+        connection.query(query, function(err, rows) {
+            if(err) res.send(err);
+
+            else if(rows) {
+                res.send(true);
+            }
+            else {
+                res.send(null);
+            }
+        });
+    });
+
+    apiRouter.post('/add_friend', authenticate.auth, function(req, res) {
+        user = jwt.decode(req.cookies.token);
+        var query = 'INSERT INTO Friends (user, friend) VALUES ("' + user.UserName + '", "' + req.body.username + '"), ("' + req.body.username + '", "' + user.UserName + '");';
+        console.log(query);
+        connection.query(query, function(err, rows) {
+            if(err) res.send(err);
+
+            else if(rows) {
+                res.send(true);
+            }
+            else {
+                res.send(null);
+            }
+        });
     });
 
     app.use('/api', apiRouter);

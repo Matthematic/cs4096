@@ -10,11 +10,32 @@ $(document).ready(function() {
 
 });
 
-var get_row_data = function(row_num) {
+var accept_invite = function(row_num) {
 	var table = $('#messages_table').DataTable();
 
 	alert( 'You have accepted the invite from ' + table.row(row_num).data()[0] );
+	window.location.href = "/game";
+};
 
+var reject_invite = function(row_num) {
+	var table = $('#messages_table').DataTable();
+
+	alert( 'Removing the invite from ' + table.row(row_num).data()[0] );
+	/*$.ajax({
+		url: "/api/delete_message",
+		data: message_id,
+		datatype: 'json',
+		method: "post",
+		success: function(){
+			console.log("Game created successfully");
+		},
+		callback: function(){
+			console.log("Game created successfully");
+		},
+		failure: function(){
+			console.log("Could not create a game");
+		},
+	});*/
 };
 
 var load_messages = function() {
@@ -33,7 +54,8 @@ var load_messages = function() {
 					data.messages[i].sender,
 					data.messages[i].subject,
 					data.messages[i].content,
-					data.messages[i].type =='invite' ? '<input type="button" id="accept_invite_' + i + '" value="Accept" class="btn btn-success" onClick="get_row_data(' + i + ')">' : 'message'
+					data.messages[i].type =='invite' ? '<input type="button" id="accept_invite_' + i + '" value="Accept" class="btn btn-success" onClick="accept_invite(' + i + ')">' +
+						'<input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="reject_invite(' + i + ')">' : 'message'
 				] ).draw( true );
 			}
 			return Object.keys(data.messages).length;

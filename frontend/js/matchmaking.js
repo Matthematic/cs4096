@@ -12,11 +12,15 @@ $(document).ready(function() {
 	var social_table = $('#social_table').DataTable();
 
 	$('#ranked_table tbody').on( 'click', 'tr', function () {
-		alert( "ranked, " + ranked_table.row( this ).data());
+		var row_data = ranked_table.row( this ).data();
+		alert( "Game starting\n" + "Player: " + row_data[0] + "\tGametype: " + row_data[2]);
+		window.location.href="/game.html";
 	} );
 
 	$('#social_table tbody').on( 'click', 'tr', function () {
-		alert( "social, " + social_table.row( this ).data() );
+		var row_data = social_table.row( this ).data();
+		alert( "Game starting\n" + "Player: " + row_data[0] + "\tGametype: " + row_data[2]);
+		window.location.href="/game.html";
 	} );
 });
 

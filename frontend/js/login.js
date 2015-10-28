@@ -140,13 +140,23 @@
         console.log(new_data);
 
         $.ajax({
-            url: "/api/login",
+            url: "/api/sign-in",
             datatype: "json",
             data: new_data,
             method: "post",
-            success: function(){
-                alert("login successful");
-                console.log("login successful");
+            success: function(res){
+                if (res.success) {
+                    console.log("successful login");
+                    addAlert($('#alert-field'), 'success', "Success! Redirecting to profile page...");
+                    var expiryDate = new Date();
+                    expiryDate.setMinutes(expiryDate.getMinutes() + 30);
+                    setCookie('token', res.token, expiryDate);
+                    setTimeout(function() {window.location.href = '/profile';}, 3000);
+                }
+                else {
+                    console.log(res.message);
+                    addAlert($('#alert-field'), 'danger', res.message);
+                }
             },
             callback: function(){
                 alert("login successful");
@@ -158,7 +168,7 @@
             },
         });
 
-        document.location.href = '/profile';
+        //document.location.href = '/profile';
     });
 
     $('#register-button').click(function() {

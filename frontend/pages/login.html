@@ -48,47 +48,6 @@
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
-	<script>
-		var setCookie = function(cname, cvalue, exdays) {
-			var expires = "expires="+exdays.toUTCString();
-			document.cookie = cname + "=" + cvalue + "; " + expires;
-		};
-
-		var login = function() {
-			var loginForm = $("#loginForm");
-			var data = loginForm.serializeArray();
-			var new_data = {};
-
-			var i;
-			for (i = 0; i < data.length; i++) {
-				new_data[data[i]["name"]] = data[i]["value"];
-			}
-			console.log(new_data);
-
-			$.ajax({
-				url: "/api/sign-in",
-				datatype: "json",
-				data: new_data,
-				method: "post",
-				success: function(res){
-					if (res.success) {
-						console.log("logged in");
-						var expiryDate = new Date();
-						expiryDate.setMinutes(expiryDate.getMinutes() + 30);
-						setCookie('token', res.token, expiryDate);
-						document.location.href = '/profile';
-					}
-					else {
-						alert("login unsuccessful - try again");
-						console.log(res.message);
-					}
-				},
-				failure: function(){
-					console.log("an error has occurred");
-				},
-			});
-		}
-	</script>
 </head>
 
 <body>
