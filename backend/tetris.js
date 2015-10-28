@@ -846,13 +846,42 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 	
 	//special case handling and error checking (for clipping and the like) goes here
 	
-	//time to make theTet take the values we just calculated and update the game grid
 	for (i=0; i < tetSize; i++)
 	{
 		myArray[theTet[i].posY][theTet[i].posX] = null;
+	}
+	
+	//time to make theTet take the values we just calculated and update the game grid
+	for (i=0; i < tetSize; i++)
+	{
 		theTet[i].posX = rotTet[i].posX + localXOffset;
 		theTet[i].posY = rotTet[i].posY + localYOffset;
 		myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
 	}
 }
 
+function updateRight (theTet, tetSize)
+{
+    var bool = true;
+	
+    for (i=0; i<tetSize; i++)
+	{
+	    for (j=0; j<tetSize; j++)
+		{
+		    if (j != i)
+			{
+			    //if the current block has a neighboring block 
+			    if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j])
+				{
+				    theTet[i].right = theTet[j];
+				}
+			}
+		}
+	}
+}
+
+function updateLeft (theTet, tetSize)
+{
+}
+
+function updateDown (theTet, tetSize)
