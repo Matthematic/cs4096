@@ -798,8 +798,6 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 	
 	var rotTet = new Array(tetSize);
 	
-	console.log (tetSize);
-	
 	for ( i=0; i<tetSize; i++)
 	{
 		rotTet[i] = new Block;
@@ -858,30 +856,88 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 		theTet[i].posY = rotTet[i].posY + localYOffset;
 		myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
 	}
+	
+	updateRight(theTet, tetSize);
+	updateLeft(theTet, tetSize);
+	updateDown(theTet, tetSize);
 }
 
 function updateRight (theTet, tetSize)
 {
-    var bool = true;
+    var bool;
 	
     for (i=0; i<tetSize; i++)
 	{
+	    bool = true;
 	    for (j=0; j<tetSize; j++)
 		{
 		    if (j != i)
 			{
-			    //if the current block has a neighboring block 
-			    if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j])
+			    //if the current block has a neighbouring block in the active tet, set right to that block
+			    if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
 				{
 				    theTet[i].right = theTet[j];
+					bool = false;
 				}
 			}
+		}
+		
+		//if it had no neighbouring blocks in the active tet, set the right to null
+		if (bool == true)
+		{
+		    theTet[i].right = null;
 		}
 	}
 }
 
 function updateLeft (theTet, tetSize)
 {
+    var bool;
+	
+	for (i=0; i<tetSize; i++)
+	{
+	    bool = true;
+		for (j=0; j<tetSize; j++)
+		{
+		    if (j != i)
+			{
+			    if (theTet[i].posX-1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+				{
+				    theTet[i].left = theTet[j];
+					bool = false;
+				}
+			}
+		}
+		
+		if (bool == true)
+		{
+		    theTet[i].left = null;
+		}
+	}
 }
 
 function updateDown (theTet, tetSize)
+{
+    var bool;
+	
+	for (i=0; i<tetSize; i++)
+	{
+	    bool = true;
+		for (j=0; j<tetSize; j++)
+		{
+		    if (j != i)
+			{
+			    if (theTet[i].posX == theTet[j].posX && theTet[i].posY + 1 == theTet[j].posY)
+				{
+				    theTet[i].down = theTet[j];
+					bool = false;
+				}
+			}
+		}
+		
+		if (bool == true)
+		{
+		    theTet[i].down = null;
+		}
+	}
+}
