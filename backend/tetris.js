@@ -21,6 +21,8 @@ console.log('test, test');
 
 var theGrid = new Block;
 var stillBlocks = new Array(0);
+var playerScore = 0;
+var currentLevel = 0;
 
 /*
 stillBlocks[0] = new Block;
@@ -98,6 +100,9 @@ function InitializeGrid() {
 
 function DisplayGrid(theGrid) {
     var s = '';
+    s = 'Current Level: ' + currentLevel + ' Score: ' + playerScore;
+    console.log(s);
+    s = '';
     for (var i = 0; i < 20; i++) {
         s = '<|';
         for (var j = 0; j < 10; j++) {
@@ -526,6 +531,7 @@ function MovePieceLeft(currentTet, theGrid) {
 
 function CheckForRows() {
     var j = 0;
+    var clearedRows = 0
     var foundHole = false;
     for (var i = 19; i >= 0; i--) {
         j = 0;
@@ -537,23 +543,44 @@ function CheckForRows() {
             j++;
         }
         if (foundHole == false) {
+            clearedRows++;
             for (k = 0; k < 10; k++) {
                 var removalIndex = stillBlocks.indexOf(theGrid[i][k]);
                 stillBlocks.splice(removalIndex, 1);
                 theGrid[i][k] = null;
             }
-        for (var x = i; x > 0; x--) {
-            for (var y = 0; y < 10; y++) {
-                if (theGrid[x-1][y] != null) {
-                    theGrid[x-1][y].posY += 1;
-                    theGrid[x][y] = theGrid[x-1][y];
-                    theGrid[x-1][y] = null;
+            for (var x = i; x > 0; x--) {
+                for (var y = 0; y < 10; y++) {
+                    if (theGrid[x-1][y] != null) {
+                        theGrid[x-1][y].posY += 1;
+                        theGrid[x][y] = theGrid[x-1][y];
+                        theGrid[x-1][y] = null;
+                    }
                 }
+                
             }
-
         }
+    }
+    
+    CalculateScore(clearedRows);
+}
 
-        }
+function CalculateScore(clearedRows) {
+    switch (clearedRows) {
+        case 0:
+            break;
+        case 1:
+            playerScore += (40*(currentLevel + 1));
+            break;
+        case 2:
+            playerScore += (100*(currentLevel + 1));
+            break;
+        case 3:
+            playerScore += (300*(currentLevel + 1));
+            break;
+        case 4:
+            playerScore += (1200*(currentLevel + 1));
+            break;
     }
 }
 
@@ -941,4 +968,6 @@ function updateDown (theTet, tetSize)
 		}
 	}
 }
+
+setInterval(down, 1000 );
 
