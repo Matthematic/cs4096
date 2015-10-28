@@ -41,8 +41,24 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(cookieParser());
 
   	app.get('/', function(req, res) {
-        return res.sendFile('frontpage.html', {root: "./frontend/pages"});
-  	});
+				var token = req.cookies.token;
+
+				if(token) {
+						jwt.verify(token, 'notevencloselistenbaby', function(err, decoded) {
+								if(err) {
+										res.json({success: false, message: 'Failed to authenticate token.'});
+								} else {
+										req.decoded = decoded;
+								}
+						});
+
+				} else {
+						console.log("error token auth");
+						return res.sendFile('frontpage.html', {root: "./frontend/pages"});
+				}
+
+				return res.sendFile('dashboard.html', {root: "./frontend/pages"});
+    });
 
     app.get('/profile', function(req, res) {
         return res.sendFile('dashboard.html', {root: "./frontend/pages"});
@@ -98,10 +114,10 @@ connection.query('SELECT 1', function(err, rows) {
         var m = new database.MessageDTO();
         m.sender = user.UserName;
         m.receiver = req.body.username;
-		m.subject = 'You have been invited!';
-		m.content = user.UserName + ' has invited you to a game!';
+				m.subject = 'You have been invited!';
+				m.content = user.UserName + ' has invited you to a game!';
         m.type = 'invite';
-		database.MessageDTO.push(m, function(err) {
+				database.MessageDTO.push(m, function(err) {
             var ret = {};
             if(err != null) {
                 ret.success = false;
@@ -135,10 +151,8 @@ connection.query('SELECT 1', function(err, rows) {
                 return;
             }
 
-            if(rows != null) {
-                ret.success = true;
-                ret.messages = rows;
-            }
+            ret.success = true;
+            ret.messages = rows;
 
             res.json(ret);
             next();
@@ -153,7 +167,10 @@ connection.query('SELECT 1', function(err, rows) {
         console.log(query);
         connection.query(query, function(err, rows) {
             var ret = {};
-            if(err) res.send(err);
+            if(err) {
+							res.send(err);
+							return;
+						}
 
             if(rows) {
                 ret.success = true;
@@ -170,7 +187,7 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/load-open-games-social', function(req, res) {
-            res.send(open_games_social);
+    		res.send(open_games_social);
     });
 
     apiRouter.post('/create_game', authenticate.auth, function(req, res) {
@@ -188,12 +205,11 @@ connection.query('SELECT 1', function(err, rows) {
         var query ="SELECT 1 FROM Friends WHERE user_id='" + user.UserName + "' AND friend_id = '" + req.body.username + "'";
         console.log(query);
         connection.query(query, function(err, rows) {
-            if(err) res.send(err);
-
-            else if(rows) {
+            if(err) {
+								res.send(err);
+						} else if(rows) {
                 res.send(true);
-            }
-            else {
+            } else {
                 res.send(null);
             }
         });
@@ -204,12 +220,11 @@ connection.query('SELECT 1', function(err, rows) {
         var query = 'INSERT INTO Friends (user, friend) VALUES ("' + user.UserName + '", "' + req.body.username + '"), ("' + req.body.username + '", "' + user.UserName + '");';
         console.log(query);
         connection.query(query, function(err, rows) {
-            if(err) res.send(err);
-
-            else if(rows) {
+            if(err) {
+								res.send(err);
+						} else if(rows) {
                 res.send(true);
-            }
-            else {
+            } else {
                 res.send(null);
             }
         });
