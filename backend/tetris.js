@@ -144,6 +144,10 @@ function CreateLPiece() {
     currentTet[2].posY = 1;
     currentTet[3].posX = 5;
     currentTet[3].posY = 0;
+	
+	currentTet[0].wide = true;
+	currentTet[0].offset = 4;
+	currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -181,7 +185,11 @@ function CreateJPiece() {
     currentTet[2].posY = 0;
     currentTet[3].posX = 5;
     currentTet[3].posY = 1;
-
+	
+	currentTet[0].wide = true;
+	currentTet[0].offset = 4;
+	currentTet[1].offset = 3;
+	
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -219,6 +227,10 @@ function CreateIPiece() {
     currentTet[3].posX = 6;
     currentTet[3].posY = 0;
 
+	currentTet[0].wide = true;
+	currentTet[0].offset = 5;
+	currentTet[1].offset = 2;
+	
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -256,6 +268,10 @@ function CreateOPiece() {
     currentTet[3].posX = 4;
     currentTet[3].posY = 1;
 
+	currentTet[0].wide = true;
+	currentTet[0].offset = 3;
+	currentTet[1].offset = 3;
+	
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -293,6 +309,10 @@ function CreateZPiece() {
     currentTet[3].posX = 5;
     currentTet[3].posY = 1;
 
+	currentTet[0].wide = true;
+	currentTet[0].offset = 4;
+	currentTet[1].offset = 3;
+	
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -330,6 +350,10 @@ function CreateSPiece() {
     currentTet[3].posX = 5;
     currentTet[3].posY = 0;
 
+	currentTet[0].wide = true;
+	currentTet[0].offset = 4;
+	currentTet[1].offset = 3;
+	
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -367,6 +391,10 @@ function CreateTPiece() {
     currentTet[3].posX = 4;
     currentTet[3].posY = 0;
 
+	currentTet[0].wide = true;
+	currentTet[0].offset = 4;
+	currentTet[1].offset = 3;
+	
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -609,6 +637,17 @@ function left(gameid, player) {
 
 function up(gameid, player) {
     console.log("up");
+	if (currentTet[0].wide == true)
+	{
+		Rotate (currentTet, theGrid, currentTet[0].offset, 4);
+		currentTet[0].wide = false;
+	}
+	else
+	{
+		Rotate (currentTet, theGrid, currentTet[1].offset, 4);
+		currentTet[0].wide = true;
+	}
+	DisplayGrid(theGrid);
 };
 
 function down(gameid, player) {
@@ -746,4 +785,74 @@ module.exports = {
     "pause": pause,
     "newGame": newGame
 };
+
+//horizOffset is the "width" of the piece being operated on +1, so a tallise L piece has a width of 2, so the offset should be 3, a sideways L piece would be 4
+//tetSize is the size of the tet, for any tetromino this is 4, it is included at this point purely to allow us to do things like rotate quintonimos if we later add them as a powerup or something
+function Rotate (theTet, myArray, horizOffset, tetSize) {
+	var localXOffset;
+	var localYOffset;
+	var minOrigY=21;
+	var minOrigX=21;
+	/*var rotTet = jQuery.extend(true, {}, theTet);*/
+	var rotDummy;
+	
+	var rotTet = new Array(tetSize);
+	
+	console.log (tetSize);
+	
+	for ( i=0; i<tetSize; i++)
+	{
+		rotTet[i] = new Block;
+	}
+	
+	for ( i=0; i<tetSize; i++)
+	{
+		rotTet[i].posX = theTet[i].posX;
+		rotTet[i].posY = theTet[i].posY;
+	}
+	
+	
+	//first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
+	
+	for ( i = 0; i < tetSize; i++){
+		if (theTet[i].posX < minOrigX)
+		{
+			minOrigX = theTet[i].posX;
+		}
+		if (theTet[i].posY < minOrigY)
+		{
+			minOrigY = theTet[i].posY;
+		}
+	}
+	
+	// the max/mins have been found at this point, it is now time to set the offsets that will put me in my preferred location in local co-ordinate space
+	localXOffset = minOrigX - 1;
+	localYOffset = minOrigY - 1;
+	
+	//at this point, I'm going to set the co-ordinates for the rotated tet piece
+	for (i = 0; i < tetSize; i++)
+	{
+		rotTet[i].posX = (theTet[i].posX - localXOffset);
+		rotTet[i].posY = (theTet[i].posY - localYOffset);
+	}
+	
+	//at the completion of the above loop, the rotTet entity now has the co-ordinates of theTet, but offset to be nestled in a quadrant's corner, it is time to do the rotation math
+	for (i = 0; i < tetSize; i++)
+	{
+		rotDummy = rotTet[i].posX;
+		rotTet[i].posX = -rotTet[i].posY + horizOffset;
+		rotTet[i].posY = rotDummy;
+	}
+	
+	//special case handling and error checking (for clipping and the like) goes here
+	
+	//time to make theTet take the values we just calculated and update the game grid
+	for (i=0; i < tetSize; i++)
+	{
+		myArray[theTet[i].posY][theTet[i].posX] = null;
+		theTet[i].posX = rotTet[i].posX + localXOffset;
+		theTet[i].posY = rotTet[i].posY + localYOffset;
+		myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
+	}
+}
 
