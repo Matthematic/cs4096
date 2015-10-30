@@ -42,13 +42,14 @@
                         '<div>' + data.friends[i].friend + '</div></a></li>'
                     );
                 }
-                $('#friends_list').append('<input type="text" id="new_friend_username" placeholder="Enter A Username" style="float:left;" >' +
-                    '<input type="button" id="add_friend" value="Add Friend" class="btn btn-success"  >');
+                //$('#friends_list').append('<input type="text" id="new_friend_username" placeholder="Enter A Username" style="float:left;" >' +
+                  //  '<input type="button" id="add_friend" value="Add Friend" class="btn btn-success"  >');
             } else {
                 console.log("error getting friends data");
             }
         }
     });
+
 
     $.ajax({
         url: "/api/load-username-display",

@@ -1,189 +1,185 @@
 <head>
-	<link rel="stylesheet" type="text/css" href="../css/navbar.css" media="screen" />
-	<script>
-		$('#logout').click(function() {
-			var cookies = document.cookie.split(";");
+    <link rel="stylesheet" type="text/css" href="../css/navbar.css" media="screen" />
+    <script>
+        $('#logout').click(function() {
+            var cookies = document.cookie.split(";");
 
-			for (var i = 0; i < cookies.length; i++) {
-				var cookie = cookies[i];
-				var eqPos = cookie.indexOf("=");
-				var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-				document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-			}
-		 });
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                var eqPos = cookie.indexOf("=");
+                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+         });
 
-		$('#add_friend').click(function() {
-			var new_friend = { "username": $('#new_friend_username').val() };
-			console.log("adding " + new_friend.username);
+        $('#add_friend').click(function() {
+            var new_friend = { "username": $('#new_friend_username').val() };
+            console.log("adding " + new_friend.username);
 
-			var add = false;
-			$.ajax({
-				url: "/api/check_if_friends",
-				data: new_friend,
-				datatype: 'json',
-				method: "post",
-				success: function(res){
-					console.log(res);
-					console.log("Not Friends");
-					add = true;
-					$.ajax({
-						url: "/api/add_friend",
-						data: new_friend,
-						datatype: 'json',
-						method: "post",
-						success: function(res){
-							console.log(res);
-							console.log("Friend added successfully");
-						},
-						callback: function(){
-							console.log("Game created successfully");
-						},
-						failure: function(){
-							console.log("Could not add friend");
-						},
-					});
-				},
-				callback: function(){
-					console.log("Game created successfully");
-				},
-				failure: function(){
-					console.log("Already Friends");
-				},
-			});
+            var add = false;
+            $.ajax({
+                url: "/api/check_if_friends",
+                data: new_friend,
+                datatype: 'json',
+                method: "post",
+                success: function(res){
+                    console.log(res);
+                    console.log("Not Friends");
+                    add = true;
+                    $.ajax({
+                        url: "/api/send_friend_request",
+                        data: new_friend,
+                        datatype: 'json',
+                        method: "post",
+                        success: function(res){
+                            console.log(res);
+                            console.log("Friend request sent successfully");
+                        },
+                        failure: function(){
+                            console.log("Could not send freind request");
+                        },
+                    });
+                },
+                failure: function(){
+                    console.log("Already Friends");
+                },
+            });
 
-		});
+        });
 
-		$('#view_all_messages').click(function() {
-			window.location.href="/messages";
-		});
+        $('#view_all_messages').click(function() {
+            window.location.href="/messages";
+        });
 
-	</script>
+    </script>
 </head>
 <body>
-	<div id="top-navbar">
-		<!-- Begin Top Dropdown Navbar -->
-		<nav class="navbar navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="/">Kilobytes of Tetris</a>
-		</div>
-		<!-- /.navbar-header -->
+    <div id="top-navbar">
+        <!-- Begin Top Dropdown Navbar -->
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Kilobytes of Tetris</a>
+        </div>
+        <!-- /.navbar-header -->
 
-		<ul class="nav navbar-top-links navbar-right">
-			<!-- Begin Dropdown Messages -->
-			<li id="messages" class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-					<i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
-				</a>
-				<ul class="dropdown-menu dropdown-messages" id="message_list">
-					<input type="button" id="view_all_messages" value="View All Messages" class="btn btn-success"  >
-				</ul>
-			</li>
-			<!-- End Dropdown Messages-->
+        <ul class="nav navbar-top-links navbar-right">
+            <!-- Begin Dropdown Messages -->
+            <li id="messages" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-messages" id="message_list">
+                    <input type="button" id="view_all_messages" value="View All Messages" class="btn btn-success"  >
+                </ul>
+            </li>
+            <!-- End Dropdown Messages-->
 
-			<!-- Begin Dropdown Friends list -->
-			<li id="friends" class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-					<i class="fa fa-users fa-fw"></i>  <i class="fa fa-caret-down"></i>
-				</a>
-				<ul class="dropdown-menu dropdown-messages" id="friends_list">
-					<li>
-						<div>
-							<strong>Friends List</strong>
-						</div>
-					</li>
-				</ul>
-			</li>
-			<!-- End Dropdown Friends list -->
+            <!-- Begin Dropdown Friends list -->
+            <li id="friends" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-users fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-messages" id="friends_list">
+                    <div>
+                        <strong>Friends List</strong>
+                    </div>
+                    <input type="text" id="new_friend_username" placeholder="Enter A Username" style="float:left;" >
+                    <input type="button" id="add_friend" value="Add Friend" class="btn btn-success"  >
+                    <li>
+                    </li>
+                </ul>
+            </li>
+            <!-- End Dropdown Friends list -->
 
-			<!-- Begin Dropdown User Settings -->
-			<li id="profile" class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameDisplay">
-					<!--<i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>-->
-				</a>
-				<ul id="profile-logged-in" class="dropdown-menu dropdown-user">
-					<li><a href="/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
-					</li>
-					<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
-					</li>
-					<li class="divider"></li>
-					<li id="logout"><a href="/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-					</li>
-				</ul>
-				<ul id="profile-logged-out" class="dropdown-menu dropdown-user">
-					<li class="divider"></li>
-					<!--
-					<li>
-						<a href="login.html"><i class="fa fa-user fa-fw"></i> Sign In</a>
-					</li>
-					-->
-				</ul>
-			</li>
-			<!-- Begin Dropdown User Settings -->
+            <!-- Begin Dropdown User Settings -->
+            <li id="profile" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameDisplay">
+                    <!--<i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>-->
+                </a>
+                <ul id="profile-logged-in" class="dropdown-menu dropdown-user">
+                    <li><a href="/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
+                    <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li id="logout"><a href="/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+                <ul id="profile-logged-out" class="dropdown-menu dropdown-user">
+                    <li class="divider"></li>
+                    <!--
+                    <li>
+                        <a href="login.html"><i class="fa fa-user fa-fw"></i> Sign In</a>
+                    </li>
+                    -->
+                </ul>
+            </li>
+            <!-- Begin Dropdown User Settings -->
 
-		</ul>
-		<!-- End Top Dropdown Navbar -->
-	</div>
+        </ul>
+        <!-- End Top Dropdown Navbar -->
+    </div>
 
-	<div id="sidebar" class="navbar-default sidebar" role="navigation">
-		<div class="sidebar-nav navbar-collapse">
-			<ul class="nav" id="side-menu">
-				<li class="sidebar-search">
-					<div class="input-group custom-search-form">
-						<input type="text" class="form-control" placeholder="Search...">
-						<span class="input-group-btn">
-						<button class="btn btn-default" type="button">
-							<i class="fa fa-search"></i>
-						</button>
-					</span>
-					</div>
-					<!-- /input-group -->
-				</li>
-				<li>
-					<a href="/matchmaking"><i class="fa fa-group fa-fw"></i> Matchmaking</a>
-				</li>
-				<li>
-					<a href="/profile"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-				</li>
-				<li>
-					<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Stats<span class="fa arrow"></span></a>
-					<ul class="nav nav-second-level">
-						<li>
-							<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Personal<span class="fa arrow"></span></a>
-							<ul class="nav nav-third-level">
-								<li>
-									<a href="/stats/ranked">Ranked</a>
-								</li>
-								<li>
-									<a href="/stats/social">Social</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Leaderboards<span class="fa arrow"></span></a>
-							<ul class="nav nav-third-level">
-								<li>
-									<a href="ranked_leaderboards.html">Ranked</a>
-								</li>
-								<li>
-									<a href="social_leaderboards.html">Social</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-					<!-- /.nav-second-level -->
-				</li>
-		</div>
-	</div>
-	<!-- /.navbar-static-side -->
+    <div id="sidebar" class="navbar-default sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="sidebar-search">
+                    <div class="input-group custom-search-form">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                    </div>
+                    <!-- /input-group -->
+                </li>
+                <li>
+                    <a href="/matchmaking"><i class="fa fa-group fa-fw"></i> Matchmaking</a>
+                </li>
+                <li>
+                    <a href="/profile"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Stats<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Personal<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li>
+                                    <a href="/stats/ranked">Ranked</a>
+                                </li>
+                                <li>
+                                    <a href="/stats/social">Social</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Leaderboards<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li>
+                                    <a href="ranked_leaderboards.html">Ranked</a>
+                                </li>
+                                <li>
+                                    <a href="social_leaderboards.html">Social</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+        </div>
+    </div>
+    <!-- /.navbar-static-side -->
 
-	<!-- Custom Theme JavaScript -->
-	<script src="../js/sb-admin-2.js"></script>
-	<script src="../js/navbar.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="../js/sb-admin-2.js"></script>
+    <script src="../js/navbar.js"></script>
 
 </body>
