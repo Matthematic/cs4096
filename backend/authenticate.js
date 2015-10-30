@@ -8,11 +8,14 @@ module.exports = {
         database.UserDTO.getByName(req.body.username, function(err, dto) {
             if(err != null) {
                 callback({success: false, message: "The server had an unexpected error. Please try again later."});
+                console.log("Database query error occurred:");
+                console.log(err);
                 return;
             }
 
             if(dto != null) {
                 callback({success: false, message: "That username already exists."});
+                console.log("Submitted username already exists.");
                 return;
             } else {
                 var newUser = new database.UserDTO();
@@ -24,12 +27,14 @@ module.exports = {
                 database.UserDTO.push(newUser, function(err) {
                     if(err) {
                         callback({success: false, message: "The server had an unexpected error"});
+                        console.log("Could not push new user to database.");
                         return;
                     }
 
                     database.UserDTO.getByName(newUser.UserName, function(err, dto) {
                         if(err || dto == null) {
                             callback({success: false, message: "The server had an unexpected error"});
+                            console.log("Couldn't retrieve new user data.");
                             return;
                         }
 
@@ -54,15 +59,19 @@ module.exports = {
         database.UserDTO.getByName(req.body.username, function(err, dto) {
             if(err) {
                 callback({success: false, message: "The server had an unexpected error. Please try again later."});
+                console.log ("The getByName query failed.")
+                console.log (err);
                 return;
             }
 
             if(dto == null) {
                 callback({success: false, message: "Authentication failed. User not found."});
+                console.log("Authentication failed, user not found.");
                 return;
             } else {
                 if(dto.Password != req.body.password) {
                     callback({success: false, message: "Authentication failed. Password is incorrect."});
+                    console.log("Authentication failed. password is incorrect.");
                     return;
                 } else {
 

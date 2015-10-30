@@ -12,14 +12,14 @@ var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classi
 var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
 
 process.on('SIGINT', function() {
-		console.log('Closing database connection...');
-		connection.end(function(err) {
-				if(typeof err == "undefined") {
-					console.log ('Could not close connection: ' + err.stack);
-				} else {
-					console.log ('Connection closed successfully.');
-				}
-		});
+        console.log('Closing database connection...');
+        connection.end(function(err) {
+                if(typeof err == "undefined") {
+                    console.log ('Could not close connection: ' + err.stack);
+                } else {
+                    console.log ('Connection closed successfully.');
+                }
+        });
 });
 
 connection.query('SELECT 1', function(err, rows) {
@@ -30,9 +30,9 @@ connection.query('SELECT 1', function(err, rows) {
     }
     var app = express();
 
-  	app.use(express.static('.tmp/'));
-  	app.use(express.static('frontend/pages'));
-  	app.use('/bower_components', express.static('bower_components'));
+    app.use(express.static('.tmp/'));
+    app.use(express.static('frontend/pages'));
+    app.use('/bower_components', express.static('bower_components'));
 
     app.use(bodyParser.urlencoded({
         extended: true
@@ -40,9 +40,25 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(bodyParser.json());
     app.use(cookieParser());
 
-  	app.get('/', function(req, res) {
-        return res.sendFile('frontpage.html', {root: "./frontend/pages"});
-  	});
+    app.get('/', function(req, res) {
+        var token = req.cookies.token;
+
+        if(token) {
+                jwt.verify(token, 'notevencloselistenbaby', function(err, decoded) {
+                        if(err) {
+                                res.json({success: false, message: 'Failed to authenticate token.'});
+                        } else {
+                                req.decoded = decoded;
+                        }
+                });
+
+        } else {
+                console.log("error token auth");
+                return res.sendFile('frontpage.html', {root: "./frontend/pages"});
+        }
+
+        return res.sendFile('dashboard.html', {root: "./frontend/pages"});
+    });
 
     app.get('/profile', function(req, res) {
         return res.sendFile('dashboard.html', {root: "./frontend/pages"});
@@ -93,15 +109,15 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     // need to send a "message" to a user, maybe an email
-  	apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
+    apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
         var m = new database.MessageDTO();
         m.sender = user.UserName;
         m.receiver = req.body.username;
-		m.subject = 'You have been invited!';
-		m.content = user.UserName + ' has invited you to a game!';
+                m.subject = 'You have been invited!';
+                m.content = user.UserName + ' has invited you to a game!';
         m.type = 'invite';
-		database.MessageDTO.push(m, function(err) {
+                database.MessageDTO.push(m, function(err) {
             var ret = {};
             if(err != null) {
                 ret.success = false;
@@ -113,7 +129,7 @@ connection.query('SELECT 1', function(err, rows) {
             }
             res.json(ret);
         });
-  	});
+    });
 
     apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
             user = jwt.decode(req.cookies.token);
@@ -121,8 +137,8 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     // need to send a "message" to a user, maybe an email
-  	apiRouter.post('/load-messages', authenticate.auth, function(req, res, next) {
-    	user = jwt.decode(req.cookies.token);
+    apiRouter.post('/load-messages', authenticate.auth, function(req, res, next) {
+        user = jwt.decode(req.cookies.token);
 
         database.MessageDTO.getByReceiver(user.UserName, function(err, rows) {
             var ret = {};
@@ -135,16 +151,14 @@ connection.query('SELECT 1', function(err, rows) {
                 return;
             }
 
-            if(rows != null) {
-                ret.success = true;
-                ret.messages = rows;
-            }
+            ret.success = true;
+            ret.messages = rows;
 
             res.json(ret);
             next();
             return;
         });
-  	});
+    });
 
     apiRouter.post('/load-friends', authenticate.auth, function(req, res, next) {
         user = jwt.decode(req.cookies.token);
@@ -153,7 +167,10 @@ connection.query('SELECT 1', function(err, rows) {
         console.log(query);
         connection.query(query, function(err, rows) {
             var ret = {};
-            if(err) res.send(err);
+            if(err) {
+                            res.send(err);
+                            return;
+                        }
 
             if(rows) {
                 ret.success = true;
@@ -188,12 +205,11 @@ connection.query('SELECT 1', function(err, rows) {
         var query ="SELECT 1 FROM Friends WHERE user_id='" + user.UserName + "' AND friend_id = '" + req.body.username + "'";
         console.log(query);
         connection.query(query, function(err, rows) {
-            if(err) res.send(err);
-
-            else if(rows) {
+            if(err) {
+                                res.send(err);
+                        } else if(rows) {
                 res.send(true);
-            }
-            else {
+            } else {
                 res.send(null);
             }
         });

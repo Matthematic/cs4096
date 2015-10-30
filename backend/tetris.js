@@ -21,6 +21,8 @@ console.log('test, test');
 
 var theGrid = new Block;
 var stillBlocks = new Array(0);
+var playerScore = 0;
+var currentLevel = 0;
 
 /*
 stillBlocks[0] = new Block;
@@ -62,7 +64,7 @@ GeneratePieces();
 DisplayGrid(theGrid);
 var userInput = 0;
 //while (userInput != 'q') {
-    
+
     y.question('Your move? :', function(userInput) {
         if (userInput == 'a') {
             MovePieceLeft(currentTet, theGrid);
@@ -77,8 +79,8 @@ var userInput = 0;
         y.close();
         //y.stdin.destroy();
     });
-    
-    
+
+
     //CheckForRows(theGrid, stillBlocks);
     //DisplayGrid(theGrid);
 //}
@@ -98,6 +100,9 @@ function InitializeGrid() {
 
 function DisplayGrid(theGrid) {
     var s = '';
+    s = 'Current Level: ' + currentLevel + ' Score: ' + playerScore;
+    console.log(s);
+    s = '';
     for (var i = 0; i < 20; i++) {
         s = '<|';
         for (var j = 0; j < 10; j++) {
@@ -144,7 +149,7 @@ function CreateLPiece() {
     currentTet[2].posY = 1;
     currentTet[3].posX = 5;
     currentTet[3].posY = 0;
-	
+
 	currentTet[0].wide = true;
 	currentTet[0].offset = 4;
 	currentTet[1].offset = 3;
@@ -185,11 +190,11 @@ function CreateJPiece() {
     currentTet[2].posY = 0;
     currentTet[3].posX = 5;
     currentTet[3].posY = 1;
-	
+
 	currentTet[0].wide = true;
 	currentTet[0].offset = 4;
 	currentTet[1].offset = 3;
-	
+
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -230,7 +235,7 @@ function CreateIPiece() {
 	currentTet[0].wide = true;
 	currentTet[0].offset = 5;
 	currentTet[1].offset = 2;
-	
+
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -271,7 +276,7 @@ function CreateOPiece() {
 	currentTet[0].wide = true;
 	currentTet[0].offset = 3;
 	currentTet[1].offset = 3;
-	
+
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -312,7 +317,7 @@ function CreateZPiece() {
 	currentTet[0].wide = true;
 	currentTet[0].offset = 4;
 	currentTet[1].offset = 3;
-	
+
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -353,7 +358,7 @@ function CreateSPiece() {
 	currentTet[0].wide = true;
 	currentTet[0].offset = 4;
 	currentTet[1].offset = 3;
-	
+
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -394,7 +399,7 @@ function CreateTPiece() {
 	currentTet[0].wide = true;
 	currentTet[0].offset = 4;
 	currentTet[1].offset = 3;
-	
+
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
@@ -526,6 +531,7 @@ function MovePieceLeft(currentTet, theGrid) {
 
 function CheckForRows() {
     var j = 0;
+    var clearedRows = 0
     var foundHole = false;
     for (var i = 19; i >= 0; i--) {
         j = 0;
@@ -537,29 +543,50 @@ function CheckForRows() {
             j++;
         }
         if (foundHole == false) {
+            clearedRows++;
             for (k = 0; k < 10; k++) {
                 var removalIndex = stillBlocks.indexOf(theGrid[i][k]);
                 stillBlocks.splice(removalIndex, 1);
                 theGrid[i][k] = null;
             }
-        for (var x = i; x > 0; x--) {
-            for (var y = 0; y < 10; y++) {
-                if (theGrid[x-1][y] != null) {
-                    theGrid[x-1][y].posY += 1;
-                    theGrid[x][y] = theGrid[x-1][y];
-                    theGrid[x-1][y] = null;
+            for (var x = i; x > 0; x--) {
+                for (var y = 0; y < 10; y++) {
+                    if (theGrid[x-1][y] != null) {
+                        theGrid[x-1][y].posY += 1;
+                        theGrid[x][y] = theGrid[x-1][y];
+                        theGrid[x-1][y] = null;
+                    }
                 }
+                
             }
-            
         }
-        
-        }
+    }
+    
+    CalculateScore(clearedRows);
+}
+
+function CalculateScore(clearedRows) {
+    switch (clearedRows) {
+        case 0:
+            break;
+        case 1:
+            playerScore += (40*(currentLevel + 1));
+            break;
+        case 2:
+            playerScore += (100*(currentLevel + 1));
+            break;
+        case 3:
+            playerScore += (300*(currentLevel + 1));
+            break;
+        case 4:
+            playerScore += (1200*(currentLevel + 1));
+            break;
     }
 }
 
 function TetToBlocks() {
     for (var i = 0; i < 4; i++) {
-        
+
         currentTet[i].left = null;
         currentTet[i].right = null;
         currentTet[i].up = null;
@@ -570,10 +597,10 @@ function TetToBlocks() {
 }
 
 function GeneratePieces() {
-    
+
     currentPieceType = nextPieceType;
     nextPieceType = Math.floor((Math.random() * 7));
-    
+
     switch(currentPieceType) {
         case 0:
             CreateLPiece();
@@ -597,10 +624,10 @@ function GeneratePieces() {
             CreateTPiece();
             break;
     }
-    
-    
-    
-    
+
+
+
+
 }
 
 function left(gameid, player) {
@@ -678,15 +705,15 @@ function down(gameid, player) {
         theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
         theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
-    
+
     if (CanMoveDown() == false) {
         TetToBlocks();
         CheckForRows();
         GeneratePieces();
     }
     DisplayGrid(theGrid);
-    
-    
+
+
     //return moveDown;
 };
 
@@ -758,7 +785,7 @@ function space(gameid, player) {
     TetToBlocks();
     CheckForRows();
     GeneratePieces();
-    
+
     DisplayGrid(theGrid);
 
 };
@@ -795,25 +822,23 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 	var minOrigX=21;
 	/*var rotTet = jQuery.extend(true, {}, theTet);*/
 	var rotDummy;
-	
+
 	var rotTet = new Array(tetSize);
-	
-	console.log (tetSize);
-	
+
 	for ( i=0; i<tetSize; i++)
 	{
 		rotTet[i] = new Block;
 	}
-	
+
 	for ( i=0; i<tetSize; i++)
 	{
 		rotTet[i].posX = theTet[i].posX;
 		rotTet[i].posY = theTet[i].posY;
 	}
-	
-	
+
+
 	//first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
-	
+
 	for ( i = 0; i < tetSize; i++){
 		if (theTet[i].posX < minOrigX)
 		{
@@ -824,18 +849,18 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 			minOrigY = theTet[i].posY;
 		}
 	}
-	
+
 	// the max/mins have been found at this point, it is now time to set the offsets that will put me in my preferred location in local co-ordinate space
 	localXOffset = minOrigX - 1;
 	localYOffset = minOrigY - 1;
-	
+
 	//at this point, I'm going to set the co-ordinates for the rotated tet piece
 	for (i = 0; i < tetSize; i++)
 	{
 		rotTet[i].posX = (theTet[i].posX - localXOffset);
 		rotTet[i].posY = (theTet[i].posY - localYOffset);
 	}
-	
+
 	//at the completion of the above loop, the rotTet entity now has the co-ordinates of theTet, but offset to be nestled in a quadrant's corner, it is time to do the rotation math
 	for (i = 0; i < tetSize; i++)
 	{
@@ -843,16 +868,106 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 		rotTet[i].posX = -rotTet[i].posY + horizOffset;
 		rotTet[i].posY = rotDummy;
 	}
-	
+
 	//special case handling and error checking (for clipping and the like) goes here
-	
-	//time to make theTet take the values we just calculated and update the game grid
+
 	for (i=0; i < tetSize; i++)
 	{
 		myArray[theTet[i].posY][theTet[i].posX] = null;
+	}
+
+	//time to make theTet take the values we just calculated and update the game grid
+	for (i=0; i < tetSize; i++)
+	{
 		theTet[i].posX = rotTet[i].posX + localXOffset;
 		theTet[i].posY = rotTet[i].posY + localYOffset;
 		myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
 	}
+	
+	updateRight(theTet, tetSize);
+	updateLeft(theTet, tetSize);
+	updateDown(theTet, tetSize);
 }
+
+function updateRight (theTet, tetSize)
+{
+    var bool;
+
+    for (i=0; i<tetSize; i++)
+	{
+	    bool = true;
+	    for (j=0; j<tetSize; j++)
+		{
+		    if (j != i)
+			{
+			    //if the current block has a neighbouring block in the active tet, set right to that block
+			    if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+				{
+				    theTet[i].right = theTet[j];
+					bool = false;
+				}
+			}
+		}
+		
+		//if it had no neighbouring blocks in the active tet, set the right to null
+		if (bool == true)
+		{
+		    theTet[i].right = null;
+		}
+	}
+}
+
+function updateLeft (theTet, tetSize)
+{
+    var bool;
+	
+	for (i=0; i<tetSize; i++)
+	{
+	    bool = true;
+		for (j=0; j<tetSize; j++)
+		{
+		    if (j != i)
+			{
+			    if (theTet[i].posX-1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+				{
+				    theTet[i].left = theTet[j];
+					bool = false;
+				}
+			}
+		}
+		
+		if (bool == true)
+		{
+		    theTet[i].left = null;
+		}
+	}
+}
+
+function updateDown (theTet, tetSize)
+{
+    var bool;
+	
+	for (i=0; i<tetSize; i++)
+	{
+	    bool = true;
+		for (j=0; j<tetSize; j++)
+		{
+		    if (j != i)
+			{
+			    if (theTet[i].posX == theTet[j].posX && theTet[i].posY + 1 == theTet[j].posY)
+				{
+				    theTet[i].down = theTet[j];
+					bool = false;
+				}
+			}
+		}
+		
+		if (bool == true)
+		{
+		    theTet[i].down = null;
+		}
+	}
+}
+
+setInterval(down, 1000 );
 
