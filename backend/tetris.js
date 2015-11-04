@@ -8,6 +8,7 @@ var Block = function() {
     this.right = null;
     this.down = null;
     this.left = null;
+    this.blockID = 0;
 }
 
 var myReadLine = require('readline');
@@ -15,6 +16,9 @@ var y = myReadLine.createInterface(process.stdin, process.stdout);
 
 var currentTet = new Array(4);
 var userInput = 0;
+var blockID = 0;
+var totalClearedRows = 0;
+var nextLevel = 10;
 
 console.log('test, test');
 
@@ -158,6 +162,11 @@ function CreateLPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 function CreateJPiece() {
@@ -199,6 +208,11 @@ function CreateJPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 function CreateIPiece() {
@@ -240,6 +254,11 @@ function CreateIPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 function CreateOPiece() {
@@ -281,6 +300,11 @@ function CreateOPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 function CreateZPiece() {
@@ -322,6 +346,11 @@ function CreateZPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 function CreateSPiece() {
@@ -363,6 +392,11 @@ function CreateSPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 function CreateTPiece() {
@@ -404,6 +438,11 @@ function CreateTPiece() {
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
     theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
     theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+
+    for (var i = 0; i < 4; i++) {
+        currentTet[i].blockID = blockID;
+        blockID++
+    }
 }
 
 
@@ -561,7 +600,11 @@ function CheckForRows() {
             }
         }
     }
+<<<<<<< HEAD
 
+=======
+    totalClearedRows += clearedRows;
+>>>>>>> d8b56d405e2b3d7a9c32fe89aa03512981c1981a
     CalculateScore(clearedRows);
 }
 
@@ -582,6 +625,11 @@ function CalculateScore(clearedRows) {
             playerScore += (1200*(currentLevel + 1));
             break;
     }
+    if (totalClearedRows >= nextLevel) {
+        currentLevel++
+        nextLevel += 10;
+    }
+
 }
 
 function TetToBlocks() {
@@ -887,6 +935,7 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
     updateRight(theTet, tetSize);
     updateLeft(theTet, tetSize);
     updateDown(theTet, tetSize);
+
 }
 
 function updateRight (theTet, tetSize)
@@ -969,5 +1018,9 @@ function updateDown (theTet, tetSize)
     }
 }
 
+<<<<<<< HEAD
 //setInterval(down, 1000 );
+=======
+setInterval(down, 1000 - (10 * currentLevel));
+>>>>>>> d8b56d405e2b3d7a9c32fe89aa03512981c1981a
 
