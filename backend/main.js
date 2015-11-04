@@ -202,20 +202,47 @@ connection.query('SELECT 1', function(err, rows) {
     apiRouter.post('/check_if_friends', authenticate.auth, function(req, res) {
         console.log(req);
         user = jwt.decode(req.cookies.token);
-        var query ="SELECT 1 FROM Friends WHERE user_id='" + user.UserName + "' AND friend_id = '" + req.body.username + "'";
+        var query ="SELECT 1 FROM Friends WHERE user='" + user.UserName + "' AND friend = '" + req.body.username + "'";
         console.log(query);
         connection.query(query, function(err, rows) {
+            var ret = {};
             if(err) {
-                                res.send(err);
-                        } else if(rows) {
-                res.send(true);
+                ret.success = false;
+                ret.message = "An unknown error has occurred.";
+            } else if(rows) {
+                ret.success = false;
+                ret.message = "Already Friends";
             } else {
-                res.send(null);
+                ret.success = true;
+                ret.message = "Not already friends";
             }
+            res.json(ret);
         });
     });
 
     apiRouter.post('/send_friend_request', authenticate.auth, function(req, res) {
+        user = jwt.decode(req.cookies.token);
+        var m = new database.MessageDTO();
+        m.sender = user.UserName;
+        m.receiver = req.body.username;
+        m.subject = 'You have a friend request!';
+        m.content = user.UserName + ' has added you to be their friend!';
+        m.type = 'friend_request';
+        database.MessageDTO.push(m, function(err) {
+            var ret = {};
+            if(err != null) {
+                ret.success = false;
+                ret.message = "An unknown error has occurred.";
+                console.log(err.stack);
+            } else {
+                ret.success = true;
+                ret.message = null;
+            }
+            res.json(ret);
+        });
+    });
+
+    apiRouter.post('/remove_friend_request', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
         var m = new database.MessageDTO();
         m.sender = user.UserName;
@@ -258,7 +285,6 @@ connection.query('SELECT 1', function(err, rows) {
             }
             res.json(ret);
         });
-
     });
 
     app.use('/api', apiRouter);

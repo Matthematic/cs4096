@@ -3,8 +3,8 @@ var mysql = require('mysql');
 var connection = mysql.createConnection({
 	host: 'localhost',
 	port: '3307',
-	user: 'root',
-	password: 'apples',
+	//user: 'root',
+	//password: 'apples',
 	database: 'test'
 });
 
@@ -156,6 +156,12 @@ MessageDTO.getByReceiver = function(receiver, callback) {
 
 MessageDTO.push = function(dto, callback) {
     connection.query('INSERT INTO Messages(id, sender, receiver, subject, content, type) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\", \"' + dto.type + '")', function(err) {
+        callback(err);
+    });
+};
+
+MessageDTO.pull = function(dto, callback) {
+    connection.query('DELETE FROM Messages WHERE id=' + dto.id, function(err) {
         callback(err);
     });
 };

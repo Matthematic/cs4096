@@ -16,7 +16,6 @@
             var new_friend = { "username": $('#new_friend_username').val() };
             console.log("adding " + new_friend.username);
 
-            var add = false;
             $.ajax({
                 url: "/api/check_if_friends",
                 data: new_friend,
@@ -24,24 +23,28 @@
                 method: "post",
                 success: function(res){
                     console.log(res);
-                    console.log("Not Friends");
-                    add = true;
-                    $.ajax({
-                        url: "/api/send_friend_request",
-                        data: new_friend,
-                        datatype: 'json',
-                        method: "post",
-                        success: function(res){
-                            console.log(res);
-                            console.log("Friend request sent successfully");
-                        },
-                        failure: function(){
-                            console.log("Could not send freind request");
-                        },
-                    });
+                    if (res.success) {
+                        console.log("Not Friends");
+                        $.ajax({
+                            url: "/api/send_friend_request",
+                            data: new_friend,
+                            datatype: 'json',
+                            method: "post",
+                            success: function(res){
+                                console.log(res);
+                                console.log("Friend request sent successfully");
+                            },
+                            failure: function(){
+                                console.log("Could not send freind request");
+                            },
+                        });
+                    }
+                    else {
+                        alert("You can't add someone who is already your friend!");
+                    }
                 },
                 failure: function(){
-                    console.log("Already Friends");
+                    console.log("An error has occurred");
                 },
             });
 
@@ -113,11 +116,6 @@
                 </ul>
                 <ul id="profile-logged-out" class="dropdown-menu dropdown-user">
                     <li class="divider"></li>
-                    <!--
-                    <li>
-                        <a href="login.html"><i class="fa fa-user fa-fw"></i> Sign In</a>
-                    </li>
-                    -->
                 </ul>
             </li>
             <!-- Begin Dropdown User Settings -->

@@ -150,9 +150,9 @@ function CreateLPiece() {
     currentTet[3].posX = 5;
     currentTet[3].posY = 0;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 4;
-	currentTet[1].offset = 3;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 4;
+    currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -191,9 +191,9 @@ function CreateJPiece() {
     currentTet[3].posX = 5;
     currentTet[3].posY = 1;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 4;
-	currentTet[1].offset = 3;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 4;
+    currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -232,9 +232,9 @@ function CreateIPiece() {
     currentTet[3].posX = 6;
     currentTet[3].posY = 0;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 5;
-	currentTet[1].offset = 2;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 5;
+    currentTet[1].offset = 2;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -273,9 +273,9 @@ function CreateOPiece() {
     currentTet[3].posX = 4;
     currentTet[3].posY = 1;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 3;
-	currentTet[1].offset = 3;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 3;
+    currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -314,9 +314,9 @@ function CreateZPiece() {
     currentTet[3].posX = 5;
     currentTet[3].posY = 1;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 4;
-	currentTet[1].offset = 3;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 4;
+    currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -355,9 +355,9 @@ function CreateSPiece() {
     currentTet[3].posX = 5;
     currentTet[3].posY = 0;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 4;
-	currentTet[1].offset = 3;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 4;
+    currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -396,9 +396,9 @@ function CreateTPiece() {
     currentTet[3].posX = 4;
     currentTet[3].posY = 0;
 
-	currentTet[0].wide = true;
-	currentTet[0].offset = 4;
-	currentTet[1].offset = 3;
+    currentTet[0].wide = true;
+    currentTet[0].offset = 4;
+    currentTet[1].offset = 3;
 
     theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
     theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
@@ -557,11 +557,11 @@ function CheckForRows() {
                         theGrid[x-1][y] = null;
                     }
                 }
-                
+
             }
         }
     }
-    
+
     CalculateScore(clearedRows);
 }
 
@@ -664,17 +664,17 @@ function left(gameid, player) {
 
 function up(gameid, player) {
     console.log("up");
-	if (currentTet[0].wide == true)
-	{
-		Rotate (currentTet, theGrid, currentTet[0].offset, 4);
-		currentTet[0].wide = false;
-	}
-	else
-	{
-		Rotate (currentTet, theGrid, currentTet[1].offset, 4);
-		currentTet[0].wide = true;
-	}
-	DisplayGrid(theGrid);
+    if (currentTet[0].wide == true)
+    {
+        Rotate (currentTet, theGrid, currentTet[0].offset, 4);
+        currentTet[0].wide = false;
+    }
+    else
+    {
+        Rotate (currentTet, theGrid, currentTet[1].offset, 4);
+        currentTet[0].wide = true;
+    }
+    DisplayGrid(theGrid);
 };
 
 function down(gameid, player) {
@@ -816,77 +816,77 @@ module.exports = {
 //horizOffset is the "width" of the piece being operated on +1, so a tallise L piece has a width of 2, so the offset should be 3, a sideways L piece would be 4
 //tetSize is the size of the tet, for any tetromino this is 4, it is included at this point purely to allow us to do things like rotate quintonimos if we later add them as a powerup or something
 function Rotate (theTet, myArray, horizOffset, tetSize) {
-	var localXOffset;
-	var localYOffset;
-	var minOrigY=21;
-	var minOrigX=21;
-	/*var rotTet = jQuery.extend(true, {}, theTet);*/
-	var rotDummy;
+    var localXOffset;
+    var localYOffset;
+    var minOrigY=21;
+    var minOrigX=21;
+    /*var rotTet = jQuery.extend(true, {}, theTet);*/
+    var rotDummy;
 
-	var rotTet = new Array(tetSize);
+    var rotTet = new Array(tetSize);
 
-	for ( i=0; i<tetSize; i++)
-	{
-		rotTet[i] = new Block;
-	}
+    for ( i=0; i<tetSize; i++)
+    {
+        rotTet[i] = new Block;
+    }
 
-	for ( i=0; i<tetSize; i++)
-	{
-		rotTet[i].posX = theTet[i].posX;
-		rotTet[i].posY = theTet[i].posY;
-	}
+    for ( i=0; i<tetSize; i++)
+    {
+        rotTet[i].posX = theTet[i].posX;
+        rotTet[i].posY = theTet[i].posY;
+    }
 
 
-	//first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
+    //first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
 
-	for ( i = 0; i < tetSize; i++){
-		if (theTet[i].posX < minOrigX)
-		{
-			minOrigX = theTet[i].posX;
-		}
-		if (theTet[i].posY < minOrigY)
-		{
-			minOrigY = theTet[i].posY;
-		}
-	}
+    for ( i = 0; i < tetSize; i++){
+        if (theTet[i].posX < minOrigX)
+        {
+            minOrigX = theTet[i].posX;
+        }
+        if (theTet[i].posY < minOrigY)
+        {
+            minOrigY = theTet[i].posY;
+        }
+    }
 
-	// the max/mins have been found at this point, it is now time to set the offsets that will put me in my preferred location in local co-ordinate space
-	localXOffset = minOrigX - 1;
-	localYOffset = minOrigY - 1;
+    // the max/mins have been found at this point, it is now time to set the offsets that will put me in my preferred location in local co-ordinate space
+    localXOffset = minOrigX - 1;
+    localYOffset = minOrigY - 1;
 
-	//at this point, I'm going to set the co-ordinates for the rotated tet piece
-	for (i = 0; i < tetSize; i++)
-	{
-		rotTet[i].posX = (theTet[i].posX - localXOffset);
-		rotTet[i].posY = (theTet[i].posY - localYOffset);
-	}
+    //at this point, I'm going to set the co-ordinates for the rotated tet piece
+    for (i = 0; i < tetSize; i++)
+    {
+        rotTet[i].posX = (theTet[i].posX - localXOffset);
+        rotTet[i].posY = (theTet[i].posY - localYOffset);
+    }
 
-	//at the completion of the above loop, the rotTet entity now has the co-ordinates of theTet, but offset to be nestled in a quadrant's corner, it is time to do the rotation math
-	for (i = 0; i < tetSize; i++)
-	{
-		rotDummy = rotTet[i].posX;
-		rotTet[i].posX = -rotTet[i].posY + horizOffset;
-		rotTet[i].posY = rotDummy;
-	}
+    //at the completion of the above loop, the rotTet entity now has the co-ordinates of theTet, but offset to be nestled in a quadrant's corner, it is time to do the rotation math
+    for (i = 0; i < tetSize; i++)
+    {
+        rotDummy = rotTet[i].posX;
+        rotTet[i].posX = -rotTet[i].posY + horizOffset;
+        rotTet[i].posY = rotDummy;
+    }
 
-	//special case handling and error checking (for clipping and the like) goes here
+    //special case handling and error checking (for clipping and the like) goes here
 
-	for (i=0; i < tetSize; i++)
-	{
-		myArray[theTet[i].posY][theTet[i].posX] = null;
-	}
+    for (i=0; i < tetSize; i++)
+    {
+        myArray[theTet[i].posY][theTet[i].posX] = null;
+    }
 
-	//time to make theTet take the values we just calculated and update the game grid
-	for (i=0; i < tetSize; i++)
-	{
-		theTet[i].posX = rotTet[i].posX + localXOffset;
-		theTet[i].posY = rotTet[i].posY + localYOffset;
-		myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
-	}
-	
-	updateRight(theTet, tetSize);
-	updateLeft(theTet, tetSize);
-	updateDown(theTet, tetSize);
+    //time to make theTet take the values we just calculated and update the game grid
+    for (i=0; i < tetSize; i++)
+    {
+        theTet[i].posX = rotTet[i].posX + localXOffset;
+        theTet[i].posY = rotTet[i].posY + localYOffset;
+        myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
+    }
+
+    updateRight(theTet, tetSize);
+    updateLeft(theTet, tetSize);
+    updateDown(theTet, tetSize);
 }
 
 function updateRight (theTet, tetSize)
@@ -894,80 +894,80 @@ function updateRight (theTet, tetSize)
     var bool;
 
     for (i=0; i<tetSize; i++)
-	{
-	    bool = true;
-	    for (j=0; j<tetSize; j++)
-		{
-		    if (j != i)
-			{
-			    //if the current block has a neighbouring block in the active tet, set right to that block
-			    if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
-				{
-				    theTet[i].right = theTet[j];
-					bool = false;
-				}
-			}
-		}
-		
-		//if it had no neighbouring blocks in the active tet, set the right to null
-		if (bool == true)
-		{
-		    theTet[i].right = null;
-		}
-	}
+    {
+        bool = true;
+        for (j=0; j<tetSize; j++)
+        {
+            if (j != i)
+            {
+                //if the current block has a neighbouring block in the active tet, set right to that block
+                if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+                {
+                    theTet[i].right = theTet[j];
+                    bool = false;
+                }
+            }
+        }
+
+        //if it had no neighbouring blocks in the active tet, set the right to null
+        if (bool == true)
+        {
+            theTet[i].right = null;
+        }
+    }
 }
 
 function updateLeft (theTet, tetSize)
 {
     var bool;
-	
-	for (i=0; i<tetSize; i++)
-	{
-	    bool = true;
-		for (j=0; j<tetSize; j++)
-		{
-		    if (j != i)
-			{
-			    if (theTet[i].posX-1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
-				{
-				    theTet[i].left = theTet[j];
-					bool = false;
-				}
-			}
-		}
-		
-		if (bool == true)
-		{
-		    theTet[i].left = null;
-		}
-	}
+
+    for (i=0; i<tetSize; i++)
+    {
+        bool = true;
+        for (j=0; j<tetSize; j++)
+        {
+            if (j != i)
+            {
+                if (theTet[i].posX-1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+                {
+                    theTet[i].left = theTet[j];
+                    bool = false;
+                }
+            }
+        }
+
+        if (bool == true)
+        {
+            theTet[i].left = null;
+        }
+    }
 }
 
 function updateDown (theTet, tetSize)
 {
     var bool;
-	
-	for (i=0; i<tetSize; i++)
-	{
-	    bool = true;
-		for (j=0; j<tetSize; j++)
-		{
-		    if (j != i)
-			{
-			    if (theTet[i].posX == theTet[j].posX && theTet[i].posY + 1 == theTet[j].posY)
-				{
-				    theTet[i].down = theTet[j];
-					bool = false;
-				}
-			}
-		}
-		
-		if (bool == true)
-		{
-		    theTet[i].down = null;
-		}
-	}
+
+    for (i=0; i<tetSize; i++)
+    {
+        bool = true;
+        for (j=0; j<tetSize; j++)
+        {
+            if (j != i)
+            {
+                if (theTet[i].posX == theTet[j].posX && theTet[i].posY + 1 == theTet[j].posY)
+                {
+                    theTet[i].down = theTet[j];
+                    bool = false;
+                }
+            }
+        }
+
+        if (bool == true)
+        {
+            theTet[i].down = null;
+        }
+    }
 }
 
-setInterval(down, 1000 );
+//setInterval(down, 1000 );
 
