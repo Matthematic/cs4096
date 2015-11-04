@@ -1017,5 +1017,4 @@ function updateDown (theTet, tetSize)
 
 //setInterval(down, 1000 );
 
->>>>>>> d8b56d405e2b3d7a9c32fe89aa03512981c1981a
 
