@@ -600,11 +600,8 @@ function CheckForRows() {
             }
         }
     }
-<<<<<<< HEAD
 
-=======
-    totalClearedRows += clearedRows;
->>>>>>> d8b56d405e2b3d7a9c32fe89aa03512981c1981a
+
     CalculateScore(clearedRows);
 }
 
