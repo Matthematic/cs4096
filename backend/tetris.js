@@ -859,14 +859,16 @@ module.exports = {
 
 //horizOffset is the "width" of the piece being operated on +1, so a tallise L piece has a width of 2, so the offset should be 3, a sideways L piece would be 4
 //tetSize is the size of the tet, for any tetromino this is 4, it is included at this point purely to allow us to do things like rotate quintonimos if we later add them as a powerup or something
-function Rotate (theTet, myArray, horizOffset, tetSize) {
+function Rotate (theTet, myArray, horizOffset, tetSize, recurse) {
 	var localXOffset;
 	var localYOffset;
 	var minOrigY=21;
 	var minOrigX=21;
 	/*var rotTet = jQuery.extend(true, {}, theTet);*/
 	var rotDummy;
-
+    var legal = true;
+	var origIntersect = false;
+	
 	var rotTet = new Array(tetSize);
 
 	for ( i=0; i<tetSize; i++)
@@ -880,6 +882,9 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 		rotTet[i].posY = theTet[i].posY;
 	}
 
+	rotTet[0].wide = !theTet[0].wide;
+	rotTet[0].offset = theTet[0].offset;
+	rotTet[1].offset = theTet[1].offset;
 
 	//first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
 
@@ -914,23 +919,55 @@ function Rotate (theTet, myArray, horizOffset, tetSize) {
 	}
 
 	//special case handling and error checking (for clipping and the like) goes here
-
-	for (i=0; i < tetSize; i++)
+	for (i=0; i<tetSize; i++)
 	{
-		myArray[theTet[i].posY][theTet[i].posX] = null;
-	}
-
-	//time to make theTet take the values we just calculated and update the game grid
-	for (i=0; i < tetSize; i++)
-	{
-		theTet[i].posX = rotTet[i].posX + localXOffset;
-		theTet[i].posY = rotTet[i].posY + localYOffset;
-		myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
+	    //reset the origIntersect variable
+		origIntersect = false;
+	    
+	    //if the rotated piece intersects any areas
+	    if (myArray[rotTet[i].posY + localYOffset][rotTet[i].posX + localXOffset] != null)
+		{
+		    //we need to see if the detected intersection is in the original tet
+		    for (j=0; j<tetSize; j++)
+			{
+			    if (theTet[j].posX == rotTet[i].posX + localXOffset && theTet[j].posY == rotTet[i].posY + localYOffset)
+				{
+				    origIntersect = true;
+				}
+			}
+			
+			if (origIntersect == false)
+			{
+		        legal = false;
+			}
+		}
 	}
 	
-	updateRight(theTet, tetSize);
-	updateLeft(theTet, tetSize);
-	updateDown(theTet, tetSize);
+	
+    if (legal == true)
+	{
+	    for (i=0; i < tetSize; i++)
+	    {
+		    myArray[theTet[i].posY][theTet[i].posX] = null;
+	    }
+
+	    //time to make theTet take the values we just calculated and update the game grid
+	    for (i=0; i < tetSize; i++)
+	    {
+		    theTet[i].posX = rotTet[i].posX + localXOffset;
+		    theTet[i].posY = rotTet[i].posY + localYOffset;
+		    myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
+	    }
+	
+	    updateRight(theTet, tetSize);
+	    updateLeft(theTet, tetSize);
+	    updateDown(theTet, tetSize);
+	}
+	//if it wasn't a legal rotation, try doing the next rotation (180 degrees instead of 90)
+	/*else
+	{
+	    rotate(rotTet, myArray
+	}*/
 }
 
 function updateRight (theTet, tetSize)
