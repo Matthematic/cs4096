@@ -113,7 +113,7 @@ function DisplayGrid(theGrid) {
             if (theGrid[i][j] == null)
                 s += '.';
             else
-                s += 'B';
+                s += '█';
         }
         s += '|>'
         console.log(s);
@@ -751,13 +751,7 @@ function down(gameid, player) {
         theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
     }
 
-    if (CanMoveDown() == false) {
-        TetToBlocks();
-        CheckForRows();
-        GeneratePieces();
-    }
     DisplayGrid(theGrid);
-
 
     //return moveDown;
 };
@@ -1015,6 +1009,49 @@ function updateDown (theTet, tetSize)
     }
 }
 
-//setInterval(down, 1000 );
 
+function TimeMoveDown() {
+    console.log("down");
+    var moveDown = true;
+    var count = 0;
+
+    if (CanMoveDown() == false) {
+        TetToBlocks();
+        CheckForRows();
+        GeneratePieces();
+    }
+    else {
+    while (count < 4) {
+        if (currentTet[count].down == null) {
+            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
+                moveDown = false;
+                break;
+            }
+        }
+        count++;
+    }
+    if (moveDown == true) {
+        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
+        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
+        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
+        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
+        currentTet[0].posY += 1;
+        currentTet[1].posY += 1;
+        currentTet[2].posY += 1;
+        currentTet[3].posY += 1;
+        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
+        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
+        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
+        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+    }
+    }
+
+
+    DisplayGrid(theGrid);
+
+
+    //return moveDown;
+}
+
+//setInterval(TimeMoveDown, 1000 - (10 * currentLevel));
 

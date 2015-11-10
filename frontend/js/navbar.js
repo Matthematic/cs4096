@@ -8,9 +8,9 @@
                 console.log(data.messages.length);
                 console.log(data);
 
-                for( var i=0; i < data.messages.length; i++ )
+                for( var i=0; i < 5; i++ ) // only display last 5 messages
                 {
-                    $('#message_list').prepend('<li>' +
+                    $('#message_list').append('<li>' +
                         '<a href="#">' +
                         '<div>' +
                         '<strong>From:' + data.messages[i].sender + '</strong>' +

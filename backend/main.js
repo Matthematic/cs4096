@@ -183,6 +183,15 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/load-open-games-ranked', function(req, res) {
+        /*user = jwt.decode(req.cookies.token);
+        var games_without_user = open_games_ranked;
+        for (var i = 0; i < games_without_user.length; i++) {
+            if (games_without_user[i].username == user.UserName) {
+                games_without_user.splice(i, 1);
+                break;
+            }
+        }
+        res.send(games_without_user);*/
         res.send(open_games_ranked);
     });
 
@@ -209,13 +218,14 @@ connection.query('SELECT 1', function(err, rows) {
             if(err) {
                 ret.success = false;
                 ret.message = "An unknown error has occurred.";
-            } else if(rows) {
+            } else if(rows.length > 0) {
                 ret.success = false;
                 ret.message = "Already Friends";
             } else {
                 ret.success = true;
                 ret.message = "Not already friends";
             }
+            console.log(rows);
             res.json(ret);
         });
     });

@@ -12,6 +12,7 @@ $(document).ready(function() {
 
     var message_dtos = []; // array to hold message data objects so we can reference their id's without hitting the database again
 });
+
 var accept_friend_request = function(row_num) {
     var table = $('#messages_table').DataTable();
 
@@ -82,7 +83,8 @@ var load_messages = function() {
                     data.messages[i].subject,
                     data.messages[i].content,
                     data.messages[i].type =='invite' || 'friend_request' ? '<input type="button" id="accept_' + data.messages[i].type  + '_' + i + '" value="Accept" class="btn btn-success" onClick="accept_' + data.messages[i].type + '(' + i + ')">' +
-                        '<input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="remove_friend_request(' + i + ')">' : 'message'
+                        '<input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="remove_friend_request(' + i + ')">' : 'message',
+                    data.messages[i].timestamp,
                 ] ).draw( true );
             }
             return Object.keys(data.messages).length;

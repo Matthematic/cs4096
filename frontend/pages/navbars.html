@@ -23,7 +23,7 @@
                 method: "post",
                 success: function(res){
                     console.log(res);
-                    if (res.success) {
+                    if (res.success == true) {
                         console.log("Not Friends");
                         $.ajax({
                             url: "/api/send_friend_request",
