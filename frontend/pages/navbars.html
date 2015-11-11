@@ -55,6 +55,8 @@
         });
 
     </script>
+
+    <link href="../css/navbar.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div id="top-navbar">
@@ -71,14 +73,14 @@
         </div>
         <!-- /.navbar-header -->
 
-        <ul class="nav navbar-top-links navbar-right">
+        <ul class="nav navbar-top-links navbar-right" >
             <!-- Begin Dropdown Messages -->
             <li id="messages" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-messages" id="message_list">
-                    <input type="button" id="view_all_messages" value="View All Messages" class="btn btn-success"  >
+                        <input type="button" id="view_all_messages" value="View All Messages" class="btn btn-info" >
                 </ul>
             </li>
             <!-- End Dropdown Messages-->
@@ -89,11 +91,8 @@
                     <i class="fa fa-users fa-fw"></i>  <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-messages" id="friends_list">
-                    <div>
-                        <strong>Friends List</strong>
-                    </div>
-                    <input type="text" id="new_friend_username" placeholder="Enter A Username" style="float:left;" >
-                    <input type="button" id="add_friend" value="Add Friend" class="btn btn-success"  >
+                    <input type="text" id="new_friend_username" placeholder="Enter A Username" >
+                    <input type="button" id="add_friend" value="Add Friend" class="btn btn-info" >
                     <li>
                     </li>
                 </ul>

@@ -3,6 +3,8 @@ $(document).ready(function() {
         $("#navbars").load("navbars.html");
     });
 
+    $("#ranked_game_button").html("create/remove game");
+    $("#social_game_button").html("create/remove game");
 
     $('#ranked_table').DataTable();
     load_table_data('ranked');
@@ -53,7 +55,6 @@ function create_game(queuetype) {
     });
 
     load_table_data(queuetype);
-
 }
 
 var send_play_request = function() {

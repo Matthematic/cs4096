@@ -38,9 +38,11 @@ module.exports = {
                             return;
                         }
 
-                        var token = jwt.sign(dto, secret, {
-                              expiresInMinutes: 1440
-                        });
+                        //var token = jwt.sign(dto, secret, {
+                        //      expiresInMinutes: 1440
+                        //});
+
+                        var token = jwt.sign(dto, secret);
 
                         callback({
                             success: true,
@@ -94,7 +96,7 @@ module.exports = {
 
     "auth": function(req, res, next) {
         var token = req.cookies.token;
-        console.log(req.cookies);
+        //console.log(req.cookies);
 
         if(token) {
             jwt.verify(token, secret, function(err, decoded) {

@@ -158,15 +158,13 @@ MessageDTO.getByReceiver = function(receiver, callback) {
 };
 
 MessageDTO.push = function(dto, callback) {
-    var now = new Date().toLocaleString();
-    console.log(now);
     connection.query('INSERT INTO Messages(id, sender, receiver, subject, content, type, timestamp) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\", \"' + dto.type + '\",  NOW() )', function(err) {
         callback(err);
     });
 };
 
-MessageDTO.pull = function(dto, callback) {
-    connection.query('DELETE FROM Messages WHERE id=' + dto.id, function(err) {
+MessageDTO.pull = function(id, callback) {
+    connection.query('DELETE FROM Messages WHERE id=' + id, function(err) {
         callback(err);
     });
 };

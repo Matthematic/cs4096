@@ -8,8 +8,8 @@ var authenticate = require('./authenticate');
 var tetris = require('./tetris');
 var connection = database.connection;
 
-var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classic'}];
-var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
+var open_games_ranked = [{'username':'matthew', 'elo':'1500', 'gametype':'Classic'}];
+var open_games_social = [{'username':'user1', 'elo':'1500', 'gametype':'Classic'}];
 
 process.on('SIGINT', function() {
         console.log('Closing database connection...');
@@ -183,33 +183,67 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/load-open-games-ranked', function(req, res) {
-        /*user = jwt.decode(req.cookies.token);
-        var games_without_user = open_games_ranked;
-        for (var i = 0; i < games_without_user.length; i++) {
-            if (games_without_user[i].username == user.UserName) {
-                games_without_user.splice(i, 1);
-                break;
-            }
-        }
-        res.send(games_without_user);*/
         res.send(open_games_ranked);
     });
 
     apiRouter.post('/load-open-games-social', function(req, res) {
-            res.send(open_games_social);
+        res.send(open_games_social);
     });
 
     apiRouter.post('/create_game', authenticate.auth, function(req, res) {
+        console.log("-------------------");
+        user = jwt.decode(req.cookies.token);
+        var exists = false;
+        var index = null;
         if (req.body.queuetype == 'ranked') {
-            open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+            console.log("getting inside ranked");
+            for (var i = 0; i < open_games_ranked.length; i++){
+                if (open_games_ranked[i].username == user.UserName) {
+                    console.log("exists, getting index");
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
+            if (!exists) {
+                console.log("pushing to ranked");
+                open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+            }
+            else {
+                console.log("checking if index is set");
+                if (index != null) {
+                    console.log("popping from ranked");
+                    open_games_ranked.splice(index, 1);
+                }
+            }
+
         }
         else if (req.body.queuetype == 'social') {
-            open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
+            console.log("getting inside social");
+            for (var n = 0; n < open_games_social.length; n++){
+                if (open_games_social[n].username == user.UserName) {
+                    exists = true;
+                    index = n;
+                    break;
+                }
+            }
+            if (!exists) {
+                console.log("pushing to social");
+                open_games_social.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+            }
+            else { // remove the game
+                console.log("checking if social index is set");
+                if (index != null) {
+                    console.log("popping from social");
+                    open_games_social.splice(index, 1);
+                }
+            }
         }
+        console.log(open_games_ranked);
+        console.log(open_games_social);
     });
 
     apiRouter.post('/check_if_friends', authenticate.auth, function(req, res) {
-        console.log(req);
         user = jwt.decode(req.cookies.token);
         var query ="SELECT 1 FROM Friends WHERE user='" + user.UserName + "' AND friend = '" + req.body.username + "'";
         console.log(query);
@@ -225,7 +259,6 @@ connection.query('SELECT 1', function(err, rows) {
                 ret.success = true;
                 ret.message = "Not already friends";
             }
-            console.log(rows);
             res.json(ret);
         });
     });
@@ -254,13 +287,7 @@ connection.query('SELECT 1', function(err, rows) {
 
     apiRouter.post('/remove_friend_request', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
-        var m = new database.MessageDTO();
-        m.sender = user.UserName;
-        m.receiver = req.body.username;
-        m.subject = 'You have a friend request!';
-        m.content = user.UserName + ' has added you to be their friend!';
-        m.type = 'friend_request';
-        database.MessageDTO.push(m, function(err) {
+        database.MessageDTO.pull(req.body.id, function(err) {
             var ret = {};
             if(err != null) {
                 ret.success = false;

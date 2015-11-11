@@ -26,6 +26,7 @@ var accept_friend_request = function(row_num) {
         success: function(res){
             if (res.success) {
                 console.log("Friend added successfully");
+                remove_message(row_num, 1);
             }
         },
         failure: function(){
@@ -39,27 +40,30 @@ var accept_invite = function(row_num) {
     var table = $('#messages_table').DataTable();
 
     alert( 'You have accepted the invite from ' + table.row(row_num).data()[0] );
+    remove_message(row_num);
     window.location.href = "/game";
 };
 
-var remove_friend_request = function(row_num) {
+var remove_message = function(row, reload) {
+    reload = reload || 0; // forces reload to be optional
     var table = $('#messages_table').DataTable();
 
-    alert( 'Removing the invite from ' + table.row(row_num).data()[0] );
-    var message_dto =
+    var message_dto = message_dtos[row];
     $.ajax({
         url: "/api/remove_friend_request",
-        data: message_dtos[row_num],
-        datatype: 'json',
+        data: message_dto,
         method: "post",
-        success: function(){
-            console.log("Game created successfully");
-        },
-        callback: function(){
-            console.log("Game created successfully");
+        success: function(res){
+            if (res.success) {
+                console.log("Message removed successfully");
+                if (reload)
+                    location.reload();
+            }
+            else
+                console.log("Could not remove message");
         },
         failure: function(){
-            console.log("Could not create a game");
+            console.log("An error has occurred");
         },
     });
 };
@@ -83,7 +87,7 @@ var load_messages = function() {
                     data.messages[i].subject,
                     data.messages[i].content,
                     data.messages[i].type =='invite' || 'friend_request' ? '<input type="button" id="accept_' + data.messages[i].type  + '_' + i + '" value="Accept" class="btn btn-success" onClick="accept_' + data.messages[i].type + '(' + i + ')">' +
-                        '<input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="remove_friend_request(' + i + ')">' : 'message',
+                        '<input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="remove_message(' + i + ', 1)">' : 'message',
                     data.messages[i].timestamp,
                 ] ).draw( true );
             }
