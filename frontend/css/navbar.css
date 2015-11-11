@@ -1,0 +1,44 @@
+#view_all_messages {
+    display:block;
+    margin:0 auto;
+    position:relative;
+    font-style:normal;
+    font-weight:normal;
+    font-size:14px;
+    outline:none;
+    color:#fff;
+    border:none;
+    text-decoration:none;
+    text-align:center;
+    cursor:pointer;
+    -webkit-border-radius:2px;
+    -moz-border-radius:2px;
+    border-radius:2px;
+    border-bottom:1px solid #7b8b2f;
+}
+
+#add_friend {
+    display:inline-block;
+    margin:0 auto;
+    float:left;
+    font-style:normal;
+    font-weight:normal;
+    font-size:14px;
+    outline:none;
+    color:#fff;
+    border:none;
+    text-decoration:none;
+    text-align:center;
+    cursor:pointer;
+    -webkit-border-radius:2px;
+    -moz-border-radius:2px;
+    border-radius:2px;
+    border-bottom:1px solid #7b8b2f;
+}
+
+#new_friend_username {
+    display:inline-block;
+    margin:0 auto;
+    position:relative;
+    height:34px;
+}
