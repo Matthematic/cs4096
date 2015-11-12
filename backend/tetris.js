@@ -11,7 +11,9 @@ var Block = function() {
     this.blockID = 0;
 };
 
-var Game = function() {
+var Game = function(updateFunc, endFunc) {
+    this.EndFunc = endFunc;
+    this.UpdateFunc = updateFunc;
     this.currentTet = new Array(4);
     this.blockID = 0;
     this.totalClearedRows = 0;
@@ -22,13 +24,14 @@ var Game = function() {
     this.currentLevel = 0;
     this.currentPieceType = 0;
     this.nextPieceType = Math.floor((Math.random() * 7));
+    this.intervalHandle = null;
     
     this.init = function() {
         console.error('test test');
         var deltas = {};
         this.theGrid = this.InitializeGrid();
         this.GeneratePieces(deltas);
-        setInterval(this.TimeMoveDown, 1000 - (10 * this.currentLevel), this);
+        this.intervalHandle = setInterval(this.TimeMoveDown, 1000 - (10 * this.currentLevel), this);
         return this.CreateDeltas(deltas);
     };
     
@@ -811,6 +814,14 @@ var Game = function() {
         var deltas = {};
 
         if (self.CanMoveDown() == false) {
+            if (self.CheckEnd()) {
+                clearInterval(self.intervalHandle);
+                self.EndFunc();
+                console.log('THE GAME IS OVER!');
+                self.UpdateFunc(self.CreateDeltas(deltas));
+                return;
+                
+            }
             self.TetToBlocks();
             self.CheckForRows(deltas);
             self.GeneratePieces(deltas);
@@ -841,7 +852,8 @@ var Game = function() {
             deltas[self.currentTet[i].blockID] = self.currentTet[i];
         }
         self.DisplayGrid();
-       //TODO: Update client/deltas stuff.
+        self.UpdateFunc(self.CreateDeltas(deltas));
+        
     };
     
     this.DisplayGrid = function(theGrid) {
@@ -878,8 +890,12 @@ var Game = function() {
             }
         }
         return newDeltas;
-    };        
+    };
 };    
+
+Game.prototype.CheckEnd = function() {
+    return (this.theGrid[0][4] != null || this.theGrid[0][5] != null);
+};
 
 var Games = {};
 var gameID = 0;
@@ -908,13 +924,13 @@ function pause(gameid, player) {
 
 };
 
-function newGame(player) {
+function newGame(player, updateFunc, endFunc) {
     console.error("print please");
     var elGame = {};
     elGame.width = 10;
     elGame.height = 20;
     elGame.gameid = gameID++;
-    Games[elGame.gameid] = new Game;
+    Games[elGame.gameid] = new Game(updateFunc, endFunc);
     elGame.deltas = Games[elGame.gameid].init();
     console.error('lol el game');
     return elGame;
