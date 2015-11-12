@@ -8,18 +8,18 @@ var authenticate = require('./authenticate');
 var tetris = require('./tetris');
 var connection = database.connection;
 
-var open_games_ranked = [{'username':'matthew', 'elo':'1500', 'gametype':'Classic'}];
-var open_games_social = [{'username':'user1', 'elo':'1500', 'gametype':'Classic'}];
+var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classic'}];
+var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
 
 process.on('SIGINT', function() {
-        console.log('Closing database connection...');
-        connection.end(function(err) {
-                if(typeof err == "undefined") {
-                    console.log ('Could not close connection: ' + err.stack);
-                } else {
-                    console.log ('Connection closed successfully.');
-                }
-        });
+		console.log('Closing database connection...');
+		connection.end(function(err) {
+				if(typeof err == "undefined") {
+					console.log ('Could not close connection: ' + err.stack);
+				} else {
+					console.log ('Connection closed successfully.');
+				}
+		});
 });
 
 connection.query('SELECT 1', function(err, rows) {
@@ -30,9 +30,9 @@ connection.query('SELECT 1', function(err, rows) {
     }
     var app = express();
 
-    app.use(express.static('.tmp/'));
-    app.use(express.static('frontend/pages'));
-    app.use('/bower_components', express.static('bower_components'));
+  	app.use(express.static('.tmp/'));
+  	app.use(express.static('frontend/pages'));
+  	app.use('/bower_components', express.static('bower_components'));
 
     app.use(bodyParser.urlencoded({
         extended: true
@@ -40,24 +40,24 @@ connection.query('SELECT 1', function(err, rows) {
     app.use(bodyParser.json());
     app.use(cookieParser());
 
-    app.get('/', function(req, res) {
-        var token = req.cookies.token;
+  	app.get('/', function(req, res) {
+				var token = req.cookies.token;
 
-        if(token) {
-                jwt.verify(token, 'notevencloselistenbaby', function(err, decoded) {
-                        if(err) {
-                                res.json({success: false, message: 'Failed to authenticate token.'});
-                        } else {
-                                req.decoded = decoded;
-                        }
-                });
+				if(token) {
+						jwt.verify(token, 'notevencloselistenbaby', function(err, decoded) {
+								if(err) {
+										res.json({success: false, message: 'Failed to authenticate token.'});
+								} else {
+										req.decoded = decoded;
+								}
+						});
 
-        } else {
-                console.log("error token auth");
-                return res.sendFile('frontpage.html', {root: "./frontend/pages"});
-        }
+				} else {
+						console.log("error token auth");
+						return res.sendFile('frontpage.html', {root: "./frontend/pages"});
+				}
 
-        return res.sendFile('dashboard.html', {root: "./frontend/pages"});
+				return res.sendFile('dashboard.html', {root: "./frontend/pages"});
     });
 
     app.get('/profile', function(req, res) {
@@ -109,15 +109,15 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     // need to send a "message" to a user, maybe an email
-    apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
+  	apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
         var m = new database.MessageDTO();
         m.sender = user.UserName;
         m.receiver = req.body.username;
-                m.subject = 'You have been invited!';
-                m.content = user.UserName + ' has invited you to a game!';
+				m.subject = 'You have been invited!';
+				m.content = user.UserName + ' has invited you to a game!';
         m.type = 'invite';
-                database.MessageDTO.push(m, function(err) {
+				database.MessageDTO.push(m, function(err) {
             var ret = {};
             if(err != null) {
                 ret.success = false;
@@ -129,7 +129,7 @@ connection.query('SELECT 1', function(err, rows) {
             }
             res.json(ret);
         });
-    });
+  	});
 
     apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
             user = jwt.decode(req.cookies.token);
@@ -137,8 +137,8 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     // need to send a "message" to a user, maybe an email
-    apiRouter.post('/load-messages', authenticate.auth, function(req, res, next) {
-        user = jwt.decode(req.cookies.token);
+  	apiRouter.post('/load-messages', authenticate.auth, function(req, res, next) {
+    	user = jwt.decode(req.cookies.token);
 
         database.MessageDTO.getByReceiver(user.UserName, function(err, rows) {
             var ret = {};
@@ -158,7 +158,7 @@ connection.query('SELECT 1', function(err, rows) {
             next();
             return;
         });
-    });
+  	});
 
     apiRouter.post('/load-friends', authenticate.auth, function(req, res, next) {
         user = jwt.decode(req.cookies.token);
@@ -168,9 +168,9 @@ connection.query('SELECT 1', function(err, rows) {
         connection.query(query, function(err, rows) {
             var ret = {};
             if(err) {
-                            res.send(err);
-                            return;
-                        }
+							res.send(err);
+							return;
+						}
 
             if(rows) {
                 ret.success = true;
@@ -187,140 +187,46 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/load-open-games-social', function(req, res) {
-        res.send(open_games_social);
+    		res.send(open_games_social);
     });
 
     apiRouter.post('/create_game', authenticate.auth, function(req, res) {
-        console.log("-------------------");
-        user = jwt.decode(req.cookies.token);
-        var exists = false;
-        var index = null;
         if (req.body.queuetype == 'ranked') {
-            console.log("getting inside ranked");
-            for (var i = 0; i < open_games_ranked.length; i++){
-                if (open_games_ranked[i].username == user.UserName) {
-                    console.log("exists, getting index");
-                    exists = true;
-                    index = i;
-                    break;
-                }
-            }
-            if (!exists) {
-                console.log("pushing to ranked");
-                open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
-            }
-            else {
-                console.log("checking if index is set");
-                if (index != null) {
-                    console.log("popping from ranked");
-                    open_games_ranked.splice(index, 1);
-                }
-            }
-
+            open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
         }
         else if (req.body.queuetype == 'social') {
-            console.log("getting inside social");
-            for (var n = 0; n < open_games_social.length; n++){
-                if (open_games_social[n].username == user.UserName) {
-                    exists = true;
-                    index = n;
-                    break;
-                }
-            }
-            if (!exists) {
-                console.log("pushing to social");
-                open_games_social.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
-            }
-            else { // remove the game
-                console.log("checking if social index is set");
-                if (index != null) {
-                    console.log("popping from social");
-                    open_games_social.splice(index, 1);
-                }
-            }
+            open_games_social.push({'username': user.UserName,'elo': '1700','gametype': 'Classic'});
         }
-        console.log(open_games_ranked);
-        console.log(open_games_social);
     });
 
     apiRouter.post('/check_if_friends', authenticate.auth, function(req, res) {
+        console.log(req);
         user = jwt.decode(req.cookies.token);
-        var query ="SELECT 1 FROM Friends WHERE user='" + user.UserName + "' AND friend = '" + req.body.username + "'";
+        var query ="SELECT 1 FROM Friends WHERE user_id='" + user.UserName + "' AND friend_id = '" + req.body.username + "'";
         console.log(query);
         connection.query(query, function(err, rows) {
-            var ret = {};
             if(err) {
-                ret.success = false;
-                ret.message = "An unknown error has occurred.";
-            } else if(rows.length > 0) {
-                ret.success = false;
-                ret.message = "Already Friends";
+								res.send(err);
+						} else if(rows) {
+                res.send(true);
             } else {
-                ret.success = true;
-                ret.message = "Not already friends";
+                res.send(null);
             }
-            res.json(ret);
-        });
-    });
-
-    apiRouter.post('/send_friend_request', authenticate.auth, function(req, res) {
-        user = jwt.decode(req.cookies.token);
-        var m = new database.MessageDTO();
-        m.sender = user.UserName;
-        m.receiver = req.body.username;
-        m.subject = 'You have a friend request!';
-        m.content = user.UserName + ' has added you to be their friend!';
-        m.type = 'friend_request';
-        database.MessageDTO.push(m, function(err) {
-            var ret = {};
-            if(err != null) {
-                ret.success = false;
-                ret.message = "An unknown error has occurred.";
-                console.log(err.stack);
-            } else {
-                ret.success = true;
-                ret.message = null;
-            }
-            res.json(ret);
-        });
-    });
-
-    apiRouter.post('/remove_friend_request', authenticate.auth, function(req, res) {
-        user = jwt.decode(req.cookies.token);
-        database.MessageDTO.pull(req.body.id, function(err) {
-            var ret = {};
-            if(err != null) {
-                ret.success = false;
-                ret.message = "An unknown error has occurred.";
-                console.log(err.stack);
-            } else {
-                ret.success = true;
-                ret.message = null;
-            }
-            res.json(ret);
         });
     });
 
     apiRouter.post('/add_friend', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
-
         var query = 'INSERT INTO Friends (user, friend) VALUES ("' + user.UserName + '", "' + req.body.username + '"), ("' + req.body.username + '", "' + user.UserName + '");';
         console.log(query);
         connection.query(query, function(err, rows) {
-            var ret = {};
             if(err) {
-                ret.success = false;
-                ret.message = " An unknown error has occurred.";
+								res.send(err);
+						} else if(rows) {
+                res.send(true);
+            } else {
+                res.send(null);
             }
-            else if(rows) {
-                ret.success = true;
-                ret.message = " friend added successfully";
-            }
-            else {
-                ret.success = false;
-                ret.message = null;
-            }
-            res.json(ret);
         });
     });
 
@@ -345,7 +251,11 @@ connection.query('SELECT 1', function(err, rows) {
 			var updateFunc = function(deltas) {
 				socket.emit('update-game', deltas);
 			};
-
+			var endFunc = function() {
+				socket.emit('end');
+				socket.disconnect();
+			}
+			var endFunc = function
             var gameData = tetris.newGame("anonymousPengin", updateFunc);
             gameid = gameData.gameid;
             socket.emit('join-response', gameData);
