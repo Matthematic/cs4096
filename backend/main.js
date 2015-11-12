@@ -256,7 +256,7 @@ connection.query('SELECT 1', function(err, rows) {
 				socket.disconnect();
 			}
 			var endFunc = function
-            var gameData = tetris.newGame("anonymousPengin", updateFunc);
+            var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
             gameid = gameData.gameid;
             socket.emit('join-response', gameData);
 
