@@ -419,6 +419,7 @@ var Game = function(updateFunc, endFunc) {
                     }
 
                 }
+                i++;
             }
         }
 
