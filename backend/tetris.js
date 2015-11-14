@@ -661,8 +661,8 @@ var Game = function(updateFunc, endFunc) {
         var localYOffset;
         var minOrigY=21;
         var minOrigX=21;
-        /*var rotTet = jQuery.extend(true, {}, theTet);*/
         var rotDummy;
+		var legal = true;
 
         var rotTet = new Array(tetSize);
 
@@ -709,25 +709,67 @@ var Game = function(updateFunc, endFunc) {
             rotTet[i].posX = -rotTet[i].posY + horizOffset;
             rotTet[i].posY = rotDummy;
         }
+		
+		//moving it back into the game grid's space
+		for (i=0; i < tetSize; i++)
+		{
+		  rotTet[i].posX = rotTet[i].posX + localXOffset;
+		  rotTet[i].posY = rotTet[i].posY + localYOffset;
+		}
 
         //special case handling and error checking (for clipping and the like) goes here
 
         for (i=0; i < tetSize; i++)
-        {
-            myArray[theTet[i].posY][theTet[i].posX] = null;
-        }
+		{
+		    //if the new positions are occupied, it's illegal
+		    if (myArray[rotTet[i].posY][rotTet[i].posX] != null)
+			{
+			    legal = false;
+				//if it was occupied by the previous position, it is instead legal
+			    for (j = 0; j < tetSize; j++)
+				{
+				    if (rotTet[i].posY == theTet[j].posY && rotTet[i].posX == theTet[j].posX)
+					{
+					    legal = true;
+					}
+				}
+				if (legal == false)
+				{
+				    break;
+				}
+			}
+		}
+		
+		//boundary testing, if the piece would be out of bounds, it's illegal (wallkicks go here if we get to them)
+		if (legal == true)
+		{
+		    for ( i=0; i < tetSize; i++)
+		    {
+		        if (rotTet[i].posX < 0 || rotTet[i].posX > 9 || rotTet[i].posY < 0 || rotTet[i].posY > 19)
+				{
+				    legal = false;
+				}
+		    }
+		}
 
         //time to make theTet take the values we just calculated and update the game grid
-        for (i=0; i < tetSize; i++)
-        {
-            theTet[i].posX = rotTet[i].posX + localXOffset;
-            theTet[i].posY = rotTet[i].posY + localYOffset;
-            myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
-        }
+        if (legal == true)
+		{
+		    for (i=0; i < tetSize; i++)
+            {
+            myArray[theTet[i].posY][theTet[i].posX] = null;
+            }
+		    for (i=0; i < tetSize; i++)
+            {
+                theTet[i].posX = rotTet[i].posX;
+                theTet[i].posY = rotTet[i].posY;
+                myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
+            }
 
-        this.updateRight(theTet, tetSize);
-        this.updateLeft(theTet, tetSize);
-        this.updateDown(theTet, tetSize);
+            this.updateRight(theTet, tetSize);
+            this.updateLeft(theTet, tetSize);
+            this.updateDown(theTet, tetSize);
+		}
 
     };
     
