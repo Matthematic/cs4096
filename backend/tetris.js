@@ -427,6 +427,7 @@ var Game = function(updateFunc, endFunc) {
     };
     
     this.CalculateScore = function(clearedRows) {
+        
         switch (clearedRows) {
             case 0:
                 break;
@@ -443,6 +444,7 @@ var Game = function(updateFunc, endFunc) {
                 this.playerScore += (1200*(this.currentLevel + 1));
                 break;
         }
+        this.totalClearedRows += clearedRows;
         if (this.totalClearedRows >= this.nextLevel) {
             this.currentLevel++;
             this.nextLevel += 10;
@@ -901,7 +903,7 @@ var Game = function(updateFunc, endFunc) {
     
     this.DisplayGrid = function(theGrid) {
         var s = '';
-        s = 'Current Level: ' + this.currentLevel + ' Score: ' + this.playerScore;
+        s = 'Current Level: ' + this.currentLevel + ' Score: ' + this.playerScore + ' Lines Cleared: ' + this.totalClearedRows;
         console.log(s);
         s = '';
         for (var i = 0; i < 20; i++) {
