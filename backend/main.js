@@ -342,7 +342,14 @@ connection.query('SELECT 1', function(err, rows) {
 
         socket.on('join-game', function(name){
             username = name;
-            var gameData = tetris.newGame("anonymousPengin");
+            var updateFunc = function(deltas) {
+                socket.emit('update-game', deltas);
+            };
+            var endFunc = function() {
+                socket.emit('end');
+                socket.disconnect();
+            };
+            var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
             gameid = gameData.gameid;
             socket.emit('join-response', gameData);
 
