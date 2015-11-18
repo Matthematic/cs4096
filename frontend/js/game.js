@@ -302,15 +302,46 @@
         newEnt.position.height = 1;
         newEnt.color = color;
         return newEnt;
-    }
+    };
 
-    var updateEntities = function(data, color) {
+    var createRandomColor = function() {
+        var newColor = Math.floor(Math.random() * 6);
+        var newColorObj = null;
+
+        switch(newColor) {
+            case 0:
+                newColorObj = new Color(1.0, 0.0, 0.0, 1.0);
+                break;
+            case 1:
+                newColorObj = new Color(0.0, 1.0, 0.0, 1.0);
+                break;
+            case 2:
+                newColorObj = new Color(0.0, 0.0, 1.0, 1.0);
+                break;
+            case 3:
+                newColorObj = new Color(1.0, 1.0, 0.0, 1.0);
+                break;
+            case 4:
+                newColorObj = new Color(1.0, 0.0, 1.0, 1.0);
+                break;
+            case 5:
+                newColorObj = new Color(0.0, 1.0, 1.0, 1.0);
+                break;
+        }
+        return newColorObj;
+    };
+
+    var updateEntities = function(data) {
+        var color = null;
         for(var key in data) {
             if(!data.hasOwnProperty(key)) continue;
 
             var obj = data[key];
             if(entities[obj.id] === undefined) {
-                entities[obj.id] = createBlock(obj, newColorObj);
+                if(color === null) {
+                    color = createRandomColor();
+                }
+                entities[obj.id] = createBlock(obj, color);
             } else {
                 if(obj.dead) {
                     delete entities[obj.id];
@@ -321,7 +352,7 @@
                 entities[obj.id].position.y = obj.y;
             }
         }
-    }
+    };
 
     socket.on('connect', function() {
         console.log("Connected!");
@@ -375,25 +406,7 @@
     });
 
     socket.on('update-game', function(data) {
-        newColor = Math.floor(Math.random() * 6);
-        newColorObj = null;
-
-        switch(newColor) {
-            case 0:
-                newColorObj = new Color(1.0, 0.0, 0.0, 1.0);
-            case 1:
-                newColorObj = new Color(0.0, 1.0, 0.0, 1.0);
-            case 2:
-                newColorObj = new Color(0.0, 0.0, 1.0, 1.0)
-            case 3:
-                newColorObj = new Color(1.0, 1.0, 0.0, 1.0);
-            case 4:
-                newColorObj = new Color(1.0, 0.0, 1.0, 1.0);
-            case 5:
-                newColorObj = new Color(0.0, 1.0, 1.0, 1.0);
-        }
-
-        updateEntities(data, newColorObj);
+        updateEntities(data);
     });
 
     // for now lets just auto join an anonymous game
