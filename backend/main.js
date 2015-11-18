@@ -261,19 +261,24 @@ connection.query('SELECT 1', function(err, rows) {
 
         });
         socket.on('space', function() {
-            tetris.space(gameid, username);
+            var deltas = tetris.space(gameid, username);
+            socket.emit('space-response', deltas);
         });
         socket.on('left', function() {
-            tetris.left(gameid, username);
+            var deltas = tetris.left(gameid, username);
+            socket.emit('left-response', deltas);
         });
         socket.on('right', function() {
-            tetris.right(gameid, username);
+            var deltas = tetris.right(gameid, username);
+            socket.emit('right-response', deltas);
         });
         socket.on('up', function() {
-            tetris.up(gameid, username);
+            var deltas = tetris.up(gameid, username);
+            socket.emit('up-response', deltas);
         });
         socket.on('down', function() {
-            tetris.down(gameid, username);
+            var deltas = tetris.down(gameid, username);
+            socket.emit('down-response', deltas);
         });
     });
 

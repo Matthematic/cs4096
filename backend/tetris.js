@@ -25,7 +25,7 @@ var Game = function(updateFunc, endFunc) {
     this.currentPieceType = 0;
     this.nextPieceType = Math.floor((Math.random() * 7));
     this.intervalHandle = null;
-    
+
     this.init = function() {
         console.error('test test');
         var deltas = {};
@@ -34,7 +34,7 @@ var Game = function(updateFunc, endFunc) {
         this.intervalHandle = setInterval(this.TimeMoveDown, 1000 - (10 * this.currentLevel), this);
         return this.CreateDeltas(deltas);
     };
-    
+
     this.InitializeGrid = function()  {
         grid = new Array(20);
         for (var i = 0; i < 20; i++) {
@@ -47,7 +47,7 @@ var Game = function(updateFunc, endFunc) {
         }
         return grid;
     };
-    
+
     this.CreateLPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -93,7 +93,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CreateJPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -139,7 +139,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CreateIPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -185,7 +185,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CreateOPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -231,7 +231,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CreateZPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -277,7 +277,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CreateSPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -323,7 +323,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CreateTPiece = function() {
         this.currentTet[0] = new Block;
         this.currentTet[1] = new Block;
@@ -369,7 +369,7 @@ var Game = function(updateFunc, endFunc) {
             this.blockID++;
         }
     };
-    
+
     this.CanMoveDown = function() {
         var moveDown = true;
         var count = 0;
@@ -385,7 +385,7 @@ var Game = function(updateFunc, endFunc) {
         }
         return moveDown;
     };
-    
+
     this.CheckForRows = function(deltas) {
         var j = 0;
         var clearedRows = 0;
@@ -425,9 +425,9 @@ var Game = function(updateFunc, endFunc) {
 
         this.CalculateScore(clearedRows);
     };
-    
+
     this.CalculateScore = function(clearedRows) {
-        
+
         switch (clearedRows) {
             case 0:
                 break;
@@ -451,7 +451,7 @@ var Game = function(updateFunc, endFunc) {
         }
 
     };
-    
+
     this.TetToBlocks = function() {
         for (var i = 0; i < 4; i++) {
             this.currentTet[i].left = null;
@@ -462,7 +462,7 @@ var Game = function(updateFunc, endFunc) {
             this.currentTet[i] = null;
         }
     };
-    
+
     this.GeneratePieces = function(deltas) {
 
         this.currentPieceType = this.nextPieceType;
@@ -496,13 +496,13 @@ var Game = function(updateFunc, endFunc) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
     };
-    
+
     this.left = function() {
         console.log("left");
         var moveLeft = true;
         var count = 0;
         var deltas = {};
-        
+
 
         while (count < 4) {
             if (this.currentTet[count].left == null) {
@@ -516,7 +516,7 @@ var Game = function(updateFunc, endFunc) {
         if (moveLeft == true) {
             for (var i = 0; i < this.currentTet.length; i++) {
                 this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
-            }           
+            }
             for (var i = 0; i < this.currentTet.length; i++) {
                this.currentTet[i].posX -= 1;
             }
@@ -531,12 +531,12 @@ var Game = function(updateFunc, endFunc) {
         return this.CreateDeltas(deltas);
         //return moveLeft;
     };
-    
+
     this.up = function() {
-    
+
         var deltas = {};
         console.log("up");
-        
+
         if (this.currentTet[0].wide == true)
         {
             this.Rotate (this.currentTet, this.theGrid, this.currentTet[0].offset, 4);
@@ -553,7 +553,7 @@ var Game = function(updateFunc, endFunc) {
         this.DisplayGrid();
         return this.CreateDeltas(deltas);
     };
-    
+
     this.down = function() {
 
         var moveDown = true;
@@ -572,7 +572,7 @@ var Game = function(updateFunc, endFunc) {
         if (moveDown == true) {
             for (var i = 0; i < this.currentTet.length; i++) {
                 this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
-            }           
+            }
             for (var i = 0; i < this.currentTet.length; i++) {
                 this.currentTet[i].posY += 1;
             }
@@ -587,7 +587,7 @@ var Game = function(updateFunc, endFunc) {
         this.DisplayGrid();
         return this.CreateDeltas(deltas);
     };
-    
+
     this.right = function() {
         var moveRight = true;
         var count = 0;
@@ -605,7 +605,7 @@ var Game = function(updateFunc, endFunc) {
         if (moveRight == true) {
             for (var i = 0; i < this.currentTet.length; i++) {
                 this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
-            }           
+            }
             for (var i = 0; i < this.currentTet.length; i++) {
                this.currentTet[i].posX += 1;
             }
@@ -619,13 +619,13 @@ var Game = function(updateFunc, endFunc) {
         this.DisplayGrid();
         return this.CreateDeltas(deltas);
     };
-    
+
     this.space = function() {
-    
+
         var moveDown = true;
         var count = 0;
         var deltas = {};
-        
+
         while(this.CanMoveDown() == true) {
             moveDown = true;
             var count = 0;
@@ -642,7 +642,7 @@ var Game = function(updateFunc, endFunc) {
             if (moveDown == true) {
                 for (var i = 0; i < this.currentTet.length; i++) {
                     this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
-                }           
+                }
                 for (var i = 0; i < this.currentTet.length; i++) {
                    this.currentTet[i].posY += 1;
                 }
@@ -651,13 +651,16 @@ var Game = function(updateFunc, endFunc) {
                 }
             }
         }
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
         this.TetToBlocks();
         this.CheckForRows(deltas);
         this.GeneratePieces(deltas);
         this.DisplayGrid();
         return this.CreateDeltas(deltas);
     };
-    
+
     this.Rotate = function(theTet, myArray, horizOffset, tetSize) {
         var localXOffset;
         var localYOffset;
@@ -711,7 +714,7 @@ var Game = function(updateFunc, endFunc) {
             rotTet[i].posX = -rotTet[i].posY + horizOffset;
             rotTet[i].posY = rotDummy;
         }
-		
+
 		//moving it back into the game grid's space
 		for (i=0; i < tetSize; i++)
 		{
@@ -741,7 +744,7 @@ var Game = function(updateFunc, endFunc) {
 				}
 			}
 		}
-		
+
 		//boundary testing, if the piece would be out of bounds, it's illegal (wallkicks go here if we get to them)
 		if (legal == true)
 		{
@@ -774,7 +777,7 @@ var Game = function(updateFunc, endFunc) {
 		}
 
     };
-    
+
     this.updateRight = function(theTet, tetSize) {
         var bool;
 
@@ -851,9 +854,9 @@ var Game = function(updateFunc, endFunc) {
             }
         }
     };
-    
+
     this.TimeMoveDown = function(self) {
-        
+
         var moveDown = true;
         var count = 0;
         var deltas = {};
@@ -865,7 +868,7 @@ var Game = function(updateFunc, endFunc) {
                 console.log('THE GAME IS OVER!');
                 self.UpdateFunc(self.CreateDeltas(deltas));
                 return;
-                
+
             }
             self.TetToBlocks();
             self.CheckForRows(deltas);
@@ -884,7 +887,7 @@ var Game = function(updateFunc, endFunc) {
             if (moveDown == true) {
                 for (var i = 0; i < self.currentTet.length; i++) {
                     self.theGrid[self.currentTet[i].posY][self.currentTet[i].posX] = null;
-                }           
+                }
                 for (var i = 0; i < self.currentTet.length; i++) {
                    self.currentTet[i].posY += 1;
                 }
@@ -898,9 +901,9 @@ var Game = function(updateFunc, endFunc) {
         }
         self.DisplayGrid();
         self.UpdateFunc(self.CreateDeltas(deltas));
-        
+
     };
-    
+
     this.DisplayGrid = function(theGrid) {
         var s = '';
         s = 'Current Level: ' + this.currentLevel + ' Score: ' + this.playerScore + ' Lines Cleared: ' + this.totalClearedRows;
@@ -921,7 +924,7 @@ var Game = function(updateFunc, endFunc) {
         console.log(s);
 
     };
-    
+
     this.CreateDeltas = function(deltas) {
         var newDeltas = [];
         for(var key in deltas) {
@@ -936,7 +939,7 @@ var Game = function(updateFunc, endFunc) {
         }
         return newDeltas;
     };
-};    
+};
 
 Game.prototype.CheckEnd = function() {
     return (this.theGrid[0][4] != null || this.theGrid[0][5] != null);

@@ -3,7 +3,7 @@
         var constructor = function(param){
             this.elements = new Float32Array(9);
             var i = 0;
-            if(typeof param != 'undefined') {
+            if(typeof param === 'undefined') {
                 for(i = 0; i < 8; i++) {
                     this.elements[i] = 0.0;
                 }
@@ -121,6 +121,7 @@
             this.elements[4] = y * this.elements[4];
         };
 
+        return constructor;
     }();
 
     var Color = function() {
@@ -153,6 +154,8 @@
             if(a.length == 1) {a = "0"+a;}
             return "#" + r + g + b;
         };
+
+        return constructor;
     }();
 
     var Point = function(x, y, z) {
@@ -204,11 +207,9 @@
         attribute vec2 aVertexPosition;\
         \
         uniform mat3 uMVMatrix;\
-        uniform mat3 uPMatrix;\
         \
         void main(void) {\
             vec3 pos = uMVMatrix * vec3(aVertexPosition, 1.0);\
-            pos = uPMatrix * pos;\
             gl_Position = vec4(pos.xy, 0.0, 1.0);\
         }\
     ";
@@ -248,7 +249,6 @@
 
     colorProg.vertexPositionAttribute = gl.getAttribLocation(colorProg, "aVertexPosition");
     gl.enableVertexAttribArray(colorProg.vertexPositionAttribute);
-    colorProg.pMatrixUniform = gl.getUniformLocation(colorProg, "uPMatrix");
     colorProg.mvMatrixUniform = gl.getUniformLocation(colorProg, "uMVMatrix");
     colorProg.color = gl.getUniformLocation(colorProg, "uColor");
 
@@ -256,34 +256,72 @@
         gl.useProgram(colorProg);
         gl.disableVertexAttribArray(1);
 
-        var mvmat = new Matrix3x3();
-
         var color = new Float32Array(4);
-        color[0] = rect.fillColor.r;
-        color[1] = rect.fillColor.g;
-        color[2] = rect.fillColor.b;
-        color[3] = rect.fillColor.a;
-
-        mvmat.translate(rect.position.x, rect.position.y);
-        mvmat.scale(rect.width, rect.height);
+        color[0] = rect.color.r;
+        color[1] = rect.color.g;
+        color[2] = rect.color.b;
+        color[3] = rect.color.a;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, baseRect);
         gl.vertexAttribPointer(colorProg.vertexPositionAttribute,
             baseRect.itemSize, gl.FLOAT, false, 0, 0);
 
-        if(rect.transform != null) {
-            gl.uniformMatrix3fv(colorProg.pMatrixUniform, false, rect.transform.elements);
-        } else {
-            gl.uniformMatrix3fv(colorProg.pMatrixUniform, false, Projection.elements);
-        }
+        var mvmat = new Matrix3x3(rect.transform);
+        mvmat.translate(rect.position.x, rect.position.y);
 
         gl.uniformMatrix3fv(colorProg.mvMatrixUniform, false, mvmat.elements);
         gl.uniform4fv(colorProg.color, color);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, baseRect.numItems);
     };
 
+    var worldMat = new Matrix3x3();
+    worldMat.set(2, 0, -1);
+    worldMat.set(2, 1, 1);
+    worldMat.set(1, 1, -1);
+    worldMat.scale(1/10, 1/20);
+
     var socket = io();
     var gamedata;
+    var entities = {}
+
+    function draw() {
+        for(var key in entities) {
+            if(!entities.hasOwnProperty(key)) continue;
+            drawRect(entities[key]);
+        }
+        window.requestAnimationFrame(draw);
+    }
+    window.requestAnimationFrame(draw);
+
+    var createBlock = function(delta, color) {
+        var newEnt = new Rect();
+        newEnt.transform = worldMat;
+        newEnt.position.x = delta.x;
+        newEnt.position.y = delta.y;
+        newEnt.position.width = 1;
+        newEnt.position.height = 1;
+        newEnt.color = color;
+        return newEnt;
+    }
+
+    var updateEntities = function(data, color) {
+        for(var key in data) {
+            if(!data.hasOwnProperty(key)) continue;
+
+            var obj = data[key];
+            if(entities[obj.id] === undefined) {
+                entities[obj.id] = createBlock(obj, newColorObj);
+            } else {
+                if(obj.dead) {
+                    delete entities[obj.id];
+                    continue;
+                }
+
+                entities[obj.id].position.x = obj.x;
+                entities[obj.id].position.y = obj.y;
+            }
+        }
+    }
 
     socket.on('connect', function() {
         console.log("Connected!");
@@ -315,6 +353,48 @@
             }
         });
     })
+
+    socket.on('left-response', function(data) {
+        updateEntities(data);
+    });
+
+    socket.on('right-response', function(data) {
+        updateEntities(data);
+    });
+
+    socket.on('up-response', function(data) {
+        updateEntities(data);
+    });
+
+    socket.on('down-response', function(data) {
+        updateEntities(data);
+    });
+
+    socket.on('space-response', function(data) {
+        updateEntities(data);
+    });
+
+    socket.on('update-game', function(data) {
+        newColor = Math.floor(Math.random() * 6);
+        newColorObj = null;
+
+        switch(newColor) {
+            case 0:
+                newColorObj = new Color(1.0, 0.0, 0.0, 1.0);
+            case 1:
+                newColorObj = new Color(0.0, 1.0, 0.0, 1.0);
+            case 2:
+                newColorObj = new Color(0.0, 0.0, 1.0, 1.0)
+            case 3:
+                newColorObj = new Color(1.0, 1.0, 0.0, 1.0);
+            case 4:
+                newColorObj = new Color(1.0, 0.0, 1.0, 1.0);
+            case 5:
+                newColorObj = new Color(0.0, 1.0, 1.0, 1.0);
+        }
+
+        updateEntities(data, newColorObj);
+    });
 
     // for now lets just auto join an anonymous game
     socket.emit('join-game');
