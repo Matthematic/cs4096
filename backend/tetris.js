@@ -9,797 +9,560 @@ var Block = function() {
     this.down = null;
     this.left = null;
     this.blockID = 0;
-}
-
-var myReadLine = require('readline');
-var y = myReadLine.createInterface(process.stdin, process.stdout);
-
-var currentTet = new Array(4);
-var userInput = 0;
-var blockID = 0;
-var totalClearedRows = 0;
-var nextLevel = 10;
-
-console.log('test, test');
-
-
-var theGrid = new Block;
-var stillBlocks = new Array(0);
-var playerScore = 0;
-var currentLevel = 0;
-
-/*
-stillBlocks[0] = new Block;
-stillBlocks[1] = new Block;
-stillBlocks[2] = new Block;
-stillBlocks[3] = new Block;
-stillBlocks[4] = new Block;
-stillBlocks[5] = new Block;
-stillBlocks[6] = new Block;
-stillBlocks[7] = new Block;
-stillBlocks[8] = new Block;
-stillBlocks[9] = new Block;
-stillBlocks[10] = new Block;
-*/
-
-theGrid = InitializeGrid();
-
-/*
-theGrid[5][0] = stillBlocks[0];
-theGrid[5][1] = stillBlocks[1];
-theGrid[5][2] = stillBlocks[2];
-theGrid[5][3] = stillBlocks[3];
-theGrid[5][4] = stillBlocks[4];
-theGrid[5][5] = stillBlocks[5];
-theGrid[5][6] = stillBlocks[6];
-theGrid[5][7] = stillBlocks[7];
-theGrid[5][8] = stillBlocks[8];
-theGrid[5][9] = stillBlocks[9];
-theGrid[4][3] = stillBlocks[10];
-*/
-
-
-var currentPieceType = 0;
-var nextPieceType = Math.floor((Math.random() * 7));
-
-GeneratePieces();
-
-
-DisplayGrid(theGrid);
-var userInput = 0;
-//while (userInput != 'q') {
-
-    y.question('Your move? :', function(userInput) {
-        if (userInput == 'a') {
-            MovePieceLeft(currentTet, theGrid);
-        }
-        else if (userInput == 'd') {
-            MovePieceRight(currentTet, theGrid);
-        }
-        else if (userInput == 's') {
-            MovePieceDown(currentTet, theGrid);
-        }
-        DisplayGrid(theGrid);
-        y.close();
-        //y.stdin.destroy();
-    });
-
-
-    //CheckForRows(theGrid, stillBlocks);
-    //DisplayGrid(theGrid);
-//}
-
-function InitializeGrid() {
-    grid = new Array(20);
-    for (var i = 0; i < 20; i++) {
-        grid[i] = new Array(10);
-    }
-    for (var j = 0; j < 20; j++) {
-        for (var k = 0; k < 10; k++) {
-            grid[j][k] = null;
-        }
-    }
-    return grid;
-}
-
-function DisplayGrid(theGrid) {
-    var s = '';
-    s = 'Current Level: ' + currentLevel + ' Score: ' + playerScore;
-    console.log(s);
-    s = '';
-    for (var i = 0; i < 20; i++) {
-        s = '<|';
-        for (var j = 0; j < 10; j++) {
-            if (theGrid[i][j] == null)
-                s += '.';
-            else
-                s += '█';
-        }
-        s += '|>'
-        console.log(s);
-    }
-    s = '^^^^^^^^^^^^^^';
-    console.log(s);
-}
-
-
-function CreateLPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = null;
-    currentTet[0].left = null;
-    currentTet[1].up = null;
-    currentTet[1].right = currentTet[2];
-    currentTet[1].down = null;
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = currentTet[3];
-    currentTet[2].right = null;
-    currentTet[2].down = null;
-    currentTet[2].left = currentTet[1];
-    currentTet[3].up = null;
-    currentTet[3].right = null;
-    currentTet[3].down = currentTet[2];
-    currentTet[3].left = null;
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 1;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 1;
-    currentTet[2].posX = 5;
-    currentTet[2].posY = 1;
-    currentTet[3].posX = 5;
-    currentTet[3].posY = 0;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 4;
-    currentTet[1].offset = 3;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-function CreateJPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = null;
-    currentTet[0].left = null;
-    currentTet[1].up = null;
-    currentTet[1].right = currentTet[2];
-    currentTet[1].down = null;
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = null;
-    currentTet[2].right = null;
-    currentTet[2].down = currentTet[3];
-    currentTet[2].left = currentTet[1];
-    currentTet[3].up = currentTet[2];
-    currentTet[3].right = null;
-    currentTet[3].down = null;
-    currentTet[3].left = null;
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 0;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 0;
-    currentTet[2].posX = 5;
-    currentTet[2].posY = 0;
-    currentTet[3].posX = 5;
-    currentTet[3].posY = 1;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 4;
-    currentTet[1].offset = 3;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-function CreateIPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = null;
-    currentTet[0].left = null;
-    currentTet[1].up = null;
-    currentTet[1].right = currentTet[2];
-    currentTet[1].down = null;
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = null;
-    currentTet[2].right = currentTet[3];
-    currentTet[2].down = null;
-    currentTet[2].left = currentTet[1];
-    currentTet[3].up = null;
-    currentTet[3].right = null;
-    currentTet[3].down = null;
-    currentTet[3].left = currentTet[2];
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 0;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 0;
-    currentTet[2].posX = 5;
-    currentTet[2].posY = 0;
-    currentTet[3].posX = 6;
-    currentTet[3].posY = 0;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 5;
-    currentTet[1].offset = 2;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-function CreateOPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = currentTet[2];
-    currentTet[0].left = null;
-    currentTet[1].up = null;
-    currentTet[1].right = null;
-    currentTet[1].down = currentTet[3];
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = currentTet[0];
-    currentTet[2].right = currentTet[3];
-    currentTet[2].down = null;
-    currentTet[2].left = null;
-    currentTet[3].up = currentTet[1];
-    currentTet[3].right = null;
-    currentTet[3].down = null;
-    currentTet[3].left = currentTet[2];
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 0;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 0;
-    currentTet[2].posX = 3;
-    currentTet[2].posY = 1;
-    currentTet[3].posX = 4;
-    currentTet[3].posY = 1;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 3;
-    currentTet[1].offset = 3;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-function CreateZPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = null;
-    currentTet[0].left = null;
-    currentTet[1].up = null;
-    currentTet[1].right = null;
-    currentTet[1].down = currentTet[2];
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = currentTet[0];
-    currentTet[2].right = currentTet[3];
-    currentTet[2].down = null;
-    currentTet[2].left = null;
-    currentTet[3].up = null;
-    currentTet[3].right = null;
-    currentTet[3].down = null;
-    currentTet[3].left = currentTet[2];
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 0;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 0;
-    currentTet[2].posX = 4;
-    currentTet[2].posY = 1;
-    currentTet[3].posX = 5;
-    currentTet[3].posY = 1;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 4;
-    currentTet[1].offset = 3;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-function CreateSPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = null;
-    currentTet[0].left = null;
-    currentTet[1].up = currentTet[2];
-    currentTet[1].right = null;
-    currentTet[1].down = null;
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = null;
-    currentTet[2].right = currentTet[3];
-    currentTet[2].down = currentTet[1];
-    currentTet[2].left = null;
-    currentTet[3].up = null;
-    currentTet[3].right = null;
-    currentTet[3].down = null;
-    currentTet[3].left = currentTet[2];
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 1;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 1;
-    currentTet[2].posX = 4;
-    currentTet[2].posY = 0;
-    currentTet[3].posX = 5;
-    currentTet[3].posY = 0;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 4;
-    currentTet[1].offset = 3;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-function CreateTPiece() {
-    currentTet[0] = new Block;
-    currentTet[1] = new Block;
-    currentTet[2] = new Block;
-    currentTet[3] = new Block;
-
-    currentTet[0].up = null;
-    currentTet[0].right = currentTet[1];
-    currentTet[0].down = null;
-    currentTet[0].left = null;
-    currentTet[1].up = currentTet[3];
-    currentTet[1].right = currentTet[2];
-    currentTet[1].down = null;
-    currentTet[1].left = currentTet[0];
-    currentTet[2].up = null;
-    currentTet[2].right = null;
-    currentTet[2].down = null;
-    currentTet[2].left = currentTet[1];
-    currentTet[3].up = null;
-    currentTet[3].right = null;
-    currentTet[3].down = currentTet[1];
-    currentTet[3].left = null;
-    currentTet[0].posX = 3;
-    currentTet[0].posY = 1;
-    currentTet[1].posX = 4;
-    currentTet[1].posY = 1;
-    currentTet[2].posX = 5;
-    currentTet[2].posY = 1;
-    currentTet[3].posX = 4;
-    currentTet[3].posY = 0;
-
-    currentTet[0].wide = true;
-    currentTet[0].offset = 4;
-    currentTet[1].offset = 3;
-
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-
-    for (var i = 0; i < 4; i++) {
-        currentTet[i].blockID = blockID;
-        blockID++
-    }
-}
-
-
-
-function MoveLPieceDown(currentTet, theGrid) {
-    theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-    theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-    theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-    theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-    currentTet[0].posY += 1;
-    currentTet[1].posY += 1;
-    currentTet[2].posY += 1;
-    currentTet[3].posY += 1;
-    theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-    theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-    theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-    theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-}
-
-function CanMoveDown() {
-    var moveDown = true;
-    var count = 0;
-
-    while (count < 4) {
-        if (currentTet[count].down == null) {
-            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
-                moveDown = false;
-                break;
-            }
-        }
-        count++;
-    }
-    return moveDown;
-}
-
-function MovePieceDown(currentTet, theGrid) {
-    var moveDown = true;
-    var count = 0;
-
-    while (count < 4) {
-        if (currentTet[count].down == null) {
-            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
-                moveDown = false;
-                break;
-            }
-        }
-        count++;
-    }
-    if (moveDown == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posY += 1;
-        currentTet[1].posY += 1;
-        currentTet[2].posY += 1;
-        currentTet[3].posY += 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
-    return moveDown;
-}
-
-function MovePieceRight(currentTet, theGrid) {
-    var moveRight = true;
-    var count = 0;
-
-    while (count < 4) {
-        if (currentTet[count].right == null) {
-            if (currentTet[count].posX + 1 >= 10 || theGrid[currentTet[count].posY][currentTet[count].posX + 1] != null) {
-                moveRight = false;
-                break;
-            }
-        }
-        count++;
-    }
-    if (moveRight == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posX += 1;
-        currentTet[1].posX += 1;
-        currentTet[2].posX += 1;
-        currentTet[3].posX += 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
-    return moveRight;
-}
-
-function MovePieceLeft(currentTet, theGrid) {
-    var moveLeft = true;
-    var count = 0;
-
-    while (count < 4) {
-        if (currentTet[count].left == null) {
-            if (currentTet[count].posX - 1 < 0 || theGrid[currentTet[count].posY][currentTet[count].posX - 1] != null) {
-                moveLeft = false;
-                break;
-            }
-        }
-        count++;
-    }
-    if (moveLeft == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posX -= 1;
-        currentTet[1].posX -= 1;
-        currentTet[2].posX -= 1;
-        currentTet[3].posX -= 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
-    return moveLeft;
-}
-
-function CheckForRows() {
-    var j = 0;
-    var clearedRows = 0
-    var foundHole = false;
-    for (var i = 19; i >= 0; i--) {
-        j = 0;
-        foundHole = false;
-        while (j < 10 && foundHole == false) {
-            if (theGrid[i][j] == null) {
-                foundHole = true;
-            }
-            j++;
-        }
-        if (foundHole == false) {
-            clearedRows++;
-            for (k = 0; k < 10; k++) {
-                var removalIndex = stillBlocks.indexOf(theGrid[i][k]);
-                stillBlocks.splice(removalIndex, 1);
-                theGrid[i][k] = null;
-            }
-            for (var x = i; x > 0; x--) {
-                for (var y = 0; y < 10; y++) {
-                    if (theGrid[x-1][y] != null) {
-                        theGrid[x-1][y].posY += 1;
-                        theGrid[x][y] = theGrid[x-1][y];
-                        theGrid[x-1][y] = null;
-                    }
-                }
-
-            }
-        }
-    }
-
-
-    CalculateScore(clearedRows);
-}
-
-function CalculateScore(clearedRows) {
-    switch (clearedRows) {
-        case 0:
-            break;
-        case 1:
-            playerScore += (40*(currentLevel + 1));
-            break;
-        case 2:
-            playerScore += (100*(currentLevel + 1));
-            break;
-        case 3:
-            playerScore += (300*(currentLevel + 1));
-            break;
-        case 4:
-            playerScore += (1200*(currentLevel + 1));
-            break;
-    }
-    if (totalClearedRows >= nextLevel) {
-        currentLevel++
-        nextLevel += 10;
-    }
-
-}
-
-function TetToBlocks() {
-    for (var i = 0; i < 4; i++) {
-
-        currentTet[i].left = null;
-        currentTet[i].right = null;
-        currentTet[i].up = null;
-        currentTet[i].down = null;
-        stillBlocks.push(currentTet[i]);
-        currentTet[i] = null;
-    }
-}
-
-function GeneratePieces() {
-
-    currentPieceType = nextPieceType;
-    nextPieceType = Math.floor((Math.random() * 7));
-
-    switch(currentPieceType) {
-        case 0:
-            CreateLPiece();
-            break;
-        case 1:
-            CreateJPiece();
-            break;
-        case 2:
-            CreateIPiece();
-            break;
-        case 3:
-            CreateOPiece();
-            break;
-        case 4:
-            CreateZPiece();
-            break;
-        case 5:
-            CreateSPiece();
-            break;
-        case 6:
-            CreateTPiece();
-            break;
-    }
-
-
-
-
-}
-
-function left(gameid, player) {
-    console.log("left");
-    var moveLeft = true;
-    var count = 0;
-
-    while (count < 4) {
-        if (currentTet[count].left == null) {
-            if (currentTet[count].posX - 1 < 0 || theGrid[currentTet[count].posY][currentTet[count].posX - 1] != null) {
-                moveLeft = false;
-                break;
-            }
-        }
-        count++;
-    }
-    if (moveLeft == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posX -= 1;
-        currentTet[1].posX -= 1;
-        currentTet[2].posX -= 1;
-        currentTet[3].posX -= 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
-    DisplayGrid(theGrid);
-    //return moveLeft;
 };
 
-function up(gameid, player) {
-    console.log("up");
-    if (currentTet[0].wide == true)
-    {
-        Rotate (currentTet, theGrid, currentTet[0].offset, 4);
-        currentTet[0].wide = false;
-    }
-    else
-    {
-        Rotate (currentTet, theGrid, currentTet[1].offset, 4);
-        currentTet[0].wide = true;
-    }
-    DisplayGrid(theGrid);
-};
+var Game = function(updateFunc, endFunc) {
+    this.EndFunc = endFunc;
+    this.UpdateFunc = updateFunc;
+    this.currentTet = new Array(4);
+    this.blockID = 0;
+    this.totalClearedRows = 0;
+    this.nextLevel = 10;
+    this.theGrid = new Block;
+    this.stillBlocks = new Array(0);
+    this.playerScore = 0;
+    this.currentLevel = 0;
+    this.currentPieceType = 0;
+    this.nextPieceType = Math.floor((Math.random() * 7));
+    this.intervalHandle = null;
 
-function down(gameid, player) {
-    console.log("down");
-    var moveDown = true;
-    var count = 0;
+    this.init = function() {
+        console.error('test test');
+        var deltas = {};
+        this.theGrid = this.InitializeGrid();
+        this.GeneratePieces(deltas);
+        this.intervalHandle = setInterval(this.TimeMoveDown, 1000 - (10 * this.currentLevel), this);
+        return this.CreateDeltas(deltas);
+    };
 
-    while (count < 4) {
-        if (currentTet[count].down == null) {
-            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
-                moveDown = false;
-                break;
+    this.InitializeGrid = function()  {
+        grid = new Array(20);
+        for (var i = 0; i < 20; i++) {
+            grid[i] = new Array(10);
+        }
+        for (var j = 0; j < 20; j++) {
+            for (var k = 0; k < 10; k++) {
+                grid[j][k] = null;
             }
         }
-        count++;
-    }
-    if (moveDown == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posY += 1;
-        currentTet[1].posY += 1;
-        currentTet[2].posY += 1;
-        currentTet[3].posY += 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
+        return grid;
+    };
 
-    DisplayGrid(theGrid);
+    this.CreateLPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
 
-    //return moveDown;
-};
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = null;
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = null;
+        this.currentTet[1].right = this.currentTet[2];
+        this.currentTet[1].down = null;
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = this.currentTet[3];
+        this.currentTet[2].right = null;
+        this.currentTet[2].down = null;
+        this.currentTet[2].left = this.currentTet[1];
+        this.currentTet[3].up = null;
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = this.currentTet[2];
+        this.currentTet[3].left = null;
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 1;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 1;
+        this.currentTet[2].posX = 5;
+        this.currentTet[2].posY = 1;
+        this.currentTet[3].posX = 5;
+        this.currentTet[3].posY = 0;
 
-function right(gameid, player) {
-    console.log("right");
-    var moveRight = true;
-    var count = 0;
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 4;
+        this.currentTet[1].offset = 3;
 
-    while (count < 4) {
-        if (currentTet[count].right == null) {
-            if (currentTet[count].posX + 1 >= 10 || theGrid[currentTet[count].posY][currentTet[count].posX + 1] != null) {
-                moveRight = false;
-                break;
-            }
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
         }
-        count++;
-    }
-    if (moveRight == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posX += 1;
-        currentTet[1].posX += 1;
-        currentTet[2].posX += 1;
-        currentTet[3].posX += 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
-    DisplayGrid(theGrid);
-    //if (CanMoveDown() == false)
-    //return moveRight;
-};
+    };
 
-function space(gameid, player) {
-    console.log("space");
-    var moveDown = true;
-    var count = 0;
-    while(CanMoveDown() == true) {
-        moveDown = true;
+    this.CreateJPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
+
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = null;
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = null;
+        this.currentTet[1].right = this.currentTet[2];
+        this.currentTet[1].down = null;
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = null;
+        this.currentTet[2].right = null;
+        this.currentTet[2].down = this.currentTet[3];
+        this.currentTet[2].left = this.currentTet[1];
+        this.currentTet[3].up = this.currentTet[2];
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = null;
+        this.currentTet[3].left = null;
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 0;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 0;
+        this.currentTet[2].posX = 5;
+        this.currentTet[2].posY = 0;
+        this.currentTet[3].posX = 5;
+        this.currentTet[3].posY = 1;
+
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 4;
+        this.currentTet[1].offset = 3;
+
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
+        }
+    };
+
+    this.CreateIPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
+
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = null;
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = null;
+        this.currentTet[1].right = this.currentTet[2];
+        this.currentTet[1].down = null;
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = null;
+        this.currentTet[2].right = this.currentTet[3];
+        this.currentTet[2].down = null;
+        this.currentTet[2].left = this.currentTet[1];
+        this.currentTet[3].up = null;
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = null;
+        this.currentTet[3].left = this.currentTet[2];
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 0;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 0;
+        this.currentTet[2].posX = 5;
+        this.currentTet[2].posY = 0;
+        this.currentTet[3].posX = 6;
+        this.currentTet[3].posY = 0;
+
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 5;
+        this.currentTet[1].offset = 2;
+
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
+        }
+    };
+
+    this.CreateOPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
+
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = this.currentTet[2];
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = null;
+        this.currentTet[1].right = null;
+        this.currentTet[1].down = this.currentTet[3];
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = this.currentTet[0];
+        this.currentTet[2].right = this.currentTet[3];
+        this.currentTet[2].down = null;
+        this.currentTet[2].left = null;
+        this.currentTet[3].up = this.currentTet[1];
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = null;
+        this.currentTet[3].left = this.currentTet[2];
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 0;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 0;
+        this.currentTet[2].posX = 3;
+        this.currentTet[2].posY = 1;
+        this.currentTet[3].posX = 4;
+        this.currentTet[3].posY = 1;
+
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 3;
+        this.currentTet[1].offset = 3;
+
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
+        }
+    };
+
+    this.CreateZPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
+
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = null;
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = null;
+        this.currentTet[1].right = null;
+        this.currentTet[1].down = this.currentTet[2];
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = this.currentTet[0];
+        this.currentTet[2].right = this.currentTet[3];
+        this.currentTet[2].down = null;
+        this.currentTet[2].left = null;
+        this.currentTet[3].up = null;
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = null;
+        this.currentTet[3].left = this.currentTet[2];
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 0;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 0;
+        this.currentTet[2].posX = 4;
+        this.currentTet[2].posY = 1;
+        this.currentTet[3].posX = 5;
+        this.currentTet[3].posY = 1;
+
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 4;
+        this.currentTet[1].offset = 3;
+
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
+        }
+    };
+
+    this.CreateSPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
+
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = null;
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = this.currentTet[2];
+        this.currentTet[1].right = null;
+        this.currentTet[1].down = null;
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = null;
+        this.currentTet[2].right = this.currentTet[3];
+        this.currentTet[2].down = this.currentTet[1];
+        this.currentTet[2].left = null;
+        this.currentTet[3].up = null;
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = null;
+        this.currentTet[3].left = this.currentTet[2];
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 1;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 1;
+        this.currentTet[2].posX = 4;
+        this.currentTet[2].posY = 0;
+        this.currentTet[3].posX = 5;
+        this.currentTet[3].posY = 0;
+
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 4;
+        this.currentTet[1].offset = 3;
+
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
+        }
+    };
+
+    this.CreateTPiece = function() {
+        this.currentTet[0] = new Block;
+        this.currentTet[1] = new Block;
+        this.currentTet[2] = new Block;
+        this.currentTet[3] = new Block;
+
+        this.currentTet[0].up = null;
+        this.currentTet[0].right = this.currentTet[1];
+        this.currentTet[0].down = null;
+        this.currentTet[0].left = null;
+        this.currentTet[1].up = this.currentTet[3];
+        this.currentTet[1].right = this.currentTet[2];
+        this.currentTet[1].down = null;
+        this.currentTet[1].left = this.currentTet[0];
+        this.currentTet[2].up = null;
+        this.currentTet[2].right = null;
+        this.currentTet[2].down = null;
+        this.currentTet[2].left = this.currentTet[1];
+        this.currentTet[3].up = null;
+        this.currentTet[3].right = null;
+        this.currentTet[3].down = this.currentTet[1];
+        this.currentTet[3].left = null;
+        this.currentTet[0].posX = 3;
+        this.currentTet[0].posY = 1;
+        this.currentTet[1].posX = 4;
+        this.currentTet[1].posY = 1;
+        this.currentTet[2].posX = 5;
+        this.currentTet[2].posY = 1;
+        this.currentTet[3].posX = 4;
+        this.currentTet[3].posY = 0;
+
+        this.currentTet[0].wide = true;
+        this.currentTet[0].offset = 4;
+        this.currentTet[1].offset = 3;
+
+        this.theGrid[this.currentTet[0].posY][this.currentTet[0].posX] = this.currentTet[0];
+        this.theGrid[this.currentTet[1].posY][this.currentTet[1].posX] = this.currentTet[1];
+        this.theGrid[this.currentTet[2].posY][this.currentTet[2].posX] = this.currentTet[2];
+        this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
+
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].blockID = this.blockID;
+            this.blockID++;
+        }
+    };
+
+    this.CanMoveDown = function() {
+        var moveDown = true;
         var count = 0;
 
         while (count < 4) {
-            if (currentTet[count].down == null) {
-                if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
+            if (this.currentTet[count].down == null) {
+                if (this.currentTet[count].posY + 1 >= 20 || this.theGrid[this.currentTet[count].posY + 1][this.currentTet[count].posX] != null) {
+                    moveDown = false;
+                    break;
+                }
+            }
+            count++;
+        }
+        return moveDown;
+    };
+
+    this.CheckForRows = function(deltas) {
+        var j = 0;
+        var clearedRows = 0;
+        var foundHole = false;
+        for (var i = 19; i >= 0; i--) {
+            j = 0;
+            foundHole = false;
+            while (j < 10 && foundHole == false) {
+                if (this.theGrid[i][j] == null) {
+                    foundHole = true;
+                }
+                j++;
+            }
+            if (foundHole == false) {
+                clearedRows++;
+                for (k = 0; k < 10; k++) {
+                    var removalIndex = this.stillBlocks.indexOf(this.theGrid[i][k]);
+                    deltas[this.theGrid[i][k].blockID] = this.theGrid[i][k];
+                    deltas[this.theGrid[i][k].blockID].dead = true;
+                    this.stillBlocks.splice(removalIndex, 1);
+                    this.theGrid[i][k] = null;
+                }
+                for (var x = i; x > 0; x--) {
+                    for (var y = 0; y < 10; y++) {
+                        if (this.theGrid[x-1][y] != null) {
+                            this.theGrid[x-1][y].posY += 1;
+                            this.theGrid[x][y] = this.theGrid[x-1][y];
+                            this.theGrid[x-1][y] = null;
+                            deltas[this.theGrid[x][y].blockID] = this.theGrid[x][y];
+                        }
+                    }
+
+                }
+                i++;
+            }
+        }
+
+        this.CalculateScore(clearedRows);
+    };
+
+    this.CalculateScore = function(clearedRows) {
+
+        switch (clearedRows) {
+            case 0:
+                break;
+            case 1:
+                this.playerScore += (40*(this.currentLevel + 1));
+                break;
+            case 2:
+                this.playerScore += (100*(this.currentLevel + 1));
+                break;
+            case 3:
+                this.playerScore += (300*(this.currentLevel + 1));
+                break;
+            case 4:
+                this.playerScore += (1200*(this.currentLevel + 1));
+                break;
+        }
+        this.totalClearedRows += clearedRows;
+        if (this.totalClearedRows >= this.nextLevel) {
+            this.currentLevel++;
+            this.nextLevel += 10;
+        }
+
+    };
+
+    this.TetToBlocks = function() {
+        for (var i = 0; i < 4; i++) {
+            this.currentTet[i].left = null;
+            this.currentTet[i].right = null;
+            this.currentTet[i].up = null;
+            this.currentTet[i].down = null;
+            this.stillBlocks.push(this.currentTet[i]);
+            this.currentTet[i] = null;
+        }
+    };
+
+    this.GeneratePieces = function(deltas) {
+
+        this.currentPieceType = this.nextPieceType;
+        this.nextPieceType = Math.floor((Math.random() * 7));
+
+        switch(this.currentPieceType) {
+            case 0:
+                this.CreateLPiece();
+                break;
+            case 1:
+                this.CreateJPiece();
+                break;
+            case 2:
+                this.CreateIPiece();
+                break;
+            case 3:
+                this.CreateOPiece();
+                break;
+            case 4:
+                this.CreateZPiece();
+                break;
+            case 5:
+                this.CreateSPiece();
+                break;
+            case 6:
+                this.CreateTPiece();
+                break;
+        }
+
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
+    };
+
+    this.left = function() {
+        console.log("left");
+        var moveLeft = true;
+        var count = 0;
+        var deltas = {};
+
+
+        while (count < 4) {
+            if (this.currentTet[count].left == null) {
+                if (this.currentTet[count].posX - 1 < 0 || this.theGrid[this.currentTet[count].posY][this.currentTet[count].posX - 1] != null) {
+                    moveLeft = false;
+                    break;
+                }
+            }
+            count++;
+        }
+        if (moveLeft == true) {
+            for (var i = 0; i < this.currentTet.length; i++) {
+                this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
+            }
+            for (var i = 0; i < this.currentTet.length; i++) {
+               this.currentTet[i].posX -= 1;
+            }
+            for (var i = 0; i < this.currentTet.length; i++) {
+               this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = this.currentTet[i];
+            }
+        }
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
+        this.DisplayGrid();
+        return this.CreateDeltas(deltas);
+        //return moveLeft;
+    };
+
+    this.up = function() {
+
+        var deltas = {};
+        console.log("up");
+
+        if (this.currentTet[0].wide == true)
+        {
+            this.Rotate (this.currentTet, this.theGrid, this.currentTet[0].offset, 4);
+            this.currentTet[0].wide = false;
+        }
+        else
+        {
+            this.Rotate (this.currentTet, this.theGrid, this.currentTet[1].offset, 4);
+            this.currentTet[0].wide = true;
+        }
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
+        this.DisplayGrid();
+        return this.CreateDeltas(deltas);
+    };
+
+    this.down = function() {
+
+        var moveDown = true;
+        var count = 0;
+        var deltas = {};
+
+        while (count < 4) {
+            if (this.currentTet[count].down == null) {
+                if (this.currentTet[count].posY + 1 >= 20 || this.theGrid[this.currentTet[count].posY + 1][this.currentTet[count].posX] != null) {
                     moveDown = false;
                     break;
                 }
@@ -807,38 +570,417 @@ function space(gameid, player) {
             count++;
         }
         if (moveDown == true) {
-            theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-            theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-            theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-            theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-            currentTet[0].posY += 1;
-            currentTet[1].posY += 1;
-            currentTet[2].posY += 1;
-            currentTet[3].posY += 1;
-            theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-            theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-            theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-            theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
+            for (var i = 0; i < this.currentTet.length; i++) {
+                this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
+            }
+            for (var i = 0; i < this.currentTet.length; i++) {
+                this.currentTet[i].posY += 1;
+            }
+            for (var i = 0; i < this.currentTet.length; i++) {
+               this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = this.currentTet[i];
+            }
         }
-    }
-    TetToBlocks();
-    CheckForRows();
-    GeneratePieces();
 
-    DisplayGrid(theGrid);
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
+        this.DisplayGrid();
+        return this.CreateDeltas(deltas);
+    };
 
+    this.right = function() {
+        var moveRight = true;
+        var count = 0;
+        var deltas = {};
+
+        while (count < 4) {
+            if (this.currentTet[count].right == null) {
+                if (this.currentTet[count].posX + 1 >= 10 || this.theGrid[this.currentTet[count].posY][this.currentTet[count].posX + 1] != null) {
+                    moveRight = false;
+                    break;
+                }
+            }
+            count++;
+        }
+        if (moveRight == true) {
+            for (var i = 0; i < this.currentTet.length; i++) {
+                this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
+            }
+            for (var i = 0; i < this.currentTet.length; i++) {
+               this.currentTet[i].posX += 1;
+            }
+            for (var i = 0; i < this.currentTet.length; i++) {
+               this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = this.currentTet[i];
+            }
+        }
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
+        this.DisplayGrid();
+        return this.CreateDeltas(deltas);
+    };
+
+    this.space = function() {
+
+        var moveDown = true;
+        var count = 0;
+        var deltas = {};
+
+        while(this.CanMoveDown() == true) {
+            moveDown = true;
+            var count = 0;
+
+            while (count < 4) {
+                if (this.currentTet[count].down == null) {
+                    if (this.currentTet[count].posY + 1 >= 20 || this.theGrid[this.currentTet[count].posY + 1][this.currentTet[count].posX] != null) {
+                        moveDown = false;
+                        break;
+                    }
+                }
+                count++;
+            }
+            if (moveDown == true) {
+                for (var i = 0; i < this.currentTet.length; i++) {
+                    this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = null;
+                }
+                for (var i = 0; i < this.currentTet.length; i++) {
+                   this.currentTet[i].posY += 1;
+                }
+                for (var i = 0; i < this.currentTet.length; i++) {
+                   this.theGrid[this.currentTet[i].posY][this.currentTet[i].posX] = this.currentTet[i];
+                }
+            }
+        }
+        for (var i = 0; i < this.currentTet.length; i++) {
+            deltas[this.currentTet[i].blockID] = this.currentTet[i];
+        }
+        this.TetToBlocks();
+        this.CheckForRows(deltas);
+        this.GeneratePieces(deltas);
+        this.DisplayGrid();
+        return this.CreateDeltas(deltas);
+    };
+
+    this.Rotate = function(theTet, myArray, horizOffset, tetSize) {
+        var localXOffset;
+        var localYOffset;
+        var minOrigY=21;
+        var minOrigX=21;
+        var rotDummy;
+		var legal = true;
+
+        var rotTet = new Array(tetSize);
+
+        for ( i=0; i<tetSize; i++)
+        {
+            rotTet[i] = new Block;
+        }
+
+        for ( i=0; i<tetSize; i++)
+        {
+            rotTet[i].posX = theTet[i].posX;
+            rotTet[i].posY = theTet[i].posY;
+        }
+
+
+        //first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
+
+        for ( i = 0; i < tetSize; i++){
+            if (theTet[i].posX < minOrigX)
+            {
+                minOrigX = theTet[i].posX;
+            }
+            if (theTet[i].posY < minOrigY)
+            {
+                minOrigY = theTet[i].posY;
+            }
+        }
+
+        // the max/mins have been found at this point, it is now time to set the offsets that will put me in my preferred location in local co-ordinate space
+        localXOffset = minOrigX - 1;
+        localYOffset = minOrigY - 1;
+
+        //at this point, I'm going to set the co-ordinates for the rotated tet piece
+        for (i = 0; i < tetSize; i++)
+        {
+            rotTet[i].posX = (theTet[i].posX - localXOffset);
+            rotTet[i].posY = (theTet[i].posY - localYOffset);
+        }
+
+        //at the completion of the above loop, the rotTet entity now has the co-ordinates of theTet, but offset to be nestled in a quadrant's corner, it is time to do the rotation math
+        for (i = 0; i < tetSize; i++)
+        {
+            rotDummy = rotTet[i].posX;
+            rotTet[i].posX = -rotTet[i].posY + horizOffset;
+            rotTet[i].posY = rotDummy;
+        }
+
+		//moving it back into the game grid's space
+		for (i=0; i < tetSize; i++)
+		{
+		  rotTet[i].posX = rotTet[i].posX + localXOffset;
+		  rotTet[i].posY = rotTet[i].posY + localYOffset;
+		}
+
+        //special case handling and error checking (for clipping and the like) goes here
+
+        for (i=0; i < tetSize; i++)
+		{
+		    //if the new positions are occupied, it's illegal
+		    if (myArray[rotTet[i].posY][rotTet[i].posX] != null)
+			{
+			    legal = false;
+				//if it was occupied by the previous position, it is instead legal
+			    for (j = 0; j < tetSize; j++)
+				{
+				    if (rotTet[i].posY == theTet[j].posY && rotTet[i].posX == theTet[j].posX)
+					{
+					    legal = true;
+					}
+				}
+				if (legal == false)
+				{
+				    break;
+				}
+			}
+		}
+
+		//boundary testing, if the piece would be out of bounds, it's illegal (wallkicks go here if we get to them)
+		if (legal == true)
+		{
+		    for ( i=0; i < tetSize; i++)
+		    {
+		        if (rotTet[i].posX < 0 || rotTet[i].posX > 9 || rotTet[i].posY < 0 || rotTet[i].posY > 19)
+				{
+				    legal = false;
+				}
+		    }
+		}
+
+        //time to make theTet take the values we just calculated and update the game grid
+        if (legal == true)
+		{
+		    for (i=0; i < tetSize; i++)
+            {
+            myArray[theTet[i].posY][theTet[i].posX] = null;
+            }
+		    for (i=0; i < tetSize; i++)
+            {
+                theTet[i].posX = rotTet[i].posX;
+                theTet[i].posY = rotTet[i].posY;
+                myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
+            }
+
+            this.updateRight(theTet, tetSize);
+            this.updateLeft(theTet, tetSize);
+            this.updateDown(theTet, tetSize);
+		}
+
+    };
+
+    this.updateRight = function(theTet, tetSize) {
+        var bool;
+
+        for (i=0; i<tetSize; i++)
+        {
+            bool = true;
+            for (j=0; j<tetSize; j++)
+            {
+                if (j != i)
+                {
+                    //if the current block has a neighbouring block in the active tet, set right to that block
+                    if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+                    {
+                        theTet[i].right = theTet[j];
+                        bool = false;
+                    }
+                }
+            }
+
+            //if it had no neighbouring blocks in the active tet, set the right to null
+            if (bool == true)
+            {
+                theTet[i].right = null;
+            }
+        }
+    };
+
+    this.updateLeft = function(theTet, tetSize) {
+        var bool;
+
+        for (i=0; i<tetSize; i++)
+        {
+            bool = true;
+            for (j=0; j<tetSize; j++)
+            {
+                if (j != i)
+                {
+                    if (theTet[i].posX-1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
+                    {
+                        theTet[i].left = theTet[j];
+                        bool = false;
+                    }
+                }
+            }
+
+            if (bool == true)
+            {
+                theTet[i].left = null;
+            }
+        }
+    };
+
+    this.updateDown = function(theTet, tetSize) {
+        var bool;
+
+        for (i=0; i<tetSize; i++)
+        {
+            bool = true;
+            for (j=0; j<tetSize; j++)
+            {
+                if (j != i)
+                {
+                    if (theTet[i].posX == theTet[j].posX && theTet[i].posY + 1 == theTet[j].posY)
+                    {
+                        theTet[i].down = theTet[j];
+                        bool = false;
+                    }
+                }
+            }
+
+            if (bool == true)
+            {
+                theTet[i].down = null;
+            }
+        }
+    };
+
+    this.TimeMoveDown = function(self) {
+
+        var moveDown = true;
+        var count = 0;
+        var deltas = {};
+
+        if (self.CanMoveDown() == false) {
+            if (self.CheckEnd()) {
+                clearInterval(self.intervalHandle);
+                self.EndFunc();
+                console.log('THE GAME IS OVER!');
+                self.UpdateFunc(self.CreateDeltas(deltas));
+                return;
+
+            }
+            self.TetToBlocks();
+            self.CheckForRows(deltas);
+            self.GeneratePieces(deltas);
+        }
+        else {
+            while (count < 4) {
+                if (self.currentTet[count].down == null) {
+                    if (self.currentTet[count].posY + 1 >= 20 || self.theGrid[self.currentTet[count].posY + 1][self.currentTet[count].posX] != null) {
+                        moveDown = false;
+                        break;
+                    }
+                }
+                count++;
+            }
+            if (moveDown == true) {
+                for (var i = 0; i < self.currentTet.length; i++) {
+                    self.theGrid[self.currentTet[i].posY][self.currentTet[i].posX] = null;
+                }
+                for (var i = 0; i < self.currentTet.length; i++) {
+                   self.currentTet[i].posY += 1;
+                }
+                for (var i = 0; i < self.currentTet.length; i++) {
+                   self.theGrid[self.currentTet[i].posY][self.currentTet[i].posX] = self.currentTet[i];
+                }
+            }
+        }
+        for (var i = 0; i < self.currentTet.length; i++) {
+            deltas[self.currentTet[i].blockID] = self.currentTet[i];
+        }
+        self.DisplayGrid();
+        self.UpdateFunc(self.CreateDeltas(deltas));
+
+    };
+
+    this.DisplayGrid = function(theGrid) {
+        var s = '';
+        s = 'Current Level: ' + this.currentLevel + ' Score: ' + this.playerScore + ' Lines Cleared: ' + this.totalClearedRows;
+        console.log(s);
+        s = '';
+        for (var i = 0; i < 20; i++) {
+            s = '<|';
+            for (var j = 0; j < 10; j++) {
+                if (this.theGrid[i][j] == null)
+                    s += '.';
+                else
+                    s += '█';
+            }
+            s += '|>'
+            console.log(s);
+        }
+        s = '^^^^^^^^^^^^^^';
+        console.log(s);
+
+    };
+
+    this.CreateDeltas = function(deltas) {
+        var newDeltas = [];
+        for(var key in deltas) {
+            if (deltas.hasOwnProperty(key)) {
+                var newDelta = {};
+                newDelta.x = deltas[key].posX;
+                newDelta.y = deltas[key].posY;
+                newDelta.dead = deltas[key].dead;
+                newDelta.id = deltas[key].blockID;
+                newDeltas.push(newDelta);
+            }
+        }
+        return newDeltas;
+    };
+};
+
+Game.prototype.CheckEnd = function() {
+    return (this.theGrid[0][4] != null || this.theGrid[0][5] != null);
+};
+
+var Games = {};
+var gameID = 0;
+
+function left(gameid, player) {
+    return Games[gameid].left();
+};
+
+function up(gameid, player) {
+    return Games[gameid].up();
+};
+
+function down(gameid, player) {
+    return Games[gameid].down();
+};
+
+function right(gameid, player) {
+    return Games[gameid].right();
+};
+
+function space(gameid, player) {
+    return Games[gameid].space();
 };
 
 function pause(gameid, player) {
 
 };
 
-// please return the new game id as an index into the game array
-function newGame(player) {
+function newGame(player, updateFunc, endFunc) {
+    console.error("print please");
     var elGame = {};
     elGame.width = 10;
     elGame.height = 20;
-    elGame.gameid = 1;
+    elGame.gameid = gameID++;
+    Games[elGame.gameid] = new Game(updateFunc, endFunc);
+    elGame.deltas = Games[elGame.gameid].init();
+    console.error('lol el game');
     return elGame;
 };
 
@@ -851,207 +993,4 @@ module.exports = {
     "pause": pause,
     "newGame": newGame
 };
-
-//horizOffset is the "width" of the piece being operated on +1, so a tallise L piece has a width of 2, so the offset should be 3, a sideways L piece would be 4
-//tetSize is the size of the tet, for any tetromino this is 4, it is included at this point purely to allow us to do things like rotate quintonimos if we later add them as a powerup or something
-function Rotate (theTet, myArray, horizOffset, tetSize) {
-    var localXOffset;
-    var localYOffset;
-    var minOrigY=21;
-    var minOrigX=21;
-    /*var rotTet = jQuery.extend(true, {}, theTet);*/
-    var rotDummy;
-
-    var rotTet = new Array(tetSize);
-
-    for ( i=0; i<tetSize; i++)
-    {
-        rotTet[i] = new Block;
-    }
-
-    for ( i=0; i<tetSize; i++)
-    {
-        rotTet[i].posX = theTet[i].posX;
-        rotTet[i].posY = theTet[i].posY;
-    }
-
-
-    //first thing to do is to define the "local co-ordinates," that is to say that we want to set the piece in the corner containing the origin within the first/fourth quadrant (we're dealing with an inverted Y axis, so it makes referring to the quadrants odd)
-
-    for ( i = 0; i < tetSize; i++){
-        if (theTet[i].posX < minOrigX)
-        {
-            minOrigX = theTet[i].posX;
-        }
-        if (theTet[i].posY < minOrigY)
-        {
-            minOrigY = theTet[i].posY;
-        }
-    }
-
-    // the max/mins have been found at this point, it is now time to set the offsets that will put me in my preferred location in local co-ordinate space
-    localXOffset = minOrigX - 1;
-    localYOffset = minOrigY - 1;
-
-    //at this point, I'm going to set the co-ordinates for the rotated tet piece
-    for (i = 0; i < tetSize; i++)
-    {
-        rotTet[i].posX = (theTet[i].posX - localXOffset);
-        rotTet[i].posY = (theTet[i].posY - localYOffset);
-    }
-
-    //at the completion of the above loop, the rotTet entity now has the co-ordinates of theTet, but offset to be nestled in a quadrant's corner, it is time to do the rotation math
-    for (i = 0; i < tetSize; i++)
-    {
-        rotDummy = rotTet[i].posX;
-        rotTet[i].posX = -rotTet[i].posY + horizOffset;
-        rotTet[i].posY = rotDummy;
-    }
-
-    //special case handling and error checking (for clipping and the like) goes here
-
-    for (i=0; i < tetSize; i++)
-    {
-        myArray[theTet[i].posY][theTet[i].posX] = null;
-    }
-
-    //time to make theTet take the values we just calculated and update the game grid
-    for (i=0; i < tetSize; i++)
-    {
-        theTet[i].posX = rotTet[i].posX + localXOffset;
-        theTet[i].posY = rotTet[i].posY + localYOffset;
-        myArray[theTet[i].posY][theTet[i].posX] = theTet[i];
-    }
-
-    updateRight(theTet, tetSize);
-    updateLeft(theTet, tetSize);
-    updateDown(theTet, tetSize);
-
-}
-
-function updateRight (theTet, tetSize)
-{
-    var bool;
-
-    for (i=0; i<tetSize; i++)
-    {
-        bool = true;
-        for (j=0; j<tetSize; j++)
-        {
-            if (j != i)
-            {
-                //if the current block has a neighbouring block in the active tet, set right to that block
-                if (theTet[i].posX + 1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
-                {
-                    theTet[i].right = theTet[j];
-                    bool = false;
-                }
-            }
-        }
-
-        //if it had no neighbouring blocks in the active tet, set the right to null
-        if (bool == true)
-        {
-            theTet[i].right = null;
-        }
-    }
-}
-
-function updateLeft (theTet, tetSize)
-{
-    var bool;
-
-    for (i=0; i<tetSize; i++)
-    {
-        bool = true;
-        for (j=0; j<tetSize; j++)
-        {
-            if (j != i)
-            {
-                if (theTet[i].posX-1 == theTet[j].posX && theTet[i].posY == theTet[j].posY)
-                {
-                    theTet[i].left = theTet[j];
-                    bool = false;
-                }
-            }
-        }
-
-        if (bool == true)
-        {
-            theTet[i].left = null;
-        }
-    }
-}
-
-function updateDown (theTet, tetSize)
-{
-    var bool;
-
-    for (i=0; i<tetSize; i++)
-    {
-        bool = true;
-        for (j=0; j<tetSize; j++)
-        {
-            if (j != i)
-            {
-                if (theTet[i].posX == theTet[j].posX && theTet[i].posY + 1 == theTet[j].posY)
-                {
-                    theTet[i].down = theTet[j];
-                    bool = false;
-                }
-            }
-        }
-
-        if (bool == true)
-        {
-            theTet[i].down = null;
-        }
-    }
-}
-
-
-function TimeMoveDown() {
-    console.log("down");
-    var moveDown = true;
-    var count = 0;
-
-    if (CanMoveDown() == false) {
-        TetToBlocks();
-        CheckForRows();
-        GeneratePieces();
-    }
-    else {
-    while (count < 4) {
-        if (currentTet[count].down == null) {
-            if (currentTet[count].posY + 1 >= 20 || theGrid[currentTet[count].posY + 1][currentTet[count].posX] != null) {
-                moveDown = false;
-                break;
-            }
-        }
-        count++;
-    }
-    if (moveDown == true) {
-        theGrid[currentTet[0].posY][currentTet[0].posX] = null;
-        theGrid[currentTet[1].posY][currentTet[1].posX] = null;
-        theGrid[currentTet[2].posY][currentTet[2].posX] = null;
-        theGrid[currentTet[3].posY][currentTet[3].posX] = null;
-        currentTet[0].posY += 1;
-        currentTet[1].posY += 1;
-        currentTet[2].posY += 1;
-        currentTet[3].posY += 1;
-        theGrid[currentTet[0].posY][currentTet[0].posX] = currentTet[0];
-        theGrid[currentTet[1].posY][currentTet[1].posX] = currentTet[1];
-        theGrid[currentTet[2].posY][currentTet[2].posX] = currentTet[2];
-        theGrid[currentTet[3].posY][currentTet[3].posX] = currentTet[3];
-    }
-    }
-
-
-    DisplayGrid(theGrid);
-
-
-    //return moveDown;
-}
-
-//setInterval(TimeMoveDown, 1000 - (10 * currentLevel));
 
