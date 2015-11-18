@@ -277,7 +277,8 @@
     var worldMat = new Matrix3x3();
     worldMat.set(2, 0, -1);
     worldMat.set(2, 1, 1);
-    worldMat.set(1, 1, -1);
+    worldMat.set(0, 0, 2);
+    worldMat.set(1, 1, -2);
     worldMat.scale(1/10, 1/20);
 
     var socket = io();
