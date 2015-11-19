@@ -11,9 +11,7 @@ var Block = function() {
     this.blockID = 0;
 };
 
-var Game = function(updateFunc, endFunc) {
-    this.EndFunc = endFunc;
-    this.UpdateFunc = updateFunc;
+var Board = function(player) {
     this.currentTet = new Array(4);
     this.blockID = 0;
     this.totalClearedRows = 0;
@@ -25,15 +23,22 @@ var Game = function(updateFunc, endFunc) {
     this.currentPieceType = 0;
     this.nextPieceType = Math.floor((Math.random() * 7));
     this.intervalHandle = null;
+    this.player = player;
+    this.connected = false;
 
-    this.init = function() {
-        console.error('test test');
+    this.init = function(updateFunc, endFunc) {
+        this.EndFunc = endFunc;
+        this.UpdateFunc = updateFunc;
+        this.connected = true;
+    };
+
+    this.start = function() {
         var deltas = {};
         this.theGrid = this.InitializeGrid();
         this.GeneratePieces(deltas);
         this.intervalHandle = setInterval(this.TimeMoveDown, 1000 - (10 * this.currentLevel), this);
         return this.CreateDeltas(deltas);
-    };
+    }
 
     this.InitializeGrid = function()  {
         grid = new Array(20);
@@ -941,47 +946,99 @@ var Game = function(updateFunc, endFunc) {
     };
 };
 
-Game.prototype.CheckEnd = function() {
+Board.prototype.CheckEnd = function() {
     return (this.theGrid[0][4] != null || this.theGrid[0][5] != null);
 };
 
 var Games = {};
 var gameID = 0;
+var Game = function(id, width, height, numPlayers, creatingPlayer) {
+    this.id = id;
+    this.boardWidth = width;
+    this.boardHeight = height;
+    this.started = false;
+
+    this.boards = {};
+    this.boards[creatingPlayer] = new Board(creatingPlayer);
+}
 
 function left(gameid, player) {
-    return Games[gameid].left();
+    if(Games[gamid].started) return;
+    return Games[gameid].boards[player].left();
 };
 
 function up(gameid, player) {
-    return Games[gameid].up();
+    if(Games[gamid].started) return;
+    return Games[gameid].boards[player].up();
 };
 
 function down(gameid, player) {
-    return Games[gameid].down();
+    if(Games[gamid].started) return;
+    return Games[gameid].boards[player].down();
 };
 
 function right(gameid, player) {
-    return Games[gameid].right();
+    if(Games[gamid].started) return;
+    return Games[gameid].boards[player].right();
 };
 
 function space(gameid, player) {
-    return Games[gameid].space();
+    if(Games[gamid].started) return;
+    return Games[gameid].boards[player].space();
 };
 
 function pause(gameid, player) {
 
 };
 
-function newGame(player, updateFunc, endFunc) {
-    console.error("print please");
-    var elGame = {};
-    elGame.width = 10;
-    elGame.height = 20;
-    elGame.gameid = gameID++;
-    Games[elGame.gameid] = new Game(updateFunc, endFunc);
-    elGame.deltas = Games[elGame.gameid].init();
-    console.error('lol el game');
-    return elGame;
+function newGame(creatingPlayer) {
+    var id = gameID++;
+    Games[id] = new Game(id, 10, 20, 2, creatingPlayer);
+    //elGame.deltas = Games[elGame.gameid].init();
+    return id;
+};
+
+function connect(gameid, player, updateFunc, endFunc) {
+    var retData = {};
+    if(Games[id] === undefined) {
+        console.log(player + " tried to connect to game, " + gameid + " which doesn't exist.");
+        retData.fail = true;
+        retData.message = "The game does not exist.";
+        return retData;
+    }
+
+    var game = Games[id];
+    if(Object.keys(game.boards).length < game.numPlayers) {
+        if(game.boards[player] === undefined) {
+            game.boards[player] = new Game(player);
+        }
+
+        game.boards[player].init();
+        console.log(player + " has connected to game " + gameid);
+    } else {
+        retData.fail = true;
+        retData.message = "The game is full.";
+    }
+
+    retData.fail = false;
+    retData.message = "";
+
+    var allConnected = true;
+    for(var i in game.boards) {
+        if(!game.boards.hasOwnProperty(i)) continue;
+        if(!game.boards[i].connected) {
+            allConnected = true;
+            break;
+        }
+    }
+
+    if(allConnected) {
+        console.log("gonna start game " + gameid);
+        // start all the games
+        this.started = true;
+    }
+
+    return retData;
 };
 
 module.exports = {
@@ -991,6 +1048,7 @@ module.exports = {
     "right": right,
     "space": space,
     "pause": pause,
-    "newGame": newGame
+    "newGame": newGame,
+    "connect": connect
 };
 

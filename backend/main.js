@@ -8,8 +8,8 @@ var authenticate = require('./authenticate');
 var tetris = require('./tetris');
 var connection = database.connection;
 
-var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classic'}];
-var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
+var open_games_ranked = [];
+var open_games_social = [];
 
 process.on('SIGINT', function() {
     console.log('Closing database connection...');
@@ -204,7 +204,6 @@ connection.query('SELECT 1', function(err, rows) {
         var exists = false;
         var index = null;
         if (req.body.queuetype == 'ranked') {
-            console.log("getting inside ranked");
             for (var i = 0; i < open_games_ranked.length; i++){
                 if (open_games_ranked[i].username == user.UserName) {
                     console.log("exists, getting index");
@@ -215,7 +214,8 @@ connection.query('SELECT 1', function(err, rows) {
             }
             if (!exists) {
                 console.log("pushing to ranked");
-                open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+                var gameid = tetris.newGame(user.UserName);
+                open_games_ranked.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
             }
             else {
                 console.log("checking if index is set");
@@ -372,8 +372,10 @@ connection.query('SELECT 1', function(err, rows) {
         var gameid;
         console.log("a user connected.");
 
-        socket.on('join-game', function(name){
-            username = name;
+        socket.on('join-game', function(data){
+            var user = jwt.decode(data.token);
+            username = user.UserName;
+
             var updateFunc = function(deltas) {
                 socket.emit('update-game', deltas);
             };
@@ -381,10 +383,12 @@ connection.query('SELECT 1', function(err, rows) {
                 socket.emit('end');
                 socket.disconnect();
             };
-            var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
-            gameid = gameData.gameid;
-            socket.emit('join-response', gameData);
 
+            var retData = tetris.connect(data.gameid, user.UserName, updateFunc, endFunc);
+            //var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
+
+
+            socket.emit('join-response', retData);
         });
         socket.on('space', function() {
             var deltas = tetris.space(gameid, username);
