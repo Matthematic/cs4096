@@ -92,6 +92,14 @@ connection.query('SELECT 1', function(err, rows) {
         return res.sendFile('game.html', {root: "./frontend/pages"});
     });
 
+    app.get('/stats/ranked_leaderboards', function(req, res) {
+        return res.sendFile('ranked_leaderboards.html', {root: "./frontend/pages"});
+    });
+
+    app.get('/stats/social_leaderboards', function(req, res) {
+        return res.sendFile('social_leaderboards.html', {root: "./frontend/pages"});
+    });
+
     var apiRouter = express.Router();
 
     apiRouter.post('/create-login', function(req, res, next) {
@@ -319,6 +327,30 @@ connection.query('SELECT 1', function(err, rows) {
             else {
                 ret.success = false;
                 ret.message = null;
+            }
+            res.json(ret);
+        });
+    });
+
+    apiRouter.post('/get_user_stats', authenticate.auth, function(req, res) {
+        user = jwt.decode(req.cookies.token);
+
+        var query = 'SELECT * FROM UserStats WHERE username = "' + user.UserName + '";';
+
+        console.log(query);
+        connection.query(query, function(err, rows) {
+            var ret = {};
+            if(err) {
+                ret.success = false;
+                ret.message = " An unknown error has occurred.";
+            }
+            else if(rows) {
+                ret.success = true;
+                ret.stats = rows;
+            }
+            else {
+                ret.success = false;
+                ret.stats = null;
             }
             res.json(ret);
         });
