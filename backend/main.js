@@ -14,11 +14,11 @@ var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'
 process.on('SIGINT', function() {
     console.log('Closing database connection...');
     connection.end(function(err) {
-            if(typeof err == "undefined") {
-                console.log ('Could not close connection: ' + err.stack);
-            } else {
-                console.log ('Connection closed successfully.');
-            }
+        if(typeof err == "undefined") {
+            console.log ('Could not close connection: ' + err.stack);
+        } else {
+            console.log ('Connection closed successfully.');
+        }
     });
 });
 
@@ -44,17 +44,17 @@ connection.query('SELECT 1', function(err, rows) {
         var token = req.cookies.token;
 
         if(token) {
-                jwt.verify(token, 'notevencloselistenbaby', function(err, decoded) {
-                        if(err) {
-                                res.json({success: false, message: 'Failed to authenticate token.'});
-                        } else {
-                                req.decoded = decoded;
-                        }
-                });
+            jwt.verify(token, 'notevencloselistenbaby', function(err, decoded) {
+                if(err) {
+                    res.json({success: false, message: 'Failed to authenticate token.'});
+                } else {
+                    req.decoded = decoded;
+                }
+            });
 
         } else {
-                console.log("error token auth");
-                return res.sendFile('frontpage.html', {root: "./frontend/pages"});
+            console.log("error token auth");
+            return res.sendFile('frontpage.html', {root: "./frontend/pages"});
         }
 
         return res.sendFile('dashboard.html', {root: "./frontend/pages"});
@@ -122,10 +122,10 @@ connection.query('SELECT 1', function(err, rows) {
         var m = new database.MessageDTO();
         m.sender = user.UserName;
         m.receiver = req.body.username;
-                m.subject = 'You have been invited!';
-                m.content = user.UserName + ' has invited you to a game!';
+        m.subject = 'You have been invited!';
+        m.content = user.UserName + ' has invited you to a game!';
         m.type = 'invite';
-                database.MessageDTO.push(m, function(err) {
+        database.MessageDTO.push(m, function(err) {
             var ret = {};
             if(err != null) {
                 ret.success = false;
@@ -140,8 +140,8 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
-            user = jwt.decode(req.cookies.token);
-            res.send(user.UserName);
+        user = jwt.decode(req.cookies.token);
+        res.send(user.UserName);
     });
 
     // need to send a "message" to a user, maybe an email
@@ -195,7 +195,7 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/load-open-games-social', function(req, res) {
-            res.send(open_games_social);
+        res.send(open_games_social);
     });
 
     apiRouter.post('/create_game', authenticate.auth, function(req, res) {
