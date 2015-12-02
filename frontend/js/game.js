@@ -410,7 +410,36 @@
         updateEntities(data);
     });
 
+    var parseUri = function() {
+        var splitter = window.location.href;
+        var uriData = {};
+        splitter = splitter.split('?')[1];
+        var vars = splitter.split(':');
+        for(var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            uriData[pair[0]] = pair[1];
+        }
+        return uriData;
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        }
+        return "";
+    }
+
+    var gameData = {};
+    var uriData = parseUri();
+    console.log(uriData);
+    gameData.gameid = uriData.gameid;
+    gameData.token = getCookie("token");
+
     // for now lets just auto join an anonymous game
-    socket.emit('join-game');
+    socket.emit('join-game', gameData);
 
 })();

@@ -214,8 +214,12 @@ connection.query('SELECT 1', function(err, rows) {
             }
             if (!exists) {
                 console.log("pushing to ranked");
+                var ret = {};
                 var gameid = tetris.newGame(user.UserName);
                 open_games_ranked.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+
+                ret.gameid = gameid;
+                res.json(ret);
             }
             else {
                 console.log("checking if index is set");
@@ -376,6 +380,7 @@ connection.query('SELECT 1', function(err, rows) {
             var user = jwt.decode(data.token);
             username = user.UserName;
 
+
             var updateFunc = function(deltas) {
                 socket.emit('update-game', deltas);
             };
@@ -384,9 +389,9 @@ connection.query('SELECT 1', function(err, rows) {
                 socket.disconnect();
             };
 
+            console.log(data);
             var retData = tetris.connect(data.gameid, user.UserName, updateFunc, endFunc);
             //var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
-
 
             socket.emit('join-response', retData);
         });

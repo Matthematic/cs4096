@@ -957,6 +957,7 @@ var Game = function(id, width, height, numPlayers, creatingPlayer) {
     this.boardWidth = width;
     this.boardHeight = height;
     this.started = false;
+    this.numPlayers = numPlayers;
 
     this.boards = {};
     this.boards[creatingPlayer] = new Board(creatingPlayer);
@@ -1000,14 +1001,15 @@ function newGame(creatingPlayer) {
 
 function connect(gameid, player, updateFunc, endFunc) {
     var retData = {};
-    if(Games[id] === undefined) {
+    if(Games[gameid] === undefined) {
         console.log(player + " tried to connect to game, " + gameid + " which doesn't exist.");
         retData.fail = true;
         retData.message = "The game does not exist.";
         return retData;
     }
 
-    var game = Games[id];
+    var game = Games[gameid];
+    console.log(player + " " + Object.keys(game.boards).length + " " + game.numPlayers);
     if(Object.keys(game.boards).length < game.numPlayers) {
         if(game.boards[player] === undefined) {
             game.boards[player] = new Game(player);
@@ -1032,7 +1034,7 @@ function connect(gameid, player, updateFunc, endFunc) {
         }
     }
 
-    if(allConnected) {
+    if(allConnected && Object.keys(game.boards).length == game.numPlayers) {
         console.log("gonna start game " + gameid);
         // start all the games
         this.started = true;
