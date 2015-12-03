@@ -1012,6 +1012,7 @@ function connect(gameid, player, updateFunc, endFunc) {
     console.log(player + " " + Object.keys(game.boards).length + " " + game.numPlayers);
     if(Object.keys(game.boards).length < game.numPlayers) {
         if(game.boards[player] === undefined) {
+            console.log("making a new board.");
             game.boards[player] = new Game(player);
         }
 
