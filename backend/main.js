@@ -379,7 +379,7 @@ connection.query('SELECT 1', function(err, rows) {
         socket.on('join-game', function(data){
             var user = jwt.decode(data.token);
             username = user.UserName;
-
+            gameid = data.gameid;
 
             var updateFunc = function(deltas) {
                 socket.emit('update-game', deltas);

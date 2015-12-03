@@ -904,7 +904,7 @@ var Board = function(player) {
         for (var i = 0; i < self.currentTet.length; i++) {
             deltas[self.currentTet[i].blockID] = self.currentTet[i];
         }
-        self.DisplayGrid();
+        // self.DisplayGrid();
         self.UpdateFunc(self.CreateDeltas(deltas));
 
     };
@@ -964,27 +964,28 @@ var Game = function(id, width, height, numPlayers, creatingPlayer) {
 }
 
 function left(gameid, player) {
-    if(Games[gamid].started) return;
+    console.log("left " + gameid + " " + player);
+    if(Games[gameid].started) return;
     return Games[gameid].boards[player].left();
 };
 
 function up(gameid, player) {
-    if(Games[gamid].started) return;
+    if(Games[gameid].started) return;
     return Games[gameid].boards[player].up();
 };
 
 function down(gameid, player) {
-    if(Games[gamid].started) return;
+    if(Games[gameid].started) return;
     return Games[gameid].boards[player].down();
 };
 
 function right(gameid, player) {
-    if(Games[gamid].started) return;
+    if(Games[gameid].started) return;
     return Games[gameid].boards[player].right();
 };
 
 function space(gameid, player) {
-    if(Games[gamid].started) return;
+    if(Games[gameid].started) return;
     return Games[gameid].boards[player].space();
 };
 
@@ -1013,10 +1014,10 @@ function connect(gameid, player, updateFunc, endFunc) {
     if(Object.keys(game.boards).length < game.numPlayers) {
         if(game.boards[player] === undefined) {
             console.log("making a new board.");
-            game.boards[player] = new Game(player);
+            game.boards[player] = new Board(player);
         }
 
-        game.boards[player].init();
+        game.boards[player].init(updateFunc, endFunc);
         console.log(player + " has connected to game " + gameid);
     } else {
         retData.fail = true;
@@ -1037,7 +1038,10 @@ function connect(gameid, player, updateFunc, endFunc) {
 
     if(allConnected && Object.keys(game.boards).length == game.numPlayers) {
         console.log("gonna start game " + gameid);
-        // start all the games
+        for(var i in game.boards) {
+            if(!game.boards.hasOwnProperty(i)) continue;
+            game.boards[i].start();
+        }
         this.started = true;
     }
 
