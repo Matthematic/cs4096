@@ -1,7 +1,32 @@
 
 .game-container {
-    display: inline-block;
+    position: relative;
+    width: 304px;
+    height: 604px;
+    margin: auto;
+    display: block;
     border: 2px;
     border-style: solid;
     border-color: black;
 }
+
+.game-text {
+    position: absolute;
+    display: inline-block;
+    left: 0px;
+    top: 0px;
+    z-index: 10;
+}
+
+.game-container p {
+    display: inline;
+    font-weight:normal;
+    color:#E8451C;
+    letter-spacing:1pt;
+    word-spacing:4pt;
+    font-size:26px;
+    text-align:left;
+    font-family:tahoma, verdana, arial, sans-serif;
+    line-height:1;
+}
+

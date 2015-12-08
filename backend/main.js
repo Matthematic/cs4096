@@ -8,8 +8,8 @@ var authenticate = require('./authenticate');
 var tetris = require('./tetris');
 var connection = database.connection;
 
-var open_games_ranked = [{'username':'matthew', 'elo':'2300', 'gametype':'Classic'}];
-var open_games_social = [{'username':'user1', 'elo':'2300', 'gametype':'Classic'}];
+var open_games_ranked = [];
+var open_games_social = [];
 
 process.on('SIGINT', function() {
     console.log('Closing database connection...');
@@ -199,12 +199,10 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/create_game', authenticate.auth, function(req, res) {
-        console.log("-------------------");
         user = jwt.decode(req.cookies.token);
         var exists = false;
         var index = null;
         if (req.body.queuetype == 'ranked') {
-            console.log("getting inside ranked");
             for (var i = 0; i < open_games_ranked.length; i++){
                 if (open_games_ranked[i].username == user.UserName) {
                     console.log("exists, getting index");
@@ -215,7 +213,21 @@ connection.query('SELECT 1', function(err, rows) {
             }
             if (!exists) {
                 console.log("pushing to ranked");
-                open_games_ranked.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+                var ret = {};
+                var resultFunc = function(states) {
+                    // when the game is over, you will recieve an object filled
+                    // with states per player.
+                    // <username> : {
+                    //     score: <int>,
+                    //     level: <int>
+                    // },
+                };
+
+                var gameid = tetris.newGame(user.UserName, resultFunc);
+                open_games_ranked.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+
+                ret.gameid = gameid;
+                res.json(ret);
             }
             else {
                 console.log("checking if index is set");
@@ -370,39 +382,39 @@ connection.query('SELECT 1', function(err, rows) {
         var gameid;
         console.log("a user connected.");
 
-        socket.on('join-game', function(name){
-            username = name;
+        socket.on('join-game', function(data){
+            var user = jwt.decode(data.token);
+            username = user.UserName;
+            gameid = data.gameid;
+
             var updateFunc = function(deltas) {
                 socket.emit('update-game', deltas);
             };
-            var endFunc = function() {
-                socket.emit('end');
+            var endFunc = function(winner) {
+                socket.emit('end', winner);
                 socket.disconnect();
             };
-            var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
-            gameid = gameData.gameid;
-            socket.emit('join-response', gameData);
 
+            console.log(data);
+            var retData = tetris.connect(data.gameid, user.UserName, updateFunc, endFunc);
+            //var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
+
+            socket.emit('join-response', retData);
         });
         socket.on('space', function() {
-            var deltas = tetris.space(gameid, username);
-            socket.emit('space-response', deltas);
+            tetris.space(gameid, username);
         });
         socket.on('left', function() {
-            var deltas = tetris.left(gameid, username);
-            socket.emit('left-response', deltas);
+            tetris.left(gameid, username);
         });
         socket.on('right', function() {
-            var deltas = tetris.right(gameid, username);
-            socket.emit('right-response', deltas);
+            tetris.right(gameid, username);
         });
         socket.on('up', function() {
-            var deltas = tetris.up(gameid, username);
-            socket.emit('up-response', deltas);
+            tetris.up(gameid, username);
         });
         socket.on('down', function() {
-            var deltas = tetris.down(gameid, username);
-            socket.emit('down-response', deltas);
+            tetris.down(gameid, username);
         });
     });
 

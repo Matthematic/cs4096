@@ -17,8 +17,8 @@ $(document).ready(function() {
         var row_data = ranked_table.row( this ).data();
         var username = get_user();
         if (row_data[0] != username) {
-            alert( "Game starting\n" + "Player: " + row_data[0] + "\tGametype: " + row_data[2]);
-            window.location.href="/game.html";
+            alert( "Game starting\n" + "Player: " + row_data[1] + "\tGametype: " + row_data[3]);
+            window.location.href="/game.html?gameid=" + row_data[0];
         }
         else {
             alert( "You can't accept your own game!");
@@ -43,7 +43,8 @@ function create_game(queuetype) {
         data: game_data,
         datatype: 'json',
         method: "post",
-        success: function(){
+        success: function(res){
+            window.location.href="/game.html?gameid=" + res.gameid;
             console.log("Game created successfully");
         },
         callback: function(){
@@ -108,7 +109,6 @@ function get_user() {
     return username;
 }
 
-
 var load_table_data = function(queuetype) {
     var t = $('#' + queuetype + '_table').DataTable();
     t.clear().draw();
@@ -123,6 +123,7 @@ var load_table_data = function(queuetype) {
             {
                 if (data[i].username != username)
                 t.row.add( [
+                    data[i].id,
                     data[i].username,
                     data[i].elo,
                     data[i].gametype,
