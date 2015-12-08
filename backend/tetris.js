@@ -9,6 +9,7 @@ var Block = function() {
     this.down = null;
     this.left = null;
     this.blockID = 0;
+    this.color = 0;
 };
 
 var Board = function(player) {
@@ -26,8 +27,9 @@ var Board = function(player) {
     this.player = player;
     this.connected = false;
 
-    this.init = function(updateFunc, endFunc) {
+    this.init = function(updateFunc, sendFunc, endFunc) {
         this.EndFunc = endFunc;
+        this.SendFunc = sendFunc;
         this.UpdateFunc = updateFunc;
         this.connected = true;
     };
@@ -58,6 +60,12 @@ var Board = function(player) {
         this.currentTet[1] = new Block;
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
+
+        // set colors of blocks
+        this.currentTet[0].color = 0;
+        this.currentTet[1].color = 0;
+        this.currentTet[2].color = 0;
+        this.currentTet[3].color = 0;
 
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
@@ -105,6 +113,12 @@ var Board = function(player) {
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
 
+        // set colors of blocks
+        this.currentTet[0].color = 1;
+        this.currentTet[1].color = 1;
+        this.currentTet[2].color = 1;
+        this.currentTet[3].color = 1;
+
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
         this.currentTet[0].down = null;
@@ -150,6 +164,12 @@ var Board = function(player) {
         this.currentTet[1] = new Block;
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
+
+        // set colors of blocks
+        this.currentTet[0].color = 2;
+        this.currentTet[1].color = 2;
+        this.currentTet[2].color = 2;
+        this.currentTet[3].color = 2;
 
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
@@ -197,6 +217,12 @@ var Board = function(player) {
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
 
+        // set colors of blocks
+        this.currentTet[0].color = 3;
+        this.currentTet[1].color = 3;
+        this.currentTet[2].color = 3;
+        this.currentTet[3].color = 3;
+
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
         this.currentTet[0].down = this.currentTet[2];
@@ -242,6 +268,12 @@ var Board = function(player) {
         this.currentTet[1] = new Block;
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
+
+        // set colors of blocks
+        this.currentTet[0].color = 4;
+        this.currentTet[1].color = 4;
+        this.currentTet[2].color = 4;
+        this.currentTet[3].color = 4;
 
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
@@ -289,6 +321,12 @@ var Board = function(player) {
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
 
+        // set colors of blocks
+        this.currentTet[0].color = 5;
+        this.currentTet[1].color = 5;
+        this.currentTet[2].color = 5;
+        this.currentTet[3].color = 5;
+
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
         this.currentTet[0].down = null;
@@ -334,6 +372,12 @@ var Board = function(player) {
         this.currentTet[1] = new Block;
         this.currentTet[2] = new Block;
         this.currentTet[3] = new Block;
+
+        // set colors of blocks
+        this.currentTet[0].color = 6;
+        this.currentTet[1].color = 6;
+        this.currentTet[2].color = 6;
+        this.currentTet[3].color = 6;
 
         this.currentTet[0].up = null;
         this.currentTet[0].right = this.currentTet[1];
@@ -533,8 +577,7 @@ var Board = function(player) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
         this.DisplayGrid();
-        return this.CreateDeltas(deltas);
-        //return moveLeft;
+        this.UpdateFunc(this.CreateDeltas(deltas));
     };
 
     this.up = function() {
@@ -556,7 +599,7 @@ var Board = function(player) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
         this.DisplayGrid();
-        return this.CreateDeltas(deltas);
+        this.UpdateFunc(this.CreateDeltas(deltas));
     };
 
     this.down = function() {
@@ -590,7 +633,7 @@ var Board = function(player) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
         this.DisplayGrid();
-        return this.CreateDeltas(deltas);
+        this.UpdateFunc(this.CreateDeltas(deltas));
     };
 
     this.right = function() {
@@ -622,7 +665,7 @@ var Board = function(player) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
         this.DisplayGrid();
-        return this.CreateDeltas(deltas);
+        this.UpdateFunc(this.CreateDeltas(deltas));
     };
 
     this.space = function() {
@@ -663,7 +706,7 @@ var Board = function(player) {
         this.CheckForRows(deltas);
         this.GeneratePieces(deltas);
         this.DisplayGrid();
-        return this.CreateDeltas(deltas);
+        this.UpdateFunc(this.CreateDeltas(deltas));
     };
 
     this.Rotate = function(theTet, myArray, horizOffset, tetSize) {
@@ -906,7 +949,6 @@ var Board = function(player) {
         }
         // self.DisplayGrid();
         self.UpdateFunc(self.CreateDeltas(deltas));
-
     };
 
     this.DisplayGrid = function(theGrid) {
@@ -939,6 +981,8 @@ var Board = function(player) {
                 newDelta.y = deltas[key].posY;
                 newDelta.dead = deltas[key].dead;
                 newDelta.id = deltas[key].blockID;
+                newDelta.color = deltas[key].color;
+                newDelta.player = this.player;
                 newDeltas.push(newDelta);
             }
         }
@@ -966,27 +1010,27 @@ var Game = function(id, width, height, numPlayers, creatingPlayer) {
 function left(gameid, player) {
     console.log("left " + gameid + " " + player);
     if(Games[gameid].started) return;
-    return Games[gameid].boards[player].left();
+    Games[gameid].boards[player].left();
 };
 
 function up(gameid, player) {
     if(Games[gameid].started) return;
-    return Games[gameid].boards[player].up();
+    Games[gameid].boards[player].up();
 };
 
 function down(gameid, player) {
     if(Games[gameid].started) return;
-    return Games[gameid].boards[player].down();
+    Games[gameid].boards[player].down();
 };
 
 function right(gameid, player) {
     if(Games[gameid].started) return;
-    return Games[gameid].boards[player].right();
+    Games[gameid].boards[player].right();
 };
 
 function space(gameid, player) {
     if(Games[gameid].started) return;
-    return Games[gameid].boards[player].space();
+    Games[gameid].boards[player].space();
 };
 
 function pause(gameid, player) {
@@ -996,11 +1040,26 @@ function pause(gameid, player) {
 function newGame(creatingPlayer) {
     var id = gameID++;
     Games[id] = new Game(id, 10, 20, 2, creatingPlayer);
-    //elGame.deltas = Games[elGame.gameid].init();
     return id;
 };
 
-function connect(gameid, player, updateFunc, endFunc) {
+var update = function(gameid) {
+    return function(deltas) {
+        if(Games[gameid] !== undefined) {
+            var game = Games[gameid];
+
+            for(var i in game.boards) {
+                if(!game.boards.hasOwnProperty(i)) continue;
+                var board = game.boards[i];
+
+                board.SendFunc(deltas);
+            }
+        }
+    }
+}
+
+
+function connect(gameid, player, sendFunc, endFunc) {
     var retData = {};
     if(Games[gameid] === undefined) {
         console.log(player + " tried to connect to game, " + gameid + " which doesn't exist.");
@@ -1017,7 +1076,7 @@ function connect(gameid, player, updateFunc, endFunc) {
             game.boards[player] = new Board(player);
         }
 
-        game.boards[player].init(updateFunc, endFunc);
+        game.boards[player].init(update(gameid), sendFunc, endFunc);
         console.log(player + " has connected to game " + gameid);
     } else {
         retData.fail = true;

@@ -109,7 +109,6 @@ function get_user() {
     return username;
 }
 
-
 var load_table_data = function(queuetype) {
     var t = $('#' + queuetype + '_table').DataTable();
     t.clear().draw();

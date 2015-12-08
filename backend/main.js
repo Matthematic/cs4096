@@ -396,24 +396,19 @@ connection.query('SELECT 1', function(err, rows) {
             socket.emit('join-response', retData);
         });
         socket.on('space', function() {
-            var deltas = tetris.space(gameid, username);
-            socket.emit('space-response', deltas);
+            tetris.space(gameid, username);
         });
         socket.on('left', function() {
-            var deltas = tetris.left(gameid, username);
-            socket.emit('left-response', deltas);
+            tetris.left(gameid, username);
         });
         socket.on('right', function() {
-            var deltas = tetris.right(gameid, username);
-            socket.emit('right-response', deltas);
+            tetris.right(gameid, username);
         });
         socket.on('up', function() {
-            var deltas = tetris.up(gameid, username);
-            socket.emit('up-response', deltas);
+            tetris.up(gameid, username);
         });
         socket.on('down', function() {
-            var deltas = tetris.down(gameid, username);
-            socket.emit('down-response', deltas);
+            tetris.down(gameid, username);
         });
     });
 

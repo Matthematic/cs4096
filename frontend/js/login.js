@@ -151,6 +151,7 @@
                     var expiryDate = new Date();
                     expiryDate.setMinutes(expiryDate.getMinutes() + 30);
                     setCookie('token', res.token, expiryDate);
+                    setCookie('username', new_data.username, expiryDate);
                     setTimeout(function() {window.location.href = '/profile';}, 3000);
                 }
                 else {
@@ -201,6 +202,7 @@
                         var expiryDate = new Date();
                         expiryDate.setMinutes(expiryDate.getMinutes() + 30);
                         setCookie('token', res.token, expiryDate);
+                        setCookie('username', new_data.username, expiryDate);
                         setTimeout(function() {window.location.href = '/profile';}, 3000);
                 } else {
                         console.log(res.message);

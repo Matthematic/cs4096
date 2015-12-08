@@ -175,123 +175,148 @@
         this.fillColor = new Color(0, 0, 0, 0)
     };
 
-    var canvas = $('#stage').get(0);
-    var gl = canvas.getContext("webgl", {antialias : false, depth: false});
-    if(typeof gl == 'undefined') {
-        gl = canvas.getContext("experimental-webgl");
-        if(typeof gl == 'undefined') {
-            console.log("Your browser does not support the playing of this game");
+    var RenderWindow = function(id) {
+        this.canvas  = $('#' + id).get(0);
+        this.gl = this.canvas.getContext("webgl", {antialias : false, depth: false});
+        if(typeof this.gl == 'undefined') {
+            this.gl = canvas.getContext("experimental-webgl");
+            if(typeof this.gl == 'undefined') {
+                console.log("Your browser does not support the playing of this game");
+            }
         }
-    }
 
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    var rectVerts = [
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0,
-    ];
+        var rectVerts = [
+            0.0, 0.0,
+            1.0, 0.0,
+            0.0, 1.0,
+            1.0, 1.0,
+        ];
 
-    var baseRect = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, baseRect)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(rectVerts), gl.STATIC_DRAW)
-    baseRect.itemSize = 2
-    baseRect.numItems = 4
+        var baseRect = this.gl.createBuffer()
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, baseRect)
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(rectVerts), this.gl.STATIC_DRAW)
+        baseRect.itemSize = 2
+        baseRect.numItems = 4
 
-    colorVShaderSource = "\
-        attribute vec2 aVertexPosition;\
-        \
-        uniform mat3 uMVMatrix;\
-        \
-        void main(void) {\
-            vec3 pos = uMVMatrix * vec3(aVertexPosition, 1.0);\
-            gl_Position = vec4(pos.xy, 0.0, 1.0);\
-        }\
-    ";
+        colorVShaderSource = "\
+            attribute vec2 aVertexPosition;\
+            \
+            uniform mat3 uMVMatrix;\
+            \
+            void main(void) {\
+                vec3 pos = uMVMatrix * vec3(aVertexPosition, 1.0);\
+                gl_Position = vec4(pos.xy, 0.0, 1.0);\
+            }\
+        ";
 
-    colorFShaderSource = "\
-        precision mediump float;\
-        \
-        uniform vec4 uColor;\
-        \
-        void main(void) {\
-            gl_FragColor = uColor;\
-        }\
-    ";
+        colorFShaderSource = "\
+            precision mediump float;\
+            \
+            uniform vec4 uColor;\
+            \
+            void main(void) {\
+                gl_FragColor = uColor;\
+            }\
+        ";
 
-    var colorVShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(colorVShader, colorVShaderSource);
-    gl.compileShader(colorVShader);
-    if(!gl.getShaderParameter(colorVShader, gl.COMPILE_STATUS)) {
-        throw {msg: "vertex shader did not compile correctly"};
-    }
+        var colorVShader = this.gl.createShader(this.gl.VERTEX_SHADER);
+        this.gl.shaderSource(colorVShader, colorVShaderSource);
+        this.gl.compileShader(colorVShader);
+        if(!this.gl.getShaderParameter(colorVShader, this.gl.COMPILE_STATUS)) {
+            throw {msg: "vertex shader did not compile correctly"};
+        }
 
-    var colorFShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(colorFShader, colorFShaderSource);
-    gl.compileShader(colorFShader);
-    if(!gl.getShaderParameter(colorFShader, gl.COMPILE_STATUS)) {
-        throw {msg: "fragment shader did not compile correctly"};
-    }
+        var colorFShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+        this.gl.shaderSource(colorFShader, colorFShaderSource);
+        this.gl.compileShader(colorFShader);
+        if(!this.gl.getShaderParameter(colorFShader, this.gl.COMPILE_STATUS)) {
+            throw {msg: "fragment shader did not compile correctly"};
+        }
 
-    var colorProg = gl.createProgram();
-    gl.attachShader(colorProg, colorVShader);
-    gl.attachShader(colorProg, colorFShader);
-    gl.linkProgram(colorProg);
-    if(!gl.getProgramParameter(colorProg, gl.LINK_STATUS)) {
-        throw {msg: "shader program could not be linked"};
-    }
-    gl.useProgram(colorProg);
+        var colorProg = this.gl.createProgram();
+        this.gl.attachShader(colorProg, colorVShader);
+        this.gl.attachShader(colorProg, colorFShader);
+        this.gl.linkProgram(colorProg);
+        if(!this.gl.getProgramParameter(colorProg, this.gl.LINK_STATUS)) {
+            throw {msg: "shader program could not be linked"};
+        }
+        this.gl.useProgram(colorProg);
 
-    colorProg.vertexPositionAttribute = gl.getAttribLocation(colorProg, "aVertexPosition");
-    gl.enableVertexAttribArray(colorProg.vertexPositionAttribute);
-    colorProg.mvMatrixUniform = gl.getUniformLocation(colorProg, "uMVMatrix");
-    colorProg.color = gl.getUniformLocation(colorProg, "uColor");
+        colorProg.vertexPositionAttribute = this.gl.getAttribLocation(colorProg, "aVertexPosition");
+        this.gl.enableVertexAttribArray(colorProg.vertexPositionAttribute);
+        colorProg.mvMatrixUniform = this.gl.getUniformLocation(colorProg, "uMVMatrix");
+        colorProg.color = this.gl.getUniformLocation(colorProg, "uColor");
 
-    var drawRect = function(rect) {
-        gl.useProgram(colorProg);
-        gl.disableVertexAttribArray(1);
+        this.drawRect = function(rect) {
+            this.gl.useProgram(colorProg);
+            this.gl.disableVertexAttribArray(1);
 
-        var color = new Float32Array(4);
-        color[0] = rect.color.r;
-        color[1] = rect.color.g;
-        color[2] = rect.color.b;
-        color[3] = rect.color.a;
+            var color = new Float32Array(4);
+            color[0] = rect.color.r;
+            color[1] = rect.color.g;
+            color[2] = rect.color.b;
+            color[3] = rect.color.a;
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, baseRect);
-        gl.vertexAttribPointer(colorProg.vertexPositionAttribute,
-            baseRect.itemSize, gl.FLOAT, false, 0, 0);
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, baseRect);
+            this.gl.vertexAttribPointer(colorProg.vertexPositionAttribute,
+                baseRect.itemSize, this.gl.FLOAT, false, 0, 0);
 
-        var mvmat = new Matrix3x3(rect.transform);
-        mvmat.translate(rect.position.x, rect.position.y);
+            var mvmat = new Matrix3x3(rect.transform);
+            mvmat.translate(rect.position.x, rect.position.y);
 
-        gl.uniformMatrix3fv(colorProg.mvMatrixUniform, false, mvmat.elements);
-        gl.uniform4fv(colorProg.color, color);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, baseRect.numItems);
+            this.gl.uniformMatrix3fv(colorProg.mvMatrixUniform, false, mvmat.elements);
+            this.gl.uniform4fv(colorProg.color, color);
+            this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, baseRect.numItems);
+        };
     };
 
-    var worldMat = new Matrix3x3();
+    worldMat = new Matrix3x3();
     worldMat.set(2, 0, -1);
     worldMat.set(2, 1, 1);
     worldMat.set(0, 0, 2);
     worldMat.set(1, 1, -2);
     worldMat.scale(1/10, 1/20);
 
+    var boards = {};
     var socket = io();
     var gamedata;
     var entities = {}
 
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        }
+        return "";
+    };
+
+    var username = getCookie('username');
+    boards[username] = new RenderWindow("stage");
+    var numPlayers = 2;
+
     function draw() {
         for(var key in entities) {
             if(!entities.hasOwnProperty(key)) continue;
-            drawRect(entities[key]);
+            var ents = entities[key];
+            var renderWindow = boards[key];
+
+            for(var key2 in ents) {
+                if(!ents.hasOwnProperty(key2)) continue;
+                renderWindow.drawRect(ents[key2]);
+            }
+
         }
         window.requestAnimationFrame(draw);
-    }
+    };
     window.requestAnimationFrame(draw);
 
     var createBlock = function(delta, color) {
@@ -305,10 +330,12 @@
         return newEnt;
     };
 
-    var createRandomColor = function() {
-        var newColor = Math.floor(Math.random() * 6);
-        var newColorObj = null;
+    var displayResult = function(){
 
+    };
+
+    var getColor = function(newColor) {
+        var newColorObj = null;
         switch(newColor) {
             case 0:
                 newColorObj = new Color(1.0, 0.0, 0.0, 1.0);
@@ -328,6 +355,8 @@
             case 5:
                 newColorObj = new Color(0.0, 1.0, 1.0, 1.0);
                 break;
+            case 6:
+                newColorObj = new Color(0.5, 1.0, 0.5, 1.0);
         }
         return newColorObj;
     };
@@ -336,21 +365,29 @@
         var color = null;
         for(var key in data) {
             if(!data.hasOwnProperty(key)) continue;
-
             var obj = data[key];
-            if(entities[obj.id] === undefined) {
-                if(color === null) {
-                    color = createRandomColor();
+
+            if(entities[obj.player] === undefined) {
+                entities[obj.player] = {};
+                if(boards[obj.player] === undefined) {
+                    boards[obj.player] = new RenderWindow("stage" + numPlayers);
                 }
-                entities[obj.id] = createBlock(obj, color);
+            }
+            var board = entities[obj.player];
+
+            if(board[obj.id] === undefined) {
+                if(color === null) {
+                    color = getColor(obj.color);
+                }
+                board[obj.id] = createBlock(obj, color);
             } else {
                 if(obj.dead) {
-                    delete entities[obj.id];
+                    delete board[obj.id];
                     continue;
                 }
 
-                entities[obj.id].position.x = obj.x;
-                entities[obj.id].position.y = obj.y;
+                board[obj.id].position.x = obj.x;
+                board[obj.id].position.y = obj.y;
             }
         }
     };
@@ -384,30 +421,18 @@
                     break;
             }
         });
-    })
-
-    socket.on('left-response', function(data) {
-        updateEntities(data);
-    });
-
-    socket.on('right-response', function(data) {
-        updateEntities(data);
-    });
-
-    socket.on('up-response', function(data) {
-        updateEntities(data);
-    });
-
-    socket.on('down-response', function(data) {
-        updateEntities(data);
-    });
-
-    socket.on('space-response', function(data) {
-        updateEntities(data);
     });
 
     socket.on('update-game', function(data) {
         updateEntities(data);
+    });
+
+    socket.on('end', function(data) {
+        displayResult();
+        setTimeout(function() {
+            window.location.href = "/matchmaking"
+        }, 3000);
+        console.log("I have received a message to return to matchmaking.");
     });
 
     var parseUri = function() {
@@ -420,17 +445,6 @@
             uriData[pair[0]] = pair[1];
         }
         return uriData;
-    }
-
-    function getCookie(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0; i<ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-        }
-        return "";
     }
 
     var gameData = {};
