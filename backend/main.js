@@ -215,7 +215,17 @@ connection.query('SELECT 1', function(err, rows) {
             if (!exists) {
                 console.log("pushing to ranked");
                 var ret = {};
-                var gameid = tetris.newGame(user.UserName);
+                var resultFunc = function(states) {
+                    // when the game is over, you will recieve an object filled
+                    // with states per player.
+                    // <username> : {
+                    //     score: <int>,
+                    //     level: <int>
+                    // },
+                }
+                };
+
+                var gameid = tetris.newGame(user.UserName, resultFunc);
                 open_games_ranked.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
 
                 ret.gameid = gameid;
@@ -384,8 +394,8 @@ connection.query('SELECT 1', function(err, rows) {
             var updateFunc = function(deltas) {
                 socket.emit('update-game', deltas);
             };
-            var endFunc = function() {
-                socket.emit('end');
+            var endFunc = function(winner) {
+                socket.emit('end', winner);
                 socket.disconnect();
             };
 

@@ -176,8 +176,13 @@
     };
 
     var RenderWindow = function(id) {
-        this.canvas  = $('#' + id).get(0);
+        this.id = id;
+        this.canvas = $('#' + id).get(0);
+        this.textCanvas = $('#' + id + "-text").get(0);
+
         this.gl = this.canvas.getContext("webgl", {antialias : false, depth: false});
+        this.textCtx = this.textCanvas.getContext("2d");
+
         if(typeof this.gl == 'undefined') {
             this.gl = canvas.getContext("experimental-webgl");
             if(typeof this.gl == 'undefined') {
@@ -253,6 +258,11 @@
         colorProg.mvMatrixUniform = this.gl.getUniformLocation(colorProg, "uMVMatrix");
         colorProg.color = this.gl.getUniformLocation(colorProg, "uColor");
 
+        this.clear = function() {
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+            this.textCtx.clearRect(0, 0, this.textCtx.canvas.width, this.textCtx.canvas.height);
+        }
+
         this.drawRect = function(rect) {
             this.gl.useProgram(colorProg);
             this.gl.disableVertexAttribArray(1);
@@ -269,10 +279,19 @@
 
             var mvmat = new Matrix3x3(rect.transform);
             mvmat.translate(rect.position.x, rect.position.y);
+            mvmat.scale(rect.width, rect.height);
 
             this.gl.uniformMatrix3fv(colorProg.mvMatrixUniform, false, mvmat.elements);
             this.gl.uniform4fv(colorProg.color, color);
             this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, baseRect.numItems);
+        };
+
+        this.fillText = function(text, x, y) {
+            this.textCtx.font = "50px tahoma";
+            var metrics = this.textCtx.measureText(text);
+            var width = metrics.width;
+            var newx = (300/2) - (width/2)
+            this.textCtx.fillText(text, newx, y);
         };
     };
 
@@ -287,6 +306,16 @@
     var socket = io();
     var gamedata;
     var entities = {}
+    var endGame = false;
+    var winner = null;
+
+    var endBackground = new Rect();
+    endBackground.transform = worldMat;
+    endBackground.position.x = 0;
+    endBackground.position.y = 0;
+    endBackground.width = 10;
+    endBackground.height = 20;
+    endBackground.color = new Color(0.0, 0.0, 0.0, 0.4);
 
     function getCookie(cname) {
         var name = cname + "=";
@@ -304,6 +333,12 @@
     var numPlayers = 2;
 
     function draw() {
+        var renderWindow = boards[key];
+        for(var key in boards) {
+            if(!boards.hasOwnProperty(key)) continue;
+            boards[key].clear();
+        }
+
         for(var key in entities) {
             if(!entities.hasOwnProperty(key)) continue;
             var ents = entities[key];
@@ -311,9 +346,22 @@
 
             for(var key2 in ents) {
                 if(!ents.hasOwnProperty(key2)) continue;
-                renderWindow.drawRect(ents[key2]);
+                if(ents[key2].type === "block") {
+                    renderWindow.drawRect(ents[key2]);
+                }
             }
+        }
 
+        if(endGame) {
+            for(var key in boards) {
+                if(!boards.hasOwnProperty(key)) continue;
+                boards[key].drawRect(endBackground);
+                if(key === winner) {
+                    boards[key].fillText("Win", 0, 300);
+                } else {
+                    boards[key].fillText("Lose", 0, 300);
+                }
+            }
         }
         window.requestAnimationFrame(draw);
     };
@@ -321,11 +369,12 @@
 
     var createBlock = function(delta, color) {
         var newEnt = new Rect();
+        newEnt.type = "block";
         newEnt.transform = worldMat;
         newEnt.position.x = delta.x;
         newEnt.position.y = delta.y;
-        newEnt.position.width = 1;
-        newEnt.position.height = 1;
+        newEnt.width = 1;
+        newEnt.height = 1;
         newEnt.color = color;
         return newEnt;
     };
@@ -375,19 +424,34 @@
             }
             var board = entities[obj.player];
 
-            if(board[obj.id] === undefined) {
-                if(color === null) {
-                    color = getColor(obj.color);
-                }
-                board[obj.id] = createBlock(obj, color);
-            } else {
-                if(obj.dead) {
-                    delete board[obj.id];
-                    continue;
+            if(obj.type === "state") {
+                if(board[obj.id] === undefined) {
+                    board[obj.id] = {};
                 }
 
-                board[obj.id].position.x = obj.x;
-                board[obj.id].position.y = obj.y;
+                board[obj.id].type = obj.type;
+                board[obj.id].nextPiece = obj.nextPiece;
+                board[obj.id].level = obj.level;
+                board[obj.id].score = obj.score;
+
+                $('#' + boards[obj.player].id + '-score').text(obj.score);
+                $('#' + boards[obj.player].id + '-level').text(obj.level);
+
+            } else if(obj.type === "block") {
+                if(board[obj.id] === undefined) {
+                    if(color === null) {
+                        color = getColor(obj.color);
+                    }
+                    board[obj.id] = createBlock(obj, color);
+                } else {
+                    if(obj.dead) {
+                        delete board[obj.id];
+                        continue;
+                    }
+
+                    board[obj.id].position.x = obj.x;
+                    board[obj.id].position.y = obj.y;
+                }
             }
         }
     };
@@ -428,7 +492,8 @@
     });
 
     socket.on('end', function(data) {
-        displayResult();
+        endGame = true;
+        winner = data;
         setTimeout(function() {
             window.location.href = "/matchmaking"
         }, 3000);

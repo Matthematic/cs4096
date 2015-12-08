@@ -2,19 +2,21 @@
 // test test
 
 var Block = function() {
+    this.type = "block";
+    this.blockID = 0;
     this.posX = null;
     this.posY = null;
     this.up = null;
     this.right = null;
     this.down = null;
     this.left = null;
-    this.blockID = 0;
     this.color = 0;
 };
 
+
 var Board = function(player) {
     this.currentTet = new Array(4);
-    this.blockID = 0;
+    this.nextEntID = 1;
     this.totalClearedRows = 0;
     this.nextLevel = 10;
     this.theGrid = new Block;
@@ -27,10 +29,12 @@ var Board = function(player) {
     this.player = player;
     this.connected = false;
 
-    this.init = function(updateFunc, sendFunc, endFunc) {
-        this.EndFunc = endFunc;
-        this.SendFunc = sendFunc;
+
+    this.init = function(updateFunc, sendFunc, endFunc, sendEndFunc) {
         this.UpdateFunc = updateFunc;
+        this.SendFunc = sendFunc;
+        this.EndFunc = endFunc;
+        this.sendEndFunc = sendEndFunc;
         this.connected = true;
     };
 
@@ -40,7 +44,11 @@ var Board = function(player) {
         this.GeneratePieces(deltas);
         this.intervalHandle = setInterval(this.TimeMoveDown, 1000 - (10 * this.currentLevel), this);
         return this.CreateDeltas(deltas);
-    }
+    };
+
+    this.stop = function() {
+        clearInterval(this.intervalHandle);
+    };
 
     this.InitializeGrid = function()  {
         grid = new Array(20);
@@ -102,8 +110,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -154,8 +162,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -206,8 +214,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -258,8 +266,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -310,8 +318,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -362,8 +370,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -414,8 +422,8 @@ var Board = function(player) {
         this.theGrid[this.currentTet[3].posY][this.currentTet[3].posX] = this.currentTet[3];
 
         for (var i = 0; i < 4; i++) {
-            this.currentTet[i].blockID = this.blockID;
-            this.blockID++;
+            this.currentTet[i].blockID = this.nextEntID;
+            this.nextEntID++;
         }
     };
 
@@ -576,8 +584,11 @@ var Board = function(player) {
         for (var i = 0; i < this.currentTet.length; i++) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
-        this.DisplayGrid();
-        this.UpdateFunc(this.CreateDeltas(deltas));
+
+        var newDeltas = this.CreateDeltas(deltas);
+        this.AppendStateUpdate(newDeltas);
+        this.UpdateFunc(newDeltas);
+
     };
 
     this.up = function() {
@@ -598,8 +609,10 @@ var Board = function(player) {
         for (var i = 0; i < this.currentTet.length; i++) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
-        this.DisplayGrid();
-        this.UpdateFunc(this.CreateDeltas(deltas));
+
+        var newDeltas = this.CreateDeltas(deltas);
+        this.AppendStateUpdate(newDeltas);
+        this.UpdateFunc(newDeltas);
     };
 
     this.down = function() {
@@ -632,8 +645,10 @@ var Board = function(player) {
         for (var i = 0; i < this.currentTet.length; i++) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
-        this.DisplayGrid();
-        this.UpdateFunc(this.CreateDeltas(deltas));
+
+        var newDeltas = this.CreateDeltas(deltas);
+        this.AppendStateUpdate(newDeltas);
+        this.UpdateFunc(newDeltas);
     };
 
     this.right = function() {
@@ -664,8 +679,10 @@ var Board = function(player) {
         for (var i = 0; i < this.currentTet.length; i++) {
             deltas[this.currentTet[i].blockID] = this.currentTet[i];
         }
-        this.DisplayGrid();
-        this.UpdateFunc(this.CreateDeltas(deltas));
+
+        var newDeltas = this.CreateDeltas(deltas);
+        this.AppendStateUpdate(newDeltas);
+        this.UpdateFunc(newDeltas);
     };
 
     this.space = function() {
@@ -705,8 +722,10 @@ var Board = function(player) {
         this.TetToBlocks();
         this.CheckForRows(deltas);
         this.GeneratePieces(deltas);
-        this.DisplayGrid();
-        this.UpdateFunc(this.CreateDeltas(deltas));
+
+        var newDeltas = this.CreateDeltas(deltas);
+        this.AppendStateUpdate(newDeltas);
+        this.UpdateFunc(newDeltas);
     };
 
     this.Rotate = function(theTet, myArray, horizOffset, tetSize) {
@@ -948,7 +967,9 @@ var Board = function(player) {
             deltas[self.currentTet[i].blockID] = self.currentTet[i];
         }
         // self.DisplayGrid();
-        self.UpdateFunc(self.CreateDeltas(deltas));
+        var newDeltas = self.CreateDeltas(deltas);
+        self.AppendStateUpdate(newDeltas);
+        self.UpdateFunc(newDeltas);
     };
 
     this.DisplayGrid = function(theGrid) {
@@ -977,6 +998,7 @@ var Board = function(player) {
         for(var key in deltas) {
             if (deltas.hasOwnProperty(key)) {
                 var newDelta = {};
+                newDelta.type = deltas[key].type
                 newDelta.x = deltas[key].posX;
                 newDelta.y = deltas[key].posY;
                 newDelta.dead = deltas[key].dead;
@@ -988,6 +1010,20 @@ var Board = function(player) {
         }
         return newDeltas;
     };
+
+    this.AppendStateUpdate = function(deltas) {
+        var state = {};
+
+        state.type = "state";
+        state.id = 0;
+        state.player = this.player;
+        state.nextPiece = this.nextPieceType;
+        state.level = this.currentLevel;
+        state.score = this.playerScore;
+
+        deltas.push(state);
+    };
+
 };
 
 Board.prototype.CheckEnd = function() {
@@ -996,12 +1032,13 @@ Board.prototype.CheckEnd = function() {
 
 var Games = {};
 var gameID = 0;
-var Game = function(id, width, height, numPlayers, creatingPlayer) {
+var Game = function(id, width, height, numPlayers, creatingPlayer, resultFunc) {
     this.id = id;
     this.boardWidth = width;
     this.boardHeight = height;
     this.started = false;
     this.numPlayers = numPlayers;
+    this.resultFunc = resultFunc;
 
     this.boards = {};
     this.boards[creatingPlayer] = new Board(creatingPlayer);
@@ -1037,9 +1074,9 @@ function pause(gameid, player) {
 
 };
 
-function newGame(creatingPlayer) {
+function newGame(creatingPlayer, resultFunc) {
     var id = gameID++;
-    Games[id] = new Game(id, 10, 20, 2, creatingPlayer);
+    Games[id] = new Game(id, 10, 20, 2, creatingPlayer, resultFunc);
     return id;
 };
 
@@ -1058,8 +1095,39 @@ var update = function(gameid) {
     }
 }
 
+var end = function(gameid) {
+    return function(winner) {
+        var game = Games[gameid];
+        var winner;
+        var score = -1
+        var states = {};
 
-function connect(gameid, player, sendFunc, endFunc) {
+        for(var i in game.boards) {
+            if(!game.boards.hasOwnProperty(i)) continue;
+            var board = game.boards[i];
+            var newState = {};
+            newState.level = board.currentLevel;
+            newState.score = board.playerScore;
+            states[board.player] = newState;
+
+            if (board.playerScore > score) {
+                winner = board.player;
+                score = board.playerScore;
+            }
+        }
+
+        for(var i in game.boards) {
+            if(!game.boards.hasOwnProperty(i)) continue;
+            var board = game.boards[i];
+            board.sendEndFunc(winner);
+        }
+
+        game.resultFunc(states);
+    }
+}
+
+
+function connect(gameid, player, sendFunc, sendEndFunc) {
     var retData = {};
     if(Games[gameid] === undefined) {
         console.log(player + " tried to connect to game, " + gameid + " which doesn't exist.");
@@ -1076,7 +1144,7 @@ function connect(gameid, player, sendFunc, endFunc) {
             game.boards[player] = new Board(player);
         }
 
-        game.boards[player].init(update(gameid), sendFunc, endFunc);
+        game.boards[player].init(update(gameid), sendFunc, end(gameid), sendEndFunc);
         console.log(player + " has connected to game " + gameid);
     } else {
         retData.fail = true;

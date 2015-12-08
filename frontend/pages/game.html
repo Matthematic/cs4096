@@ -24,11 +24,36 @@
     </head>
 
     <body>
-        <div class="game-container">
-            <canvas id="stage" width="300" height="600"></canvas>
-        </div>
-        <div class="game-container">
-            <canvas id="stage2" width="300" height="600"></canvas>
+
+        <div class="container-fluid" >
+            <div class="col-md-2 col-sm-1"></div>
+            <div class="col-md-4 col-sm-5">
+                <div class="game-container">
+                    <div>
+                        <canvas id="stage" width="300" height="600"></canvas>
+                        <canvas id="stage-text" width="300" height="600" class="game-text"></canvas>
+                        <div>
+                            <p>Score: <p id="stage-score"></p></p>
+                        </div>
+                        <div>
+                            <p>Level: <p id="stage-level"></p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-5">
+                <div class="game-container">
+                    <canvas id="stage2" width="300" height="600"></canvas>
+                    <canvas id="stage2-text" width="300" height="600" class="game-text"></canvas>
+                    <div>
+                        <p>Score: <p id="stage2-score"></p></p>
+                    </div>
+                    <div>
+                        <p>Level: <p id="stage2-level"></p></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-1"></div>
         </div>
 
         <!-- jQuery -->
