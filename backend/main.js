@@ -334,25 +334,23 @@ connection.query('SELECT 1', function(err, rows) {
 
     apiRouter.post('/get_user_stats', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
-
-        var query = 'SELECT * FROM UserStats WHERE username = "' + user.UserName + '";';
-
-        console.log(query);
-        connection.query(query, function(err, rows) {
+        database.StatsDTO.getByUsername(user.UserName, function(err, rows) {
             var ret = {};
-            if(err) {
+
+            if(err != null) {
                 ret.success = false;
-                ret.message = " An unknown error has occurred.";
+                ret.message = "An unknown error has occurred.";
+                res.json(ret);
+                next();
+                return;
             }
-            else if(rows) {
-                ret.success = true;
-                ret.stats = rows;
-            }
-            else {
-                ret.success = false;
-                ret.stats = null;
-            }
+
+            ret.success = true;
+            ret.messages = rows;
+
             res.json(ret);
+            next();
+            return;
         });
     });
 

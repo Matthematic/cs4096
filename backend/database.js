@@ -86,7 +86,17 @@ var MessageDTO = function() {
     this.content = null;
     this.type = null;
     this.timestamp = null;
-}
+};
+
+var StatsDTO = function() {
+    this.username = null;
+    this.wins = null;
+    this.games_played = null;
+    this.elo = null;
+    this.total_points = null;
+    this.total_rows_cleared = null;
+};
+
 
 MessageDTO.getBySender = function(sender, callback) {
     connection.query('SELECT * FROM Messages WHERE sender=\"' + sender + '\"', function(err, rows) {
@@ -169,8 +179,50 @@ MessageDTO.pull = function(id, callback) {
     });
 };
 
+StatsDTO.getByUsername = function(username, callback) {
+    connection.query('SELECT * FROM UserStats WHERE username=\"' + username + '\"', function(err, rows) {
+        if(err) {
+            callback(err, null);
+            console.log("statsDTO get by username failed.");
+            console.log(err);
+            return;
+        }
+
+        if(typeof rows === 'undefined') {
+            callback(null, null);
+            return;
+        }
+
+        var ret = [];
+        var s = new StatsDTO();
+        s.username = rows[0].username;
+        s.wins = rows[0].wins;
+        s.games_played = rows[0].games_played;
+        s.elo = rows[0].elo;
+        s.total_points = rows[0].total_points;
+        s.total_rows_cleared = rows[0].total_rows_cleared;
+        ret.push(s);
+        callback(null, ret);
+        return;
+    });
+};
+
+StatsDTO.update = function(dto, callback) {
+    connection.query('UPDATE UserStats SET wins=' + dto.wins +
+        ', games_played=' + dto.games_played +
+        ', elo=' + dto.elo +
+        ', total_points=' + dto.total_points +
+        ', total_rows_cleared=' + dto.total_rows_cleared +
+        ' WHERE username=' + dto.username,
+        function(err) {
+            callback(err);
+        }
+    );
+};
+
 module.exports = {
     "connection": connection,
     "UserDTO" : UserDTO,
-    "MessageDTO" : MessageDTO
+    "MessageDTO" : MessageDTO,
+    "StatsDTO" : StatsDTO
 };
