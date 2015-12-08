@@ -199,7 +199,6 @@ connection.query('SELECT 1', function(err, rows) {
     });
 
     apiRouter.post('/create_game', authenticate.auth, function(req, res) {
-        console.log("-------------------");
         user = jwt.decode(req.cookies.token);
         var exists = false;
         var index = null;
@@ -222,7 +221,6 @@ connection.query('SELECT 1', function(err, rows) {
                     //     score: <int>,
                     //     level: <int>
                     // },
-                }
                 };
 
                 var gameid = tetris.newGame(user.UserName, resultFunc);
