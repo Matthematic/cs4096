@@ -131,13 +131,62 @@ connection.query('SELECT 1', function(err, rows) {
 
         var ret = {};
         var resultFunc = function(states, winner) {
-            // when the game is over, you will recieve an object filled
-            // with states per player.
-            // <username> : {
-            //     score: <int>,
-            //     level: <int>
-            // },
-        };
+                    console.log("returned");
+                    for (var player in states) {
+                        if (!states.hasOwnProperty(player)) {continue;}
+                        var me = states[player];
+                        console.log(me + ' ' + player);
+
+                        var get_handler = function(playerName, playerData) {
+                            return function(err, rows) {
+                                if(err !== null) {
+                                    ret.success = false;
+                                    ret.message = "An unknown error has occurred.";
+                                    res.json(ret);
+                                    next();
+                                    return;
+                                }
+
+                                console.log("WINNER " + winner);
+                                if (rows !== null) {
+                                    console.log('rows is not null');
+                                    var stats = rows[0];
+                                    stats.total_points += playerData.score;
+                                    if (winner == playerName)
+                                        stats.wins += 1;
+                                    stats.games_played += 1;
+                                    stats.total_rows_cleared += playerData.clearedRows;
+                                    console.log(stats);
+                                    // update database
+                                    database.StatsDTO.update(stats, function(err) {
+                                        if (err !== null) {
+                                            console.log("Error updating stats" + err);
+                                        }
+                                    });
+                                }
+                                else {
+                                    console.log('rows is null, inserting with ' + playerName);
+                                    var stats2 = new database.StatsDTO();
+                                    stats2.username = playerName;
+                                    stats2.total_points += playerData.score;
+                                    if (winner == playerName)
+                                        stats2.wins += 1;
+                                    stats2.games_played += 1;
+                                    stats2.total_rows_cleared += playerData.clearedRows;
+                                    // update database
+                                    database.StatsDTO.insert(stats2, function(err) {
+                                        if (err !== null) {
+                                            console.log("Error creating new stats tuple" + err);
+                                        }
+                                    });
+                                }
+                            };
+                        };
+
+                        database.StatsDTO.getByUsername(player, get_handler(player, me));
+
+                    };
+                };
 
         var gameid = tetris.newGame(user.UserName, resultFunc);
         open_games_ranked.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
@@ -299,13 +348,15 @@ connection.query('SELECT 1', function(err, rows) {
             }
             if (!exists) {
                 var ret = {};
-                var resultFunc = function(states) {
+                var resultFunc = function(states, winner) {
+                    console.log("returned");
                     for (var player in states) {
-                        if (states.hasOwnProperty(player)) {
-                            var me = states[player];
-                            console.log(me);
+                        if (!states.hasOwnProperty(player)) {continue;}
+                        var me = states[player];
+                        console.log(me + ' ' + player);
 
-                            database.StatsDTO.getByUsername(player, function(err, rows) {
+                        var get_handler = function(playerName, playerData) {
+                            return function(err, rows) {
                                 if(err !== null) {
                                     ret.success = false;
                                     ret.message = "An unknown error has occurred.";
@@ -314,20 +365,44 @@ connection.query('SELECT 1', function(err, rows) {
                                     return;
                                 }
 
-                                var stats = rows[0];
-                                // update fields
-                                stats.total_points += me.score;
+                                console.log("WINNER " + winner);
+                                if (rows !== null) {
+                                    console.log('rows is not null');
+                                    var stats = rows[0];
+                                    stats.total_points += playerData.score;
+                                    if (winner == playerName)
+                                        stats.wins += 1;
+                                    stats.games_played += 1;
+                                    stats.total_rows_cleared += playerData.clearedRows;
+                                    console.log(stats);
+                                    // update database
+                                    database.StatsDTO.update(stats, function(err) {
+                                        if (err !== null) {
+                                            console.log("Error updating stats" + err);
+                                        }
+                                    });
+                                }
+                                else {
+                                    console.log('rows is null, inserting with ' + playerName);
+                                    var stats2 = new database.StatsDTO();
+                                    stats2.username = playerName;
+                                    stats2.total_points += playerData.score;
+                                    if (winner == playerName)
+                                        stats2.wins += 1;
+                                    stats2.games_played += 1;
+                                    stats2.total_rows_cleared += playerData.clearedRows;
+                                    // update database
+                                    database.StatsDTO.insert(stats2, function(err) {
+                                        if (err !== null) {
+                                            console.log("Error creating new stats tuple" + err);
+                                        }
+                                    });
+                                }
+                            };
+                        };
 
-                                console.log(stats);
-                                // update database
-                                database.StatsDTO.update(stats, function(err) {
-                                    if (err !== null) {
-                                        console.log("Error updating stats" + err);
-                                    }
-                                });
+                        database.StatsDTO.getByUsername(player, get_handler(player, me));
 
-                            });
-                        }
                     };
                 };
 
