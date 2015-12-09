@@ -242,12 +242,12 @@ connection.query('SELECT 1', function(err, rows) {
                                     return;
                                 }
 
-                                console.log("WINNER " + playerData.winner);
+                                console.log("WINNER " + winner);
                                 if (rows !== null) {
                                     console.log('rows is not null');
                                     var stats = rows[0];
                                     stats.total_points += playerData.score;
-                                    if (playerData.winner == playerName)
+                                    if (winner == playerName)
                                         stats.wins += 1;
                                     stats.games_played += 1;
                                     stats.total_rows_cleared += playerData.clearedRows;
@@ -264,7 +264,7 @@ connection.query('SELECT 1', function(err, rows) {
                                     var stats2 = new database.StatsDTO();
                                     stats2.username = playerName;
                                     stats2.total_points += playerData.score;
-                                    if (playerData.winner == playerName)
+                                    if (winner == playerName)
                                         stats2.wins += 1;
                                     stats2.games_played += 1;
                                     stats2.total_rows_cleared += playerData.clearedRows;
