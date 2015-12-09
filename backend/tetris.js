@@ -1132,7 +1132,6 @@ var end = function(gameid) {
         }
 
         game.resultFunc(states, winner);
-        delete Games[gameid];
     };
 };
 
@@ -1180,7 +1179,7 @@ function connect(gameid, player, sendStartFunc, sendFunc, sendEndFunc) {
             game.boards[i].StartFunc();
         }
 
-        //game.timer = setTimeout(end(gameid), 120000, null);
+        game.timer = setTimeout(end(gameid), 120000, null);
         this.started = true;
     }
 
