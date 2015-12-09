@@ -1177,6 +1177,7 @@ function connect(gameid, player, sendStartFunc, sendFunc, sendEndFunc) {
         for(var i in game.boards) {
             if(!game.boards.hasOwnProperty(i)) continue;
             game.boards[i].start();
+        }
 
         //game.timer = setTimeout(end(gameid), 120000, null);
         game.StartFunc();
