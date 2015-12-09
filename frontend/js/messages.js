@@ -36,12 +36,12 @@ var accept_friend_request = function(row_num) {
 };
 
 
-var accept_invite = function(row_num) {
+var accept_invite = function(row_num, gameid) {
     var table = $('#messages_table').DataTable();
 
-    alert( 'You have accepted the invite from ' + table.row(row_num).data()[0] );
+    //alert( 'You have accepted the invite from ' + table.row(row_num).data()[0] );
     remove_message(row_num);
-    window.location.href = "/game";
+    window.location.href="/game.html?gameid=" + gameid;
 };
 
 var remove_message = function(row, reload) {
@@ -82,12 +82,19 @@ var load_messages = function() {
             // data is an arbitrary object, not an array, thus data.length returns undefined. Must use this instead
             for( var i=0; i < Object.keys(data.messages).length; i++ )
             {
+                button_str = 'message';
+                if (data.messages[i].type =='friend_request') {
+                    button_str = '<input type="button" id="accept_' + data.messages[i].type  + '_' + i + '" value="Accept" class="btn btn-success" onClick="accept_' + data.messages[i].type + '(' + i + ')">';
+                }
+                else if (data.messages[i].type == 'invite') {
+                    button_str = '<input type="button" id="accept_' + data.messages[i].type  + '_' + i + '" value="Accept" class="btn btn-success" onClick="accept_' + data.messages[i].type + '(' + i + ', ' + data.messages[i].gameid + ')">';
+                }
+                button_str += ' <input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="remove_message(' + i + ', 1)">';
                 t.row.add( [
                     data.messages[i].sender,
                     data.messages[i].subject,
                     data.messages[i].content,
-                    data.messages[i].type =='invite' || 'friend_request' ? '<input type="button" id="accept_' + data.messages[i].type  + '_' + i + '" value="Accept" class="btn btn-success" onClick="accept_' + data.messages[i].type + '(' + i + ')">' +
-                        '<input type="button" id="reject_invite_' + i + '" value="Reject" class="btn btn-danger" onClick="remove_message(' + i + ', 1)">' : 'message',
+                    button_str,
                     data.messages[i].timestamp,
                 ] ).draw( true );
             }

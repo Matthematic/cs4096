@@ -27,8 +27,14 @@ $(document).ready(function() {
 
     $('#social_table tbody').on( 'click', 'tr', function () {
         var row_data = social_table.row( this ).data();
-        alert( "Game starting\n" + "Player: " + row_data[0] + "\tGametype: " + row_data[2]);
-        window.location.href="/game.html";
+        var username = get_user();
+        if (row_data[0] != username) {
+            alert( "Game starting\n" + "Player: " + row_data[1] + "\tGametype: " + row_data[3]);
+            window.location.href="/game.html?gameid=" + row_data[0];
+        }
+        else {
+            alert( "You can't accept your own game!");
+        }
     } );
 
 });
@@ -81,11 +87,12 @@ var send_play_request = function() {
             datatype: "json",
             data: new_data,
             method: "post",
-            success: function(){
+            success: function(res){
                 alert("invite sent");
+                window.location.href="/game.html?gameid=" + res.gameid;
                 console.log("invite sent");
             },
-            failure: function(){
+            failure: function(res){
                 alert("invite not sent");
                 console.log("invite not sent");
             },

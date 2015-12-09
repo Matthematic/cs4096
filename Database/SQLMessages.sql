@@ -9,5 +9,6 @@ CREATE TABLE Messages
     `content` varchar(512) NOT NULL,
     `type` varchar(16) NOT NULL,
     `timestamp` DATETIME,
+    `gameid` int UNSIGNED,
     PRIMARY KEY (id)
 );

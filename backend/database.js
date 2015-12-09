@@ -2,9 +2,9 @@ var mysql = require('mysql');
 
 var connection = mysql.createConnection({
     host: 'localhost',
-    port: '3306',
-    user: 'root',
-    password: 'apples',
+    port: '3307',
+    //user: 'root',
+    //password: 'apples',
     database: 'test'
 });
 
@@ -86,6 +86,8 @@ var MessageDTO = function() {
     this.content = null;
     this.type = null;
     this.timestamp = null;
+    //this.gameobject = null;
+    this.gameid = null;
 };
 
 var StatsDTO = function() {
@@ -160,6 +162,7 @@ MessageDTO.getByReceiver = function(receiver, callback) {
             u.content = rows[i].content;
             u.type = rows[i].type;
             u.timestamp = rows[i].timestamp;
+            u.gameid = rows[i].gameid;
             ret.push(u);
         }
         callback(null, ret);
@@ -168,7 +171,7 @@ MessageDTO.getByReceiver = function(receiver, callback) {
 };
 
 MessageDTO.push = function(dto, callback) {
-    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content, type, timestamp) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\", \"' + dto.type + '\",  NOW() )', function(err) {
+    connection.query('INSERT INTO Messages(id, sender, receiver, subject, content, type, timestamp, gameid) VALUES (' + dto.id + ', \"' + dto.sender + '\", \"' + dto.receiver + '\", \"' + dto.subject + '\", \"' + dto.content + '\", \"' + dto.type + '\",  NOW() , ' + dto.gameid + ')', function(err) {
         callback(err);
     });
 };

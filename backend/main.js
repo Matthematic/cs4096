@@ -119,12 +119,30 @@ connection.query('SELECT 1', function(err, rows) {
     // need to send a "message" to a user, maybe an email
     apiRouter.post('/invite-user', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
+
+
         var m = new database.MessageDTO();
         m.sender = user.UserName;
         m.receiver = req.body.username;
         m.subject = 'You have been invited!';
         m.content = user.UserName + ' has invited you to a game!';
         m.type = 'invite';
+        //m.gameobject = {'gameid': 0, 'queuetype': 'social'};
+
+        var ret = {};
+        var resultFunc = function(states) {
+            // when the game is over, you will recieve an object filled
+            // with states per player.
+            // <username> : {
+            //     score: <int>,
+            //     level: <int>
+            // },
+        };
+
+        var gameid = tetris.newGame(user.UserName, resultFunc);
+        open_games_ranked.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+        m.gameid = gameid;
+
         database.MessageDTO.push(m, function(err) {
             var ret = {};
             if(err != null) {
@@ -135,8 +153,11 @@ connection.query('SELECT 1', function(err, rows) {
                 ret.success = true;
                 ret.message = null;
             }
-            res.json(ret);
+            //res.json(ret);
         });
+
+        ret.gameid = gameid;
+        res.json(ret);
     });
 
     apiRouter.post('/load-username-display', authenticate.auth, function(req, res) {
@@ -229,14 +250,6 @@ connection.query('SELECT 1', function(err, rows) {
                 ret.gameid = gameid;
                 res.json(ret);
             }
-            else {
-                console.log("checking if index is set");
-                if (index != null) {
-                    console.log("popping from ranked");
-                    open_games_ranked.splice(index, 1);
-                }
-            }
-
         }
         else if (req.body.queuetype == 'social') {
             console.log("getting inside social");
@@ -249,14 +262,21 @@ connection.query('SELECT 1', function(err, rows) {
             }
             if (!exists) {
                 console.log("pushing to social");
-                open_games_social.push({'username': user.UserName,'elo': '1500','gametype': 'Classic'});
-            }
-            else { // remove the game
-                console.log("checking if social index is set");
-                if (index != null) {
-                    console.log("popping from social");
-                    open_games_social.splice(index, 1);
-                }
+                var ret = {};
+                var resultFunc = function(states) {
+                    // when the game is over, you will recieve an object filled
+                    // with states per player.
+                    // <username> : {
+                    //     score: <int>,
+                    //     level: <int>
+                    // },
+                };
+
+                var gameid = tetris.newGame(user.UserName, resultFunc);
+                open_games_social.push({'id': gameid, 'username': user.UserName,'elo': '1500','gametype': 'Classic'});
+
+                ret.gameid = gameid;
+                res.json(ret);
             }
         }
         console.log(open_games_ranked);
