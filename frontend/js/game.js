@@ -308,6 +308,7 @@
     var entities = {}
     var endGame = false;
     var winner = null;
+    var expiryDate = new Date();
 
     var endBackground = new Rect();
     endBackground.transform = worldMat;
@@ -363,6 +364,7 @@
                 }
             }
         }
+        $('#timeRemaining').text()
         window.requestAnimationFrame(draw);
     };
     window.requestAnimationFrame(draw);
