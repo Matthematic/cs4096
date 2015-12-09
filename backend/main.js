@@ -233,32 +233,46 @@ connection.query('SELECT 1', function(err, rows) {
             if (!exists) {
                 var ret = {};
                 var resultFunc = function(states) {
-                    // when the game is over, you will recieve an object filled
-                    // with states per player.
-                    // <username> : {
-                    //     score: <int>,
-                    //     level: <int>
-                    // },
-                    console.log(states);
-                    /*
-                    database.StatsDTO.getByUsername(user.UserName, function(err, rows) {
-                        if(err !== null) {
-                            ret.success = false;
-                            ret.message = "An unknown error has occurred.";
-                            res.json(ret);
-                            next();
-                            return;
+                    for (var player in states) {
+                        if (states.hasOwnProperty(player)) {
+                            var me = states[player];
+                            console.log(me);
+
+                            database.StatsDTO.getByUsername(player, function(err, rows) {
+                                if(err !== null) {
+                                    ret.success = false;
+                                    ret.message = "An unknown error has occurred.";
+                                    res.json(ret);
+                                    next();
+                                    return;
+                                }
+
+                                if (rows !== null) {
+                                    var stats = rows[0];
+                                    stats.total_points += me.score;
+
+                                    console.log(stats);
+                                    // update database
+                                    database.StatsDTO.update(stats, function(err) {
+                                        if (err !== null) {
+                                            console.log("Error updating stats" + err);
+                                        }
+                                    });
+                                }
+                                else {
+                                    var stats = new database.StatsDTO();
+                                    stats.username = player;
+                                    stats.total_points += me.score;
+                                    // update database
+                                    database.StatsDTO.insert(stats, function(err) {
+                                        if (err !== null) {
+                                            console.log("Error creating new stats tuple" + err);
+                                        }
+                                    });
+                                }
+                            });
                         }
-
-                        var stats = rows[0];
-                        stats.total_points += states.
-                        database.StatsDTO.update(stats, function(err) {
-                            if (err !== null) {
-                                console.log("Error updating stats");
-                            }
-                        });
-
-                    });*/
+                    };
                 };
 
                 var gameid = tetris.newGame(user.UserName, resultFunc);
@@ -278,12 +292,35 @@ connection.query('SELECT 1', function(err, rows) {
             if (!exists) {
                 var ret = {};
                 var resultFunc = function(states) {
-                    // when the game is over, you will recieve an object filled
-                    // with states per player.
-                    // <username> : {
-                    //     score: <int>,
-                    //     level: <int>
-                    // },
+                    for (var player in states) {
+                        if (states.hasOwnProperty(player)) {
+                            var me = states[player];
+                            console.log(me);
+
+                            database.StatsDTO.getByUsername(player, function(err, rows) {
+                                if(err !== null) {
+                                    ret.success = false;
+                                    ret.message = "An unknown error has occurred.";
+                                    res.json(ret);
+                                    next();
+                                    return;
+                                }
+
+                                var stats = rows[0];
+                                // update fields
+                                stats.total_points += me.score;
+
+                                console.log(stats);
+                                // update database
+                                database.StatsDTO.update(stats, function(err) {
+                                    if (err !== null) {
+                                        console.log("Error updating stats" + err);
+                                    }
+                                });
+
+                            });
+                        }
+                    };
                 };
 
                 var gameid = tetris.newGame(user.UserName, resultFunc);

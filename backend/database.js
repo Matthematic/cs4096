@@ -195,8 +195,11 @@ StatsDTO.getByUsername = function(username, callback) {
             callback(null, null);
             return;
         }
-
         var ret = [];
+        if (rows.length <= 0) {
+            callback(null, null);
+            return;
+        }
         var s = new StatsDTO();
         s.username = rows[0].username;
         s.wins = rows[0].wins;
@@ -216,7 +219,23 @@ StatsDTO.update = function(dto, callback) {
         ', elo=' + dto.elo +
         ', total_points=' + dto.total_points +
         ', total_rows_cleared=' + dto.total_rows_cleared +
-        ' WHERE username=' + dto.username,
+        ' WHERE username="' + dto.username + '"',
+        function(err) {
+            callback(err);
+        }
+    );
+};
+
+StatsDTO.insert = function(dto, callback) {
+    console.log('received');
+    console.log(dto);
+    connection.query('INSERT INTO UserStats(username, wins, games_played, elo, total_points, total_rows_cleared) VALUES("' +
+        dto.username + '", ' +
+        dto.wins + ', ' +
+        dto.games_played + ', ' +
+        dto.elo + ', ' +
+        dto.total_points + ', ' +
+        dto.total_rows_cleared + ')',
         function(err) {
             callback(err);
         }
