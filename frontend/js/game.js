@@ -391,6 +391,15 @@
                 secs = '' + obj.seconds;
             }
             $('#timeRemaining').text(obj.minutes + ":" + secs);
+
+            for(var key in boards) {
+                if(!boards.hasOwnProperty(key)) continue;
+                if(key === username) {
+                    $('#user1').text(key);
+                } else {
+                    $('#user2').text(key)
+                }
+            }
         }
         window.requestAnimationFrame(draw);
     };
