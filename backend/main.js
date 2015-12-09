@@ -225,7 +225,7 @@ connection.query('SELECT 1', function(err, rows) {
         var index = null;
         if (req.body.queuetype == 'ranked') {
                 var ret = {};
-                var resultFunc = function(states) {
+                var resultFunc = function(states, winner) {
                     console.log("returned");
                     for (var player in states) {
                         if (!states.hasOwnProperty(player)) {continue;}
