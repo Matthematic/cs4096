@@ -379,7 +379,7 @@
             };
         };
         var obj = getTimeRemaining(expiryDate);
-        $('#timeRemaining').text(obj.minutes + ":" + obj.seconds;
+        $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
         window.requestAnimationFrame(draw);
     };
     window.requestAnimationFrame(draw);
