@@ -384,7 +384,13 @@
 
         if(startGame && !endGame) {
             var obj = getTimeRemaining(expiryDate);
-            $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
+            var secs = "";
+            if(obj.seconds <= 9) {
+                secs += '0' + obj.seconds;
+            } else {
+                secs = '' + obj.seconds;
+            }
+            $('#timeRemaining').text(obj.minutes + ":" + secs);
         }
         window.requestAnimationFrame(draw);
     };
