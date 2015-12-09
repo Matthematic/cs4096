@@ -115,5 +115,24 @@ module.exports = {
                 message: 'No token provided.'
             })
         }
+    },
+
+    "authRedirect": function(req, res, next) {
+        var token = req.cookies.token;
+        //console.log(req.cookies);
+
+        if(token) {
+            jwt.verify(token, secret, function(err, decoded) {
+                if(err) {
+                    res.redirect('/login');
+                } else {
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+
+        } else {
+            res.redirect('/login');
+        }
     }
 };

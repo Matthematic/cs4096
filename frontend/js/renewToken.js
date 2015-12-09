@@ -21,6 +21,6 @@
         var expiryDate = new Date();
         expiryDate.setMinutes(expiryDate.getMinutes() + 30);
         setCookie("token", token, expiryDate);
-        setCookie("username", token, expiryDate);
+        setCookie("username", username, expiryDate);
     };
 })();
