@@ -333,6 +333,21 @@
     boards[username] = new RenderWindow("stage");
     var numPlayers = 2;
 
+    function getTimeRemaining(endtime){
+        var t = Date.parse(endtime) - Date.parse(new Date());
+        var seconds = Math.floor( (t/1000) % 60 );
+        var minutes = Math.floor( (t/1000/60) % 60 );
+        var hours = Math.floor( (t/(1000*60*60)) % 24 );
+        var days = Math.floor( t/(1000*60*60*24) );
+        return {
+            'total': t,
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
+        };
+    };
+
     function draw() {
         var renderWindow = boards[key];
         for(var key in boards) {
@@ -357,6 +372,7 @@
             for(var key in boards) {
                 if(!boards.hasOwnProperty(key)) continue;
                 boards[key].drawRect(endBackground);
+                console.log(key + " " + winner);
                 if(key === winner) {
                     boards[key].fillText("Win", 0, 300);
                 } else {
@@ -364,20 +380,7 @@
                 }
             }
         }
-        function getTimeRemaining(endtime){
-            var t = Date.parse(endtime) - Date.parse(new Date());
-            var seconds = Math.floor( (t/1000) % 60 );
-            var minutes = Math.floor( (t/1000/60) % 60 );
-            var hours = Math.floor( (t/(1000*60*60)) % 24 );
-            var days = Math.floor( t/(1000*60*60*24) );
-            return {
-                'total': t,
-                'days': days,
-                'hours': hours,
-                'minutes': minutes,
-                'seconds': seconds
-            };
-        };
+
         var obj = getTimeRemaining(expiryDate);
         $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
         window.requestAnimationFrame(draw);
