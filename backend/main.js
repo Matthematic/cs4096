@@ -246,10 +246,10 @@ connection.query('SELECT 1', function(err, rows) {
                                     console.log('rows is not null');
                                     var stats = rows[0];
                                     stats.total_points += playerData.score;
-                                    if (PlayerData.winner == playerName)
+                                    if (playerData.winner == playerName)
                                         stats.wins += 1;
                                     stats.games_played += 1;
-                                    stats.total_rows_cleared += PlayerData.clearedRows;
+                                    stats.total_rows_cleared += playerData.clearedRows;
                                     console.log(stats);
                                     // update database
                                     database.StatsDTO.update(stats, function(err) {
