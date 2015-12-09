@@ -364,6 +364,7 @@
                 }
             }
         }
+        var d = expiryDate - Date();
         $('#timeRemaining').text(expiryDate.getMinutes() + ":" + expiryDate.getSeconds());
         window.requestAnimationFrame(draw);
     };
