@@ -226,14 +226,11 @@ connection.query('SELECT 1', function(err, rows) {
         if (req.body.queuetype == 'ranked') {
             for (var i = 0; i < open_games_ranked.length; i++){
                 if (open_games_ranked[i].username == user.UserName) {
-                    console.log("exists, getting index");
                     exists = true;
-                    index = i;
                     break;
                 }
             }
             if (!exists) {
-                console.log("pushing to ranked");
                 var ret = {};
                 var resultFunc = function(states) {
                     // when the game is over, you will recieve an object filled
@@ -242,6 +239,26 @@ connection.query('SELECT 1', function(err, rows) {
                     //     score: <int>,
                     //     level: <int>
                     // },
+                    console.log(states);
+                    /*
+                    database.StatsDTO.getByUsername(user.UserName, function(err, rows) {
+                        if(err !== null) {
+                            ret.success = false;
+                            ret.message = "An unknown error has occurred.";
+                            res.json(ret);
+                            next();
+                            return;
+                        }
+
+                        var stats = rows[0];
+                        stats.total_points += states.
+                        database.StatsDTO.update(stats, function(err) {
+                            if (err !== null) {
+                                console.log("Error updating stats");
+                            }
+                        });
+
+                    });*/
                 };
 
                 var gameid = tetris.newGame(user.UserName, resultFunc);
@@ -252,16 +269,13 @@ connection.query('SELECT 1', function(err, rows) {
             }
         }
         else if (req.body.queuetype == 'social') {
-            console.log("getting inside social");
             for (var n = 0; n < open_games_social.length; n++){
                 if (open_games_social[n].username == user.UserName) {
                     exists = true;
-                    index = n;
                     break;
                 }
             }
             if (!exists) {
-                console.log("pushing to social");
                 var ret = {};
                 var resultFunc = function(states) {
                     // when the game is over, you will recieve an object filled
@@ -281,6 +295,31 @@ connection.query('SELECT 1', function(err, rows) {
         }
         console.log(open_games_ranked);
         console.log(open_games_social);
+    });
+
+    apiRouter.post('/remove_games', authenticate.auth, function(req, res) {
+        user = jwt.decode(req.cookies.token);
+        var index_social = null;
+        var index_ranked = null;
+        open_games_social.forEach(function(game) {
+            if (game.username == user.UserName) {
+                index_social = open_games_social.indexOf(game);
+                //break;
+            }
+        });
+
+        open_games_ranked.forEach(function(game) {
+            if (game.username == user.UserName) {
+                index_ranked = open_games_social.indexOf(game);
+                //break;
+            }
+        });
+
+        if (index_social !== null)
+            open_games_social.splice(index_social, 1);
+
+        if (index_ranked !== null)
+            open_games_ranked.splice(index_ranked, 1);
     });
 
     apiRouter.post('/check_if_friends', authenticate.auth, function(req, res) {
@@ -369,7 +408,7 @@ connection.query('SELECT 1', function(err, rows) {
         database.StatsDTO.getByUsername(user.UserName, function(err, rows) {
             var ret = {};
 
-            if(err != null) {
+            if(err !== null) {
                 ret.success = false;
                 ret.message = "An unknown error has occurred.";
                 res.json(ret);
@@ -378,10 +417,9 @@ connection.query('SELECT 1', function(err, rows) {
             }
 
             ret.success = true;
-            ret.messages = rows;
+            ret.stats = rows;
 
             res.json(ret);
-            next();
             return;
         });
     });

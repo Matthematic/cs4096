@@ -3,8 +3,21 @@ $(document).ready(function() {
         $("#navbars").load("navbars.html");
     });
 
-    $("#ranked_game_button").html("create/remove game");
-    $("#social_game_button").html("create/remove game");
+    // remove any games we have open
+    $.ajax({
+        url: "/api/remove_games",
+        datatype: 'json',
+        method: "post",
+        success: function(res){
+            console.log("games cleared");
+        },
+        failure: function(){
+            console.log("Could not clear games");
+        },
+    });
+
+    $("#ranked_game_button").html("create game");
+    $("#social_game_button").html("create game");
 
     $('#ranked_table').DataTable();
     load_table_data('ranked');

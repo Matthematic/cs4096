@@ -90,16 +90,6 @@ var MessageDTO = function() {
     this.gameid = null;
 };
 
-var StatsDTO = function() {
-    this.username = null;
-    this.wins = null;
-    this.games_played = null;
-    this.elo = null;
-    this.total_points = null;
-    this.total_rows_cleared = null;
-};
-
-
 MessageDTO.getBySender = function(sender, callback) {
     connection.query('SELECT * FROM Messages WHERE sender=\"' + sender + '\"', function(err, rows) {
         if(err) {
@@ -180,6 +170,16 @@ MessageDTO.pull = function(id, callback) {
     connection.query('DELETE FROM Messages WHERE id=' + id, function(err) {
         callback(err);
     });
+};
+
+var StatsDTO = function() {
+    this.username = null;
+    this.wins = null;
+    this.games_played = null;
+    this.elo = null;
+    this.total_points = null;
+    this.total_rows_cleared = null;
+    this.highest_level = null;
 };
 
 StatsDTO.getByUsername = function(username, callback) {
