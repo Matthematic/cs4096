@@ -474,8 +474,6 @@
     });
 
     socket.on('join-response', function(data) {
-        expiryDate.setMinutes(expiryDate.getMinutes() + 2);
-
         $(document).keydown(function(e) {
             switch(e.keyCode) {
                 case 32:
@@ -497,7 +495,12 @@
         });
     });
 
+    var firstUpdate = true;
     socket.on('update-game', function(data) {
+        if(firstUpdate) {
+            expiryDate.setMinutes(expiryDate.getMinutes() + 2);
+            firstUpdate = false;
+        }
         updateEntities(data);
     });
 
