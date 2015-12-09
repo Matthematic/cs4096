@@ -224,21 +224,16 @@ connection.query('SELECT 1', function(err, rows) {
         var exists = false;
         var index = null;
         if (req.body.queuetype == 'ranked') {
-            for (var i = 0; i < open_games_ranked.length; i++){
-                if (open_games_ranked[i].username == user.UserName) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
                 var ret = {};
                 var resultFunc = function(states) {
+                    console.log("returned");
                     for (var player in states) {
-                        if (states.hasOwnProperty(player)) {
-                            var me = states[player];
-                            console.log(me);
+                        if (!states.hasOwnProperty(player)) {continue;}
+                        var me = states[player];
+                        console.log(me + ' ' + player);
 
-                            database.StatsDTO.getByUsername(player, function(err, rows) {
+                        var get_handler = function(playerName, playerData) {
+                            return function(err, rows) {
                                 if(err !== null) {
                                     ret.success = false;
                                     ret.message = "An unknown error has occurred.";
@@ -248,8 +243,9 @@ connection.query('SELECT 1', function(err, rows) {
                                 }
 
                                 if (rows !== null) {
+                                    console.log('rows is not null');
                                     var stats = rows[0];
-                                    stats.total_points += me.score;
+                                    stats.total_points += playerData.score;
 
                                     console.log(stats);
                                     // update database
@@ -260,18 +256,22 @@ connection.query('SELECT 1', function(err, rows) {
                                     });
                                 }
                                 else {
-                                    var stats = new database.StatsDTO();
-                                    stats.username = player;
-                                    stats.total_points += me.score;
+                                    console.log('rows is null, inserting with ' + playerName);
+                                    var stats2 = new database.StatsDTO();
+                                    stats2.username = playerName;
+                                    stats2.total_points += playerData.score;
                                     // update database
-                                    database.StatsDTO.insert(stats, function(err) {
+                                    database.StatsDTO.insert(stats2, function(err) {
                                         if (err !== null) {
                                             console.log("Error creating new stats tuple" + err);
                                         }
                                     });
                                 }
-                            });
-                        }
+                            };
+                        };
+
+                        database.StatsDTO.getByUsername(player, get_handler(player, me));
+
                     };
                 };
 
@@ -280,7 +280,7 @@ connection.query('SELECT 1', function(err, rows) {
 
                 ret.gameid = gameid;
                 res.json(ret);
-            }
+
         }
         else if (req.body.queuetype == 'social') {
             for (var n = 0; n < open_games_social.length; n++){
