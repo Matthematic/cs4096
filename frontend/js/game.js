@@ -379,10 +379,6 @@
         return newEnt;
     };
 
-    var displayResult = function(){
-
-    };
-
     var getColor = function(newColor) {
         var newColorObj = null;
         switch(newColor) {
@@ -461,10 +457,8 @@
     });
 
     socket.on('join-response', function(data) {
-        gamedata = data;
-        console.log(gamedata.gameid);
-        console.log(gamedata.width);
-        console.log(gamedata.height);
+        var expiryDate = new Date();
+        expiryDate.setMinutes(expiryDate.getMinutes() + 30);
 
         $(document).keydown(function(e) {
             switch(e.keyCode) {
@@ -510,7 +504,7 @@
             uriData[pair[0]] = pair[1];
         }
         return uriData;
-    }
+    };
 
     var gameData = {};
     var uriData = parseUri();

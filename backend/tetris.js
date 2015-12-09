@@ -1039,6 +1039,7 @@ var Game = function(id, width, height, numPlayers, creatingPlayer, resultFunc) {
     this.started = false;
     this.numPlayers = numPlayers;
     this.resultFunc = resultFunc;
+    this.timer = null;
 
     this.boards = {};
     this.boards[creatingPlayer] = new Board(creatingPlayer);
@@ -1096,10 +1097,10 @@ var update = function(gameid) {
 }
 
 var end = function(gameid) {
-    return function(winner) {
+    return function(caller) {
         var game = Games[gameid];
         var winner;
-        var score = -1
+        var score = -1;
         var states = {};
 
         for(var i in game.boards) {
@@ -1110,9 +1111,15 @@ var end = function(gameid) {
             newState.score = board.playerScore;
             states[board.player] = newState;
 
-            if (board.playerScore > score) {
-                winner = board.player;
-                score = board.playerScore;
+            if(caller === null) {
+                if(score < board.playerScore) {
+                    winner = i;
+                    score = board.playerScore;
+                }
+            } else  {
+                if(caller !== i) {
+                    winner = i;
+                }
             }
         }
 
@@ -1122,10 +1129,10 @@ var end = function(gameid) {
             board.sendEndFunc(winner);
         }
 
-        game.resultFunc(states);
-    }
-}
-
+        game.resultFunc(states, winner);
+        delete Games[gameid];
+    };
+};
 
 function connect(gameid, player, sendFunc, sendEndFunc) {
     var retData = {};
@@ -1169,6 +1176,7 @@ function connect(gameid, player, sendFunc, sendEndFunc) {
             if(!game.boards.hasOwnProperty(i)) continue;
             game.boards[i].start();
         }
+        game.timer = setTimeout(end(gameid), 120000, null);
         this.started = true;
     }
 
@@ -1185,4 +1193,3 @@ module.exports = {
     "newGame": newGame,
     "connect": connect
 };
-
