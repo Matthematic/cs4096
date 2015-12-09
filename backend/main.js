@@ -242,6 +242,7 @@ connection.query('SELECT 1', function(err, rows) {
                                     return;
                                 }
 
+                                console.log("WINNER " + playerData.winner);
                                 if (rows !== null) {
                                     console.log('rows is not null');
                                     var stats = rows[0];
