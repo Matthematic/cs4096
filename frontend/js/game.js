@@ -364,7 +364,7 @@
                 }
             }
         }
-        $('#timeRemaining').text()
+        $('#timeRemaining').text(expiryDate.minutes() + ":" + expiryDate.seconds());
         window.requestAnimationFrame(draw);
     };
     window.requestAnimationFrame(draw);
