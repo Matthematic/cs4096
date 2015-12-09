@@ -30,7 +30,8 @@ var Board = function(player) {
     this.connected = false;
 
 
-    this.init = function(updateFunc, sendFunc, endFunc, sendEndFunc) {
+    this.init = function(startFunc, updateFunc, sendFunc, endFunc, sendEndFunc) {
+        this.StartFunc = startFunc;
         this.UpdateFunc = updateFunc;
         this.SendFunc = sendFunc;
         this.EndFunc = endFunc;
@@ -1135,7 +1136,7 @@ var end = function(gameid) {
     };
 };
 
-function connect(gameid, player, sendFunc, sendEndFunc) {
+function connect(gameid, player, sendStartFunc, sendFunc, sendEndFunc) {
     var retData = {};
     if(Games[gameid] === undefined) {
         console.log(player + " tried to connect to game, " + gameid + " which doesn't exist.");
@@ -1152,7 +1153,7 @@ function connect(gameid, player, sendFunc, sendEndFunc) {
             game.boards[player] = new Board(player);
         }
 
-        game.boards[player].init(update(gameid), sendFunc, end(gameid), sendEndFunc);
+        game.boards[player].init(sendStartFunc, update(gameid), sendFunc, end(gameid), sendEndFunc);
         console.log(player + " has connected to game " + gameid);
     } else {
         retData.fail = true;
@@ -1176,8 +1177,9 @@ function connect(gameid, player, sendFunc, sendEndFunc) {
         for(var i in game.boards) {
             if(!game.boards.hasOwnProperty(i)) continue;
             game.boards[i].start();
-        }
+
         //game.timer = setTimeout(end(gameid), 120000, null);
+        game.StartFunc();
         this.started = true;
     }
 

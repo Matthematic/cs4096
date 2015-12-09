@@ -381,7 +381,8 @@
                 }
             }
         }
-        if(!firstUpdate) {
+
+        if(!endGame) {
             var obj = getTimeRemaining(expiryDate);
             $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
         }
@@ -501,11 +502,11 @@
     });
 
     socket.on('update-game', function(data) {
-        if(firstUpdate) {
-            expiryDate.setMinutes(expiryDate.getMinutes() + 2);
-            firstUpdate = false;
-        }
         updateEntities(data);
+    });
+
+    socket.on('start', function() {
+        expiryDate.setMinutes(expiryDate.getMinutes() + 2);
     });
 
     socket.on('end', function(data) {

@@ -573,9 +573,12 @@ connection.query('SELECT 1', function(err, rows) {
                 socket.emit('end', winner);
                 socket.disconnect();
             };
+            var startFunc = function() {
+                socket.emit('start');
+            };
 
             console.log(data);
-            var retData = tetris.connect(data.gameid, user.UserName, updateFunc, endFunc);
+            var retData = tetris.connect(data.gameid, user.UserName, startFunc, updateFunc, endFunc);
             //var gameData = tetris.newGame("anonymousPengin", updateFunc, endFunc);
 
             socket.emit('join-response', retData);
