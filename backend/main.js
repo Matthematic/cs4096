@@ -60,11 +60,11 @@ connection.query('SELECT 1', function(err, rows) {
         return res.sendFile('dashboard.html', {root: "./frontend/pages"});
     });
 
-    app.get('/profile', function(req, res) {
+    app.get('/profile', authenticate.authRedirect, function(req, res) {
         return res.sendFile('dashboard.html', {root: "./frontend/pages"});
     });
 
-    app.get('/register' , function(req,res) {
+    app.get('/register', function(req,res) {
         return res.sendFile('account_registration.html', { root: "./frontend/pages" });
     });
 
@@ -72,23 +72,23 @@ connection.query('SELECT 1', function(err, rows) {
         return res.sendFile('login.html', {root: "./frontend/pages"});
     });
 
-    app.get('/matchmaking', function(req, res) {
+    app.get('/matchmaking', authenticate.authRedirect, function(req, res) {
         return res.sendFile('matchmaking.html', {root: "./frontend/pages"});
     });
 
-    app.get('/stats/ranked', function(req, res) {
+    app.get('/stats/ranked', authenticate.authRedirect, function(req, res) {
         return res.sendFile('ranked.html', {root: "./frontend/pages"});
     });
 
-    app.get('/stats/social', function(req, res) {
+    app.get('/stats/social', authenticate.authRedirect, function(req, res) {
         return res.sendFile('social.html', {root: "./frontend/pages"});
     });
 
-    app.get('/messages', function(req, res) {
+    app.get('/messages', authenticate.authRedirect, function(req, res) {
         return res.sendFile('messages.html', {root: "./frontend/pages"});
     });
 
-    app.get('/game', function(req, res) {
+    app.get('/game', authenticate.authRedirect, function(req, res) {
         return res.sendFile('game.html', {root: "./frontend/pages"});
     });
 
