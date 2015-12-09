@@ -307,6 +307,7 @@
     var gamedata;
     var entities = {}
     var endGame = false;
+    var startGame = false;
     var winner = null;
     var expiryDate = new Date();
 
@@ -381,7 +382,7 @@
             }
         }
 
-        if(!endGame) {
+        if(startGame && !endGame) {
             var obj = getTimeRemaining(expiryDate);
             $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
         }
@@ -506,6 +507,7 @@
 
     socket.on('start', function() {
         console.log("received start");
+        startGame = true;
         expiryDate = new Date();
         expiryDate.setMinutes(expiryDate.getMinutes() + 2);
     });
