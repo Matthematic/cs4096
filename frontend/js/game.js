@@ -332,7 +332,6 @@
     var username = getCookie('username');
     boards[username] = new RenderWindow("stage");
     var numPlayers = 2;
-    var firstUpdate = true;
 
     function getTimeRemaining(endtime){
         var t = Date.parse(endtime) - Date.parse(new Date());
