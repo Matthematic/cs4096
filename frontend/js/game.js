@@ -506,8 +506,8 @@
 
     socket.on('start', function() {
         console.log("received start");
-        var now = new Date();
-        expiryDate.setMinutes(now.getMinutes() + 2);
+        expiryDate = new Date();
+        expiryDate.setMinutes(expiryDate.getMinutes() + 2);
     });
 
     socket.on('end', function(data) {
