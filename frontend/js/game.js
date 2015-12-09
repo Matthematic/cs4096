@@ -457,8 +457,7 @@
     });
 
     socket.on('join-response', function(data) {
-        var expiryDate = new Date();
-        expiryDate.setMinutes(expiryDate.getMinutes() + 30);
+        expiryDate.setMinutes(expiryDate.getMinutes() + 2);
 
         $(document).keydown(function(e) {
             switch(e.keyCode) {

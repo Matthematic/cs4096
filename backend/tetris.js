@@ -1109,6 +1109,7 @@ var end = function(gameid) {
             var newState = {};
             newState.level = board.currentLevel;
             newState.score = board.playerScore;
+            newState.clearedRows = board.totalClearedRows;
             states[board.player] = newState;
 
             if(caller === null) {
