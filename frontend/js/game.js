@@ -332,6 +332,7 @@
     var username = getCookie('username');
     boards[username] = new RenderWindow("stage");
     var numPlayers = 2;
+    var firstUpdate = true;
 
     function getTimeRemaining(endtime){
         var t = Date.parse(endtime) - Date.parse(new Date());
@@ -380,9 +381,10 @@
                 }
             }
         }
-
-        var obj = getTimeRemaining(expiryDate);
-        $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
+        if(!firstUpdate) {
+            var obj = getTimeRemaining(expiryDate);
+            $('#timeRemaining').text(obj.minutes + ":" + obj.seconds);
+        }
         window.requestAnimationFrame(draw);
     };
     window.requestAnimationFrame(draw);
@@ -498,7 +500,6 @@
         });
     });
 
-    var firstUpdate = true;
     socket.on('update-game', function(data) {
         if(firstUpdate) {
             expiryDate.setMinutes(expiryDate.getMinutes() + 2);
