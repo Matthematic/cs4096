@@ -379,6 +379,7 @@ connection.query('SELECT 1', function(err, rows) {
         });
     });
 
+    // this comment is just so i can change the commit message
     apiRouter.post('/send_friend_request', authenticate.auth, function(req, res) {
         user = jwt.decode(req.cookies.token);
         var m = new database.MessageDTO();
