@@ -246,7 +246,10 @@ connection.query('SELECT 1', function(err, rows) {
                                     console.log('rows is not null');
                                     var stats = rows[0];
                                     stats.total_points += playerData.score;
-
+                                    if (PlayerData.winner == playerName)
+                                        stats.wins += 1;
+                                    stats.games_played += 1;
+                                    stats.total_rows_cleared += PlayerData.clearedRows;
                                     console.log(stats);
                                     // update database
                                     database.StatsDTO.update(stats, function(err) {
@@ -260,6 +263,10 @@ connection.query('SELECT 1', function(err, rows) {
                                     var stats2 = new database.StatsDTO();
                                     stats2.username = playerName;
                                     stats2.total_points += playerData.score;
+                                    if (PlayerData.winner == playerName)
+                                        stats2.wins += 1;
+                                    stats2.games_played += 1;
+                                    stats2.total_rows_cleared += PlayerData.clearedRows;
                                     // update database
                                     database.StatsDTO.insert(stats2, function(err) {
                                         if (err !== null) {
