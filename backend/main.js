@@ -130,7 +130,7 @@ connection.query('SELECT 1', function(err, rows) {
         //m.gameobject = {'gameid': 0, 'queuetype': 'social'};
 
         var ret = {};
-        var resultFunc = function(states) {
+        var resultFunc = function(states, winner) {
             // when the game is over, you will recieve an object filled
             // with states per player.
             // <username> : {
